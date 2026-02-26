@@ -100,6 +100,7 @@ MonoBehaviour:
   rigidbody: {fileID: 8962820451179798685}
   collider: {fileID: 3890789554044882711}
   renderer: {fileID: 6984781378434303609}
+  <itemType>k__BackingField: 2
 --- !u!1 &4780342796559665645
 GameObject:
   m_ObjectHideFlags: 0

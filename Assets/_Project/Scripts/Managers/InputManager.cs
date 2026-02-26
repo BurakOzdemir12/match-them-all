@@ -7,7 +7,7 @@ namespace _Project.Scripts.Managers
 {
     public class InputManager : MonoBehaviour
     {
-        public event Action<GameObject, IInteractable> OnItemClicked;
+        public event Action<IInteractable> OnItemClicked;
         private Camera _mainCamera;
         private IInteractable _interactable;
         private GameObject _currentItem;
@@ -57,8 +57,9 @@ namespace _Project.Scripts.Managers
         {
             if (!_currentItem) return;
             _interactable.Deselect();
-            OnItemClicked?.Invoke(_currentItem, _interactable);
+            OnItemClicked?.Invoke(_interactable);
             _currentItem = null;
+            _interactable = null;
         }
     }
 }

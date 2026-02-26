@@ -1,4 +1,5 @@
 ﻿using System;
+using _Project.Scripts.Enums;
 using _Project.Scripts.Interfaces;
 using _Project.Scripts.Managers;
 using UnityEngine;
@@ -16,6 +17,9 @@ namespace _Project.Scripts
 
         private Material _baseMaterial;
 
+        [field: SerializeField] public ItemType itemType { get; private set; }
+
+        // public ItemType ItemType => (ItemType) Enum.Parse(typeof(ItemType), name);
         private void Awake()
         {
             if (!rigidbody) rigidbody = GetComponent<Rigidbody>();
