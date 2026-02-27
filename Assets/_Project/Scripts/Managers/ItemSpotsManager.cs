@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Numerics;
 using _Project.Scripts.Enums;
 using _Project.Scripts.Interfaces;
+using DG.Tweening;
 using UnityEngine;
+using Quaternion = UnityEngine.Quaternion;
+using Vector3 = UnityEngine.Vector3;
 
 namespace _Project.Scripts.Managers
 {
@@ -25,6 +29,22 @@ namespace _Project.Scripts.Managers
         private Dictionary<ItemType, ItemMergeData> itemMergeDataDictionary = new Dictionary<ItemType, ItemMergeData>();
 
         [SerializeField] private List<Item> itemsInBar = new List<Item>();
+
+
+        [Header("Animation Settings")] [Tooltip("Animation duration for DOTween animations")] [SerializeField]
+        private float animationDuration = 0.15f;
+
+        [Tooltip("How strong the item will jump")] [SerializeField]
+        private float jumpPower = 1.5f;
+
+        [Tooltip("How many times the item will jump")] [SerializeField]
+        private int numJumps = 1;
+
+        [Tooltip("The scale of the item when it's on the way to the spot (squash & stretch effect)")] [SerializeField]
+        private Vector3 itemScaleOnGoing;
+
+        [Tooltip("How strong the item will jump to right or left spot")] [SerializeField]
+        private float jumpPowerOnSpot = 0.5f;
 
         private void Awake()
         {
@@ -77,7 +97,7 @@ namespace _Project.Scripts.Managers
 
             interactable.Interact();
 
-            UpdateSpotVisuals();
+            UpdateSpotVisuals(itemComponent);
 
             if (itemMergeDataDictionary[itemComponent.itemType].items.Count == 3)
             {
@@ -89,19 +109,58 @@ namespace _Project.Scripts.Managers
             isBusy = false;
         }
 
-        private void UpdateSpotVisuals()
+        private void UpdateSpotVisuals(Item newlyAddedItem = null)
         {
             for (int i = 0; i < itemsInBar.Count; i++)
             {
                 Item currentItem = itemsInBar[i];
                 ItemSpot targetSpot = availableSpots[i];
 
-                targetSpot.Populate(currentItem.gameObject);
+                bool isNewToBar = (currentItem == newlyAddedItem);
+                bool isChangingSpot = (currentItem.transform.parent != targetSpot.transform);
 
+                if (!isNewToBar && !isChangingSpot)
+                {
+                    continue;
+                }
+
+                targetSpot.Populate(currentItem.gameObject);
                 currentItem.transform.SetParent(targetSpot.transform);
-                currentItem.transform.localPosition = itemOffsetOnSpot;
-                currentItem.transform.localScale = itemScaleOnSpot;
-                currentItem.transform.rotation = Quaternion.identity;
+
+                //? DOTween animations ->
+                //? Clearing the previous animation
+                currentItem.transform.DOKill();
+                Sequence itemSeq = DOTween.Sequence();
+
+                if (isNewToBar)
+                {
+                    //? Setting the new animation
+
+                    //? Jumping: move to the target in an arc of 1.5 units, jumping once, in 0.35 seconds
+                    itemSeq.Join(
+                        currentItem.transform.DOLocalJump(itemOffsetOnSpot, jumpPower, numJumps, animationDuration));
+
+                    //? Translation: Do a 360-degree somersault while flying in the air (RotateMode.FastBeyond360 is important!)
+                    itemSeq.Join(currentItem.transform.DOLocalRotate(new Vector3(0, 360, 0), animationDuration,
+                        RotateMode.FastBeyond360));
+
+                    itemSeq.Join(currentItem.transform.DOScale(itemScaleOnSpot, animationDuration));
+
+                    //? SITTING ON THE SLOT (SQUASH & STRETCH): The moment the object touches the slot (We used Append, it works when the above ones are finished)
+                    //? First, let it flatten slightly with the speed coming from above (shrink in Y axis, swell in X and Z).
+                    itemSeq.Append(currentItem.transform.DOScale(itemScaleOnGoing, 0.1f));
+
+                    //? RECOVERY: Then it immediately returns to its original size (itemScaleOnSpot) by shaking like jell
+                    itemSeq.Append(currentItem.transform.DOScale(itemScaleOnSpot, animationDuration)
+                        .SetEase(Ease.OutBack));
+                }
+                else
+                {
+                    //? Jumping: move to the target in an arc of 1.5 units, jumping once, in 0.35 seconds
+                    itemSeq.Join(
+                        currentItem.transform.DOLocalJump(itemOffsetOnSpot, jumpPowerOnSpot, numJumps,
+                            animationDuration));
+                }
             }
 
             //? Clearing the rest of the spots
@@ -118,7 +177,6 @@ namespace _Project.Scripts.Managers
             foreach (var matched in mergeData.items)
             {
                 itemsInBar.Remove(matched);
-                Destroy(matched.gameObject);
             }
 
             itemMergeDataDictionary.Remove(type);
