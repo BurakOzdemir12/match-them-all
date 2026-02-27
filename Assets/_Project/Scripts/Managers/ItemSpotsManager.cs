@@ -187,12 +187,21 @@ namespace _Project.Scripts.Managers
             // isMerging = true;
             var mergeData = itemMergeDataDictionary[item.itemType];
 
-            foreach (var matched in mergeData.items)
+            List<Item> itemsToMerge = mergeData.items.GetRange(0, 3);
+
+            mergeData.items.RemoveRange(0, 3);
+
+            //? If there are no more items in the list with same types, remove the item from the dictionary
+            if (mergeData.items.Count == 0)
+            {
+                itemMergeDataDictionary.Remove(item.itemType);
+            }
+
+            foreach (var matched in itemsToMerge)
             {
                 itemsInBar.Remove(matched);
             }
 
-            itemMergeDataDictionary.Remove(item.itemType);
 
             //? objects on the right side move to the left and clear the spaces
             UpdateSpotVisuals();
@@ -202,10 +211,10 @@ namespace _Project.Scripts.Managers
             Sequence mergeSeq = DOTween.Sequence();
 
 
-            Vector3 middleOnePos = mergeData.items[1].transform.position;
+            Vector3 middleOnePos = itemsToMerge[1].transform.position;
             Vector3 targetPos = middleOnePos + mergeOffset;
 
-            foreach (var matchedItem in mergeData.items)
+            foreach (var matchedItem in itemsToMerge)
             {
                 matchedItem.transform.DOKill();
                 mergeSeq.Join(
@@ -216,7 +225,7 @@ namespace _Project.Scripts.Managers
             mergeSeq.OnComplete(() =>
             {
                 // isMerging = false;
-                foreach (var matchedItem in mergeData.items)
+                foreach (var matchedItem in itemsToMerge)
                 {
                     Destroy(matchedItem.gameObject);
                 }
