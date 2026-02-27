@@ -25,6 +25,8 @@ namespace _Project.Scripts.Managers
         [Header("ItemSettings")] [SerializeField]
         private bool isBusy = false;
 
+        // private bool isMerging = false;
+
         [Header("Data")]
         private Dictionary<ItemType, ItemMergeData> itemMergeDataDictionary = new Dictionary<ItemType, ItemMergeData>();
 
@@ -45,6 +47,10 @@ namespace _Project.Scripts.Managers
 
         [Tooltip("How strong the item will jump to right or left spot")] [SerializeField]
         private float jumpPowerOnSpot = 0.5f;
+
+        [Space(10)] [Tooltip("Offset for Merged objects ")] [SerializeField]
+        private Vector3 mergeOffset;
+
 
         private void Awake()
         {
@@ -99,12 +105,13 @@ namespace _Project.Scripts.Managers
 
             UpdateSpotVisuals(itemComponent);
 
-            if (itemMergeDataDictionary[itemComponent.itemType].items.Count == 3)
-            {
-                ProcessMerge(itemComponent.itemType);
-            }
+            //? If the items are merging, then the game is not over yet, wait for the merge to finish.
+            bool isMergeTriggered = itemMergeDataDictionary[itemComponent.itemType].items.Count == 3;
 
-            CheckForGameOver();
+            if (!isMergeTriggered)
+            {
+                CheckForGameOver();
+            }
 
             isBusy = false;
         }
@@ -161,6 +168,11 @@ namespace _Project.Scripts.Managers
                         currentItem.transform.DOLocalJump(itemOffsetOnSpot, jumpPowerOnSpot, numJumps,
                             animationDuration));
                 }
+
+                if (isNewToBar && itemMergeDataDictionary[currentItem.itemType].items.Count == 3)
+                {
+                    itemSeq.OnComplete(() => { ProcessMerge(currentItem); });
+                }
             }
 
             //? Clearing the rest of the spots
@@ -170,18 +182,50 @@ namespace _Project.Scripts.Managers
             }
         }
 
-        private void ProcessMerge(ItemType type)
+        private void ProcessMerge(Item item)
         {
-            var mergeData = itemMergeDataDictionary[type];
+            // isMerging = true;
+            var mergeData = itemMergeDataDictionary[item.itemType];
 
             foreach (var matched in mergeData.items)
             {
                 itemsInBar.Remove(matched);
             }
 
-            itemMergeDataDictionary.Remove(type);
+            itemMergeDataDictionary.Remove(item.itemType);
 
+            //? objects on the right side move to the left and clear the spaces
             UpdateSpotVisuals();
+
+            item.transform.DOKill();
+
+            Sequence mergeSeq = DOTween.Sequence();
+
+
+            Vector3 middleOnePos = mergeData.items[1].transform.position;
+            Vector3 targetPos = middleOnePos + mergeOffset;
+
+            foreach (var matchedItem in mergeData.items)
+            {
+                matchedItem.transform.DOKill();
+                mergeSeq.Join(
+                    matchedItem.transform.DOJump(targetPos, jumpPower, numJumps, animationDuration)
+                );
+            }
+
+            mergeSeq.OnComplete(() =>
+            {
+                // isMerging = false;
+                foreach (var matchedItem in mergeData.items)
+                {
+                    Destroy(matchedItem.gameObject);
+                }
+            });
+        }
+
+        private static void DestroyMatchedItem(Item matchedItems)
+        {
+            Destroy(matchedItems.gameObject);
         }
 
         private void CreateItemMergeData(Item item)
@@ -189,11 +233,12 @@ namespace _Project.Scripts.Managers
             itemMergeDataDictionary.Add(item.itemType, new ItemMergeData(item));
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         private void CheckForGameOver()
         {
             if (itemsInBar.Count >= availableSpots.Length)
             {
-                Debug.LogWarning("Game Over!");
+                Debug.Log("Game Over!");
             }
         }
 
