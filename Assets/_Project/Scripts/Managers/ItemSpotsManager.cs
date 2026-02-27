@@ -153,6 +153,9 @@ namespace _Project.Scripts.Managers
 
                     itemSeq.Join(currentItem.transform.DOScale(itemScaleOnSpot, animationDuration));
 
+                    //? Bumping: play the bump effects
+                    itemSeq.AppendCallback(() => { targetSpot.AnimateBump(); });
+
                     //? SITTING ON THE SLOT (SQUASH & STRETCH): The moment the object touches the slot (We used Append, it works when the above ones are finished)
                     //? First, let it flatten slightly with the speed coming from above (shrink in Y axis, swell in X and Z).
                     itemSeq.Append(currentItem.transform.DOScale(itemScaleOnGoing, 0.1f));
@@ -163,6 +166,9 @@ namespace _Project.Scripts.Managers
                 }
                 else
                 {
+                    //? Bumping: play the bump effects
+                    itemSeq.AppendCallback(() => { targetSpot.AnimateBump(); });
+
                     //? Jumping: move to the target in an arc of 1.5 units, jumping once, in 0.35 seconds
                     itemSeq.Join(
                         currentItem.transform.DOLocalJump(itemOffsetOnSpot, jumpPowerOnSpot, numJumps,

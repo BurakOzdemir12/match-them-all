@@ -2728,6 +2728,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Managers.MaterialManager
   outlineMaterial: {fileID: 2100000, guid: 3dbc4ab2c2dd9104db271dbd05efd720, type: 2}
+--- !u!95 &1920348346 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 9204106536060278710, guid: ac02441ac4180cc4a95792d1c2b64d95, type: 3}
+  m_PrefabInstance: {fileID: 2477608707611921048}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1924595797
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3195,6 +3200,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2828235532039557210, guid: ac02441ac4180cc4a95792d1c2b64d95, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 1920348346}
     - target: {fileID: 7790412246017796642, guid: ac02441ac4180cc4a95792d1c2b64d95, type: 3}
       propertyPath: m_Name
       value: ItemSpot
