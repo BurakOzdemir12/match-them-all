@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using _Project.Scripts.Enums;
 using _Project.Scripts.Interfaces;
@@ -48,9 +50,8 @@ namespace _Project.Scripts.Managers
         [Tooltip("How strong the item will jump to right or left spot")] [SerializeField]
         private float jumpPowerOnSpot = 0.5f;
 
-        [Space(10)] [Tooltip("Offset for Merged objects ")] [SerializeField]
-        private Vector3 mergeOffset;
-
+        //Event Actions
+        public event Action<List<Item>> OnItemsMergeRequested;
 
         private void Awake()
         {
@@ -87,11 +88,11 @@ namespace _Project.Scripts.Managers
 
             int insertIndex = itemsInBar.Count; // ? if it's new, then insert at the end
 
-            if (itemMergeDataDictionary.ContainsKey(itemComponent.itemType))
+            if (itemMergeDataDictionary.TryGetValue(itemComponent.itemType, out var mergeData))
             {
                 //? If there is the same item type, found that item in the itemsInBar list and insert +1 to the right.
                 insertIndex = itemsInBar.FindLastIndex(x => x.itemType == itemComponent.itemType) + 1;
-                itemMergeDataDictionary[itemComponent.itemType].items.Add(itemComponent);
+                mergeData.items.Add(itemComponent);
             }
             else
             {
@@ -105,9 +106,8 @@ namespace _Project.Scripts.Managers
 
             UpdateSpotVisuals(itemComponent);
 
-            //? If the items are merging, then the game is not over yet, wait for the merge to finish.
+            // ? If the items are merging, then the game is not over yet, wait for the merge to finish.
             bool isMergeTriggered = itemMergeDataDictionary[itemComponent.itemType].items.Count == 3;
-
             if (!isMergeTriggered)
             {
                 CheckForGameOver();
@@ -177,7 +177,7 @@ namespace _Project.Scripts.Managers
 
                 if (isNewToBar && itemMergeDataDictionary[currentItem.itemType].items.Count == 3)
                 {
-                    itemSeq.OnComplete(() => { ProcessMerge(currentItem); });
+                    itemSeq.OnComplete(() => { PrepareForMerge(currentItem); });
                 }
             }
 
@@ -188,7 +188,7 @@ namespace _Project.Scripts.Managers
             }
         }
 
-        private void ProcessMerge(Item item)
+        private void PrepareForMerge(Item item)
         {
             // isMerging = true;
             var mergeData = itemMergeDataDictionary[item.itemType];
@@ -212,35 +212,7 @@ namespace _Project.Scripts.Managers
             //? objects on the right side move to the left and clear the spaces
             UpdateSpotVisuals();
 
-            item.transform.DOKill();
-
-            Sequence mergeSeq = DOTween.Sequence();
-
-
-            Vector3 middleOnePos = itemsToMerge[1].transform.position;
-            Vector3 targetPos = middleOnePos + mergeOffset;
-
-            foreach (var matchedItem in itemsToMerge)
-            {
-                matchedItem.transform.DOKill();
-                mergeSeq.Join(
-                    matchedItem.transform.DOJump(targetPos, jumpPower, numJumps, animationDuration)
-                );
-            }
-
-            mergeSeq.OnComplete(() =>
-            {
-                // isMerging = false;
-                foreach (var matchedItem in itemsToMerge)
-                {
-                    Destroy(matchedItem.gameObject);
-                }
-            });
-        }
-
-        private static void DestroyMatchedItem(Item matchedItems)
-        {
-            Destroy(matchedItems.gameObject);
+            OnItemsMergeRequested?.Invoke(itemsToMerge);
         }
 
         private void CreateItemMergeData(Item item)
@@ -251,7 +223,11 @@ namespace _Project.Scripts.Managers
         // ReSharper disable Unity.PerformanceAnalysis
         private void CheckForGameOver()
         {
-            if (itemsInBar.Count >= availableSpots.Length)
+            if (itemsInBar.Count < availableSpots.Length) return;
+
+            bool isMergePending = itemMergeDataDictionary.Values.Any(data => data.items.Count >= 3);
+
+            if (!isMergePending)
             {
                 Debug.Log("Game Over!");
             }
