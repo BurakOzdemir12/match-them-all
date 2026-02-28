@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Project.Scripts.Enums;
+using _Project.Scripts.Static;
 using DG.Tweening;
 using UnityEngine;
 
@@ -83,12 +85,17 @@ namespace _Project.Scripts.Managers
             return upSeq;
         }
 
-        private static void CompleteMergeProcess(List<Item> itemsToMerge)
+        private void CompleteMergeProcess(List<Item> itemsToMerge)
         {
+            Vector3 mergePosition = itemsToMerge[1].transform.position;
+            ItemType mergedType = itemsToMerge[1].itemType;
+
             foreach (var matchedItem in itemsToMerge)
             {
                 Destroy(matchedItem.gameObject);
             }
+
+            GameEvents.OnMergeCompleted?.Invoke(mergePosition, mergedType);
         }
 
         private void OnDisable()
