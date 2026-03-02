@@ -40,8 +40,9 @@ namespace _Project.Scripts.Managers
 
         private void HandleMergeRequested(List<Item> itemsToMerge)
         {
-            Sequence mergeSeq = DOTween.Sequence();
-
+            // Sequence mergeSeq = DOTween.Sequence();
+            Sequence mergeSeq = DOTween.Sequence().SetLink(itemsToMerge[1].gameObject);
+            
             Vector3 middleOnePos = itemsToMerge[1].transform.position;
             Vector3 targetPos = middleOnePos + mergeOffset;
 

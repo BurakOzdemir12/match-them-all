@@ -80,6 +80,9 @@ namespace _Project.Scripts.Managers
 
             if (interactable is not Item itemComponent) return;
 
+            //? If we already clicked and item in the bar, then ignore it
+            if (itemsInBar.Contains(itemComponent)) return;
+
             //? avaliable spot check
             if (itemsInBar.Count >= availableSpots.Length) return;
 
@@ -137,8 +140,9 @@ namespace _Project.Scripts.Managers
                 //? DOTween animations ->
                 //? Clearing the previous animation
                 currentItem.transform.DOKill();
-                Sequence itemSeq = DOTween.Sequence();
-
+                // Sequence itemSeq = DOTween.Sequence();
+                Sequence itemSeq = DOTween.Sequence().SetLink(currentItem.gameObject);
+                
                 if (isNewToBar)
                 {
                     //? Setting the new animation
@@ -175,7 +179,8 @@ namespace _Project.Scripts.Managers
                             animationDuration));
                 }
 
-                if (isNewToBar && itemMergeDataDictionary[currentItem.itemType].items.Count == 3)
+                int indexOfItem = itemMergeDataDictionary[currentItem.itemType].items.IndexOf(currentItem);
+                if ((indexOfItem + 1) % 3 == 0)
                 {
                     itemSeq.OnComplete(() => { PrepareForMerge(currentItem); });
                 }
@@ -191,7 +196,9 @@ namespace _Project.Scripts.Managers
         private void PrepareForMerge(Item item)
         {
             // isMerging = true;
-            var mergeData = itemMergeDataDictionary[item.itemType];
+            if (!itemMergeDataDictionary.TryGetValue(item.itemType, out var mergeData)) return;
+            
+            if (mergeData.items.Count < 3) return;
 
             List<Item> itemsToMerge = mergeData.items.GetRange(0, 3);
 
