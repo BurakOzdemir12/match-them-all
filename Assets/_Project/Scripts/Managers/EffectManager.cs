@@ -11,9 +11,6 @@ namespace _Project.Scripts.Managers
     {
         public static EffectManager Instance { get; private set; }
 
-        [Header("References")] [SerializeField]
-        private ParticleSystem particleSystem;
-
         [Space(10)] [Header("Pool Settings")] [SerializeField]
         private EffectEmitter effectEmitterPrefab;
 
