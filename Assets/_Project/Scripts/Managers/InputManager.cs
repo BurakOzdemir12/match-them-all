@@ -29,7 +29,8 @@ namespace _Project.Scripts.Managers
         {
             // Mouse.current.position.value
             Vector2 pointerPos = Pointer.current.position.value;
-            Physics.Raycast(_mainCamera.ScreenPointToRay(pointerPos), out RaycastHit hit, 150);
+            Physics.Raycast(_mainCamera.ScreenPointToRay(pointerPos), out RaycastHit hit, 150,
+                Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
 
             if (!hit.collider || !hit.collider.TryGetComponent(out IInteractable interactable))
             {
