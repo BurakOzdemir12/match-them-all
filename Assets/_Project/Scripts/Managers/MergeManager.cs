@@ -94,8 +94,7 @@ namespace _Project.Scripts.Managers
             {
                 Destroy(matchedItem.gameObject);
             }
-
-            GameEvents.OnMergeCompleted?.Invoke(mergePosition, mergedType);
+            GameEvents.TriggerMergeCompleted(mergePosition, mergedType);
         }
 
         private void OnDisable()
