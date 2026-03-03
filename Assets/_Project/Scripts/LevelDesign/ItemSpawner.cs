@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Enums;
+using _Project.Scripts.ItemScripts;
+using _Project.Scripts.ItemScripts.ScriptableObjects;
 using _Project.Scripts.LevelDesign.ScriptableObjects;
 using _Project.Scripts.Static;
 using _Project.Scripts.Structs.Level;
@@ -17,8 +19,8 @@ namespace _Project.Scripts.LevelDesign
 
         // [SerializeField] private float spawnDelay = 0.05f;
 
-        [Header("Prefabs Database")] [Tooltip("All Item Prefabs in Game")] [SerializeField]
-        private List<Item> allItemPrefabs;
+        [Header("Item Database")] [Tooltip("All Items in Database")] [SerializeField]
+        private ItemDataSo itemDatabase;
 
         [Header("Items Parent")] [SerializeField]
         private Transform itemsParent;
@@ -84,13 +86,14 @@ namespace _Project.Scripts.LevelDesign
 
         private Item GetItemPrefabByType(ItemType itemType)
         {
-            foreach (var prefab in allItemPrefabs)
+            var dataEntry = itemDatabase.GetItemData(itemType);
+            if (dataEntry.itemPrefab == null)
             {
-                if (prefab.itemType == itemType) return prefab;
+                Debug.LogError($"ItemSpawner: didn't find prefab for {itemType}  ");
+                return null;
             }
 
-            Debug.LogError($"ItemSpawner: didn't find prefab for {itemType}  ");
-            return null;
+            return dataEntry.itemPrefab;
         }
 
         private void OnDisable()

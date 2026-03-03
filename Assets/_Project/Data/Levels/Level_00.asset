@@ -25,5 +25,5 @@ MonoBehaviour:
     Amount: 12
     IsGoal: 0
   - ItemType: 3
-    Amount: 3
+    Amount: 5
     IsGoal: 1
