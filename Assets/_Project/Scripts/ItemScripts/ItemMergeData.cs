@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using _Project.Scripts.Enums;
 
-namespace _Project.Scripts
+namespace _Project.Scripts.ItemScripts
 {
     public struct ItemMergeData
     {
