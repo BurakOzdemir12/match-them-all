@@ -10,15 +10,20 @@ namespace _Project.Scripts.Managers
     {
         [Header("Levels")] [SerializeField] private List<LevelDataSo> levelList;
         public IReadOnlyList<LevelDataSo> LevelList => levelList;
+        private const string LevelSaveKey = "SavedLevelIndex";
 
         private LevelDataSo _currentLevelData;
         private int _currentLevelIndex = 0;
 
         private void Awake()
         {
+            // _currentLevelData = levelList[_currentLevelIndex];
+            _currentLevelIndex = PlayerPrefs.GetInt(LevelSaveKey, 0);
         }
 
-            _currentLevelData = levelList[_currentLevelIndex];
+        private void OnEnable()
+        {
+            GameEvents.OnLevelCompleted += AdvanceToNextLevel;
         }
 
         private void Start()
@@ -34,14 +39,26 @@ namespace _Project.Scripts.Managers
                 return;
             }
 
-            if (_currentLevelIndex >= levelList.Count)
-            {
-                _currentLevelIndex = 0;
-            }
+            int indexToLoad = _currentLevelIndex % levelList.Count;
 
-            LevelDataSo levelToLoad = levelList[_currentLevelIndex];
-
+            LevelDataSo levelToLoad = levelList[indexToLoad];
             GameEvents.TriggerLevelStarted(levelToLoad);
+        }
+
+        // ReSharper disable Unity.PerformanceAnalysis
+        private void AdvanceToNextLevel()
+        {
+            _currentLevelIndex++;
+
+            PlayerPrefs.SetInt(LevelSaveKey, _currentLevelIndex);
+            PlayerPrefs.Save();
+
+            Debug.Log($"Level Saved! new Level Index: {_currentLevelIndex}");
+        }
+
+        private void OnDisable()
+        {
+            GameEvents.OnLevelCompleted -= AdvanceToNextLevel;
         }
     }
 }
