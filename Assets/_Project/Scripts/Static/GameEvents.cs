@@ -7,14 +7,11 @@ namespace _Project.Scripts.Static
 {
     public static class GameEvents
     {
-        public static event Action<Vector3, ItemType> OnMergeCompleted;
         public static event Action<LevelDataSo> OnLevelStarted;
         public static event Action OnLevelCompleted;
-
-        public static void TriggerMergeCompleted(Vector3 position, ItemType itemType)
-        {
-            OnMergeCompleted?.Invoke(position, itemType);
-        }
+        public static event Action OnLevelFailed;
+        public static event Action OnGameStarted;
+        public static event Action OnGamePaused;
 
         public static void TriggerLevelStarted(LevelDataSo levelData)
         {
@@ -24,6 +21,21 @@ namespace _Project.Scripts.Static
         public static void TriggerLevelCompleted()
         {
             OnLevelCompleted?.Invoke();
+        }
+
+        public static void TriggerLevelFailed()
+        {
+            OnLevelFailed?.Invoke();
+        }
+
+        public static void TriggerGameStarted()
+        {
+            OnGameStarted?.Invoke();
+        }
+
+        public static void TriggerGamePaused()
+        {
+            OnGamePaused?.Invoke();
         }
     }
 }

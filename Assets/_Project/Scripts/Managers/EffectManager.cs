@@ -33,7 +33,7 @@ namespace _Project.Scripts.Managers
 
         private void OnEnable()
         {
-            GameEvents.OnMergeCompleted += HandleMergeCompleted;
+            MergeManager.OnMergeCompleted += HandleMergeCompleted;
         }
 
         private void InitializePool()
@@ -96,7 +96,7 @@ namespace _Project.Scripts.Managers
 
         private void OnDisable()
         {
-            GameEvents.OnMergeCompleted -= HandleMergeCompleted;
+            MergeManager.OnMergeCompleted -= HandleMergeCompleted;
         }
     }
 }

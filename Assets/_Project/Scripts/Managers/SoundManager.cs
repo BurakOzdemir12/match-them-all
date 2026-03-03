@@ -45,7 +45,7 @@ namespace _Project.Scripts.Managers
 
         private void OnEnable()
         {
-            GameEvents.OnMergeCompleted += HandleMergeCompleted;
+            MergeManager.OnMergeCompleted += HandleMergeCompleted;
         }
 
         private void HandleMergeCompleted(Vector3 pos, ItemType itemType)
@@ -138,7 +138,7 @@ namespace _Project.Scripts.Managers
 
         private void OnDisable()
         {
-            GameEvents.OnMergeCompleted -= HandleMergeCompleted;
+            MergeManager.OnMergeCompleted -= HandleMergeCompleted;
         }
     }
 }

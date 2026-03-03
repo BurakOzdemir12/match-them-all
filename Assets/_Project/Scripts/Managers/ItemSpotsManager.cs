@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using _Project.Scripts.Enums;
 using _Project.Scripts.Interfaces;
+using _Project.Scripts.Static;
 using DG.Tweening;
 using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
@@ -14,9 +15,8 @@ namespace _Project.Scripts.Managers
     public class ItemSpotsManager : MonoBehaviour
     {
         [Header("References")] [SerializeField]
-        private InputManager inputManager;
+        private ItemSpot[] availableSpots;
 
-        [SerializeField] private ItemSpot[] availableSpots;
         [SerializeField] private Transform itemSpotsParent;
 
         [Header("Item Pos Settings")] [SerializeField]
@@ -51,17 +51,17 @@ namespace _Project.Scripts.Managers
         private float jumpPowerOnSpot = 0.5f;
 
         //Event Actions
-        public event Action<List<Item>> OnItemsMergeRequested;
+        public static event Action<List<Item>> OnItemsMergeRequested;
+        public static event Action<ItemType> ItemCollected;
 
         private void Awake()
         {
             InitSpots();
-            if (inputManager == null) inputManager = GetComponent<InputManager>();
         }
 
         private void OnEnable()
         {
-            inputManager.OnItemClicked += HandleItemClicked;
+            InputManager.OnItemClicked += HandleItemClicked;
         }
 
         private void InitSpots()
@@ -109,6 +109,9 @@ namespace _Project.Scripts.Managers
 
             UpdateSpotVisuals(itemComponent);
 
+            //? Trigger the event for collecting the item, so that GoalManager can listen and update the goals.
+            ItemCollected?.Invoke(itemComponent.itemType);
+
             // ? If the items are merging, then the game is not over yet, wait for the merge to finish.
             bool isMergeTriggered = itemMergeDataDictionary[itemComponent.itemType].items.Count == 3;
             if (!isMergeTriggered)
@@ -142,7 +145,7 @@ namespace _Project.Scripts.Managers
                 currentItem.transform.DOKill();
                 // Sequence itemSeq = DOTween.Sequence();
                 Sequence itemSeq = DOTween.Sequence().SetLink(currentItem.gameObject);
-                
+
                 if (isNewToBar)
                 {
                     //? Setting the new animation
@@ -197,7 +200,7 @@ namespace _Project.Scripts.Managers
         {
             // isMerging = true;
             if (!itemMergeDataDictionary.TryGetValue(item.itemType, out var mergeData)) return;
-            
+
             if (mergeData.items.Count < 3) return;
 
             List<Item> itemsToMerge = mergeData.items.GetRange(0, 3);
@@ -236,13 +239,14 @@ namespace _Project.Scripts.Managers
 
             if (!isMergePending)
             {
-                Debug.Log("Game Over!");
+                GameEvents.TriggerLevelFailed();
+                // Debug.Log("Game Over!");
             }
         }
 
         private void OnDisable()
         {
-            inputManager.OnItemClicked -= HandleItemClicked;
+            InputManager.OnItemClicked -= HandleItemClicked;
         }
     }
 }

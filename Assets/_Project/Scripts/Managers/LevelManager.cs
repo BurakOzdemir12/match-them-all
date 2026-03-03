@@ -8,7 +8,6 @@ namespace _Project.Scripts.Managers
 {
     public class LevelManager : MonoBehaviour
     {
-        public static LevelManager Instance { get; private set; }
         [Header("Levels")] [SerializeField] private List<LevelDataSo> levelList;
         public IReadOnlyList<LevelDataSo> LevelList => levelList;
 
@@ -17,14 +16,7 @@ namespace _Project.Scripts.Managers
 
         private void Awake()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(this.gameObject);
-                return;
-            }
-
-            Instance = this;
-
+        }
 
             _currentLevelData = levelList[_currentLevelIndex];
         }

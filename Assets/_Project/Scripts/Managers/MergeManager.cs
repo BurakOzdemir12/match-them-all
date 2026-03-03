@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Project.Scripts.Enums;
-using _Project.Scripts.Static;
 using DG.Tweening;
 using UnityEngine;
 
@@ -9,9 +8,6 @@ namespace _Project.Scripts.Managers
 {
     public class MergeManager : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
-        private ItemSpotsManager itemSpotsManager;
-
         [Header("Animation Settings")] [Tooltip("Offset for Merged objects ")] [SerializeField]
         private Vector3 mergeOffset;
 
@@ -30,19 +26,18 @@ namespace _Project.Scripts.Managers
         [Tooltip("How long items wait in the air before smashing")] [SerializeField]
         private float waitBeforeSmashDuration = 0.3f;
 
+        public static event Action<Vector3, ItemType> OnMergeCompleted;
+
         private void OnEnable()
         {
-            if (itemSpotsManager != null)
-            {
-                itemSpotsManager.OnItemsMergeRequested += HandleMergeRequested;
-            }
+            ItemSpotsManager.OnItemsMergeRequested += HandleMergeRequested;
         }
 
         private void HandleMergeRequested(List<Item> itemsToMerge)
         {
             // Sequence mergeSeq = DOTween.Sequence();
             Sequence mergeSeq = DOTween.Sequence().SetLink(itemsToMerge[1].gameObject);
-            
+
             Vector3 middleOnePos = itemsToMerge[1].transform.position;
             Vector3 targetPos = middleOnePos + mergeOffset;
 
@@ -95,15 +90,13 @@ namespace _Project.Scripts.Managers
             {
                 Destroy(matchedItem.gameObject);
             }
-            GameEvents.TriggerMergeCompleted(mergePosition, mergedType);
+
+            OnMergeCompleted?.Invoke(mergePosition, mergedType);
         }
 
         private void OnDisable()
         {
-            if (itemSpotsManager != null)
-            {
-                itemSpotsManager.OnItemsMergeRequested -= HandleMergeRequested;
-            }
+            ItemSpotsManager.OnItemsMergeRequested -= HandleMergeRequested;
         }
     }
 }

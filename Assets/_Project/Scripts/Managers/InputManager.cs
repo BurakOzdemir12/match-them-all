@@ -7,7 +7,7 @@ namespace _Project.Scripts.Managers
 {
     public class InputManager : MonoBehaviour
     {
-        public event Action<IInteractable> OnItemClicked;
+        public static event Action<IInteractable> OnItemClicked;
         private Camera _mainCamera;
         private IInteractable _interactable;
         private GameObject _currentItem;
