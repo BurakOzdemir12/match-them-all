@@ -1775,6 +1775,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.UI.Managers.GoalUIManager
   goalCardPrefab: {fileID: 5966265755321504289, guid: 0cff5ac2eb97bcd4c9729f6209621425, type: 3}
   gridContainer: {fileID: 591566872}
+  itemDatabase: {fileID: 11400000, guid: 85eaea9a8e6eff244b70f03e931a66c2, type: 2}
 --- !u!1001 &599345452
 PrefabInstance:
   m_ObjectHideFlags: 0

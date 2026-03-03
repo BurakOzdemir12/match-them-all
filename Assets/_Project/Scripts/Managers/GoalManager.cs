@@ -10,13 +10,14 @@ namespace _Project.Scripts.Managers
     public class GoalManager : MonoBehaviour
     {
         private Dictionary<ItemType, int> activeGoals = new Dictionary<ItemType, int>();
-        private List<ItemType> _goalTypes = new List<ItemType>();
         private int _remainingGoalTypes = 0;
+
+        //Events
+        public static event Action<ItemType, int> OnGoalProgressUpdated;
 
         private void OnEnable()
         {
             GameEvents.OnLevelStarted += HandleLevelStarted;
-            MergeManager.OnMergeCompleted += HandleMergeCompleted;
             ItemSpotsManager.ItemCollected += HandleItemCollected;
         }
 
@@ -25,6 +26,7 @@ namespace _Project.Scripts.Managers
             if (activeGoals.ContainsKey(itemType))
             {
                 activeGoals[itemType]--;
+                OnGoalProgressUpdated?.Invoke(itemType, activeGoals[itemType]);
 
                 if (activeGoals[itemType] <= 0)
                 {
@@ -59,24 +61,14 @@ namespace _Project.Scripts.Managers
                 if (itemData.IsGoal)
                 {
                     activeGoals.Add(itemData.ItemType, itemData.Amount);
-                    _goalTypes.Add(itemData.ItemType);
                     _remainingGoalTypes++;
                 }
             }
-
-            Debug.Log($"Targets Set up different type of item value =>  {_remainingGoalTypes} " +
-                      $"You must collect those item types {_goalTypes}.");
-        }
-
-        private void HandleMergeCompleted(Vector3 position, ItemType itemType)
-        {
-            if (GameManager.Instance.currentGameState != GameState.Playing) return;
         }
 
         private void OnDisable()
         {
             GameEvents.OnLevelStarted -= HandleLevelStarted;
-            MergeManager.OnMergeCompleted -= HandleMergeCompleted;
             ItemSpotsManager.ItemCollected -= HandleItemCollected;
         }
     }

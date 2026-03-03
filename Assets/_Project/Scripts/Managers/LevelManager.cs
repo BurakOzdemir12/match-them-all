@@ -53,7 +53,7 @@ namespace _Project.Scripts.Managers
             PlayerPrefs.SetInt(LevelSaveKey, _currentLevelIndex);
             PlayerPrefs.Save();
 
-            Debug.Log($"Level Saved! new Level Index: {_currentLevelIndex}");
+            Debug.Log($"Level completed! new Level Index: {_currentLevelIndex}");
         }
 
         private void OnDisable()
