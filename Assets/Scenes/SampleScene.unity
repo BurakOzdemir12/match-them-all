@@ -3534,7 +3534,7 @@ MonoBehaviour:
   maxSoundInstances: 30
   poolContainer: {fileID: 277205591}
   mergeSmashClip: {fileID: 8300000, guid: 30c701c89b43b3141bae3515ab341d28, type: 3}
-  goalDecreaseClip: {fileID: 8300000, guid: e6c9330f5ffb8f64ea8c7912b5fde79e, type: 3}
+  goalDecreaseClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
 --- !u!1 &1747995036
 GameObject:
   m_ObjectHideFlags: 0

@@ -56,7 +56,7 @@ namespace _Project.Scripts.Managers
                 clip: goalDecreaseClip,
                 position: pos,
                 volume: 1,
-                pitch: Random.Range(1f, 1f),
+                pitch: Random.Range(0.9f, 1f),
                 isFrequent: true
             );
             PlaySound(mergeSoundData);

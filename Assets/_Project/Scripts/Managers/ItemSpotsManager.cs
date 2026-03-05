@@ -117,7 +117,9 @@ namespace _Project.Scripts.Managers
             bool isMergeTriggered = itemMergeDataDictionary[itemComponent.itemType].items.Count == 3;
             if (!isMergeTriggered)
             {
-                CheckForGameOver();
+                float totalFlyTime = (animationDuration * 2) + 1.5f;
+
+                DOVirtual.DelayedCall(totalFlyTime, CheckForGameOver);
             }
 
             isBusy = false;
@@ -241,7 +243,7 @@ namespace _Project.Scripts.Managers
             if (!isMergePending)
             {
                 GameEvents.TriggerLevelFailed();
-                // Debug.Log("Game Over!");
+                Debug.Log("Game Over!");
             }
         }
 

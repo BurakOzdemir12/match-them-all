@@ -291,7 +291,7 @@ MonoBehaviour:
   goalRemainingText: {fileID: 8142411083614086314}
   goalImage: {fileID: 4122853215137812070}
   checkMarkIcon: {fileID: 5990718145521583169}
-  goalAchievedClip: {fileID: 8300000, guid: 7bd6b897eb5ca4b7d88a205c4a51640c, type: 3}
+  goalAchievedClip: {fileID: 8300000, guid: 79180f511d89441b9aa23ccae1992fe0, type: 3}
   cardWhooshClip: {fileID: 8300000, guid: fe0b1f9aeb45b41b089175aeeabd5d95, type: 3}
   goalAchievedParticles: {fileID: 3470442423851043402, guid: 7aff260bfacdd514e8b21000d6f46987, type: 3}
   layoutElement: {fileID: 8703233660077861908}

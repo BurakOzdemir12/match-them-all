@@ -62,7 +62,7 @@ namespace _Project.Scripts.UI.Components
                     elasticity: 1f)
             );
 
-            OnCardVisualUpdated?.Invoke(goalRemainingText.transform.position, EffectType.UIDecreaseSparks);
+            OnCardVisualUpdated?.Invoke(Camera.main.transform.position, EffectType.UIDecreaseSparks);
 
             //? Goal Archived Phase Animations
             if (currentAmount <= 0)
