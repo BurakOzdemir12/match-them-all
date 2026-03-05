@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using _Project.Scripts.Enums;
 using _Project.Scripts.Static;
 using _Project.Scripts.Structs;
+using _Project.Scripts.UI.Components;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -19,9 +21,15 @@ namespace _Project.Scripts.Managers
         [SerializeField] private Transform poolContainer;
 
         [Header("Default Effects Settings")] [SerializeField]
-        private Vector3 defaultScale = Vector3.one;
+        private Vector3 defaultScale = new Vector3();
 
         private IObjectPool<EffectEmitter> effectEmitterPool;
+
+        [Header("Effects Database")] [Tooltip("Add Al Effect Prefabs Here")] [SerializeField]
+        private List<EffectPoolSetup> effectSetupList = new List<EffectPoolSetup>();
+
+        private Dictionary<EffectType, IObjectPool<EffectEmitter>> effectPools =
+            new Dictionary<EffectType, IObjectPool<EffectEmitter>>();
 
         private void Awake()
         {
@@ -34,6 +42,27 @@ namespace _Project.Scripts.Managers
         private void OnEnable()
         {
             MergeManager.OnMergeCompleted += HandleMergeCompleted;
+            GoalCardUI.OnCardVisualUpdated += HandleGoalCardUpdated;
+        }
+
+        private void HandleGoalCardUpdated(Vector3 pos, EffectType type)
+        {
+            EffectData goalCardEffectData = new EffectData(
+                position: pos,
+                rotation: Quaternion.identity,
+                scale: defaultScale);
+
+            PlayEffect(goalCardEffectData, type);
+        }
+
+        private void HandleMergeCompleted(Vector3 position, ItemType itemType, EffectType effectType)
+        {
+            EffectData mergeEffectData = new EffectData(
+                position: position,
+                rotation: Quaternion.identity,
+                scale: defaultScale);
+
+            PlayEffect(mergeEffectData, effectType);
         }
 
         private void InitializePool()
@@ -41,20 +70,24 @@ namespace _Project.Scripts.Managers
             if (poolContainer == null) poolContainer = new GameObject("EffectEmitter_Pool").transform;
             poolContainer.SetParent(this.transform);
 
-            effectEmitterPool = new ObjectPool<EffectEmitter>(
-                CreateEffectEmitter,
-                OnTakeFromPool,
-                OnReturnedToPool,
-                OnDestroyPoolObject,
-                true,
-                defaultCapacity,
-                maxPoolSize
-            );
+            foreach (var setup in effectSetupList)
+            {
+                var pool = new ObjectPool<EffectEmitter>(
+                    () => CreateEffectEmitter(setup.EmitterPrefab),
+                    OnTakeFromPool,
+                    OnReturnedToPool,
+                    OnDestroyPoolObject,
+                    true,
+                    defaultCapacity,
+                    maxPoolSize
+                );
+                effectPools.Add(setup.EffectType, pool);
+            }
         }
 
-        private EffectEmitter CreateEffectEmitter()
+        private EffectEmitter CreateEffectEmitter(EffectEmitter prefab)
         {
-            EffectEmitter emitter = Instantiate(effectEmitterPrefab, poolContainer);
+            EffectEmitter emitter = Instantiate(prefab, poolContainer);
             emitter.gameObject.SetActive(false);
             return emitter;
         }
@@ -77,26 +110,25 @@ namespace _Project.Scripts.Managers
             }
         }
 
-        private void HandleMergeCompleted(Vector3 position, ItemType itemType)
-        {
-            EffectData mergeEffectData = new EffectData(
-                position: position,
-                rotation: Quaternion.identity,
-                scale: defaultScale);
 
-            PlayEffect(mergeEffectData);
-        }
-
-        private void PlayEffect(EffectData data)
+        public void PlayEffect(EffectData data, EffectType type)
         {
-            EffectEmitter emitter = effectEmitterPool.Get();
-            emitter.Initialize(data, effectEmitterPool);
-            emitter.Play();
+            if (effectPools.TryGetValue(type, out var pool))
+            {
+                EffectEmitter emitter = pool.Get();
+                emitter.Initialize(data, pool);
+                emitter.Play();
+            }
+            else
+            {
+                Debug.LogWarning($"{type} havuzu bulunamadı!");
+            }
         }
 
         private void OnDisable()
         {
             MergeManager.OnMergeCompleted -= HandleMergeCompleted;
+            GoalCardUI.OnCardVisualUpdated -= HandleGoalCardUpdated;
         }
     }
 }

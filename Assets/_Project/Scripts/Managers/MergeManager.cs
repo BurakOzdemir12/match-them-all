@@ -27,7 +27,7 @@ namespace _Project.Scripts.Managers
         [Tooltip("How long items wait in the air before smashing")] [SerializeField]
         private float waitBeforeSmashDuration = 0.3f;
 
-        public static event Action<Vector3, ItemType> OnMergeCompleted;
+        public static event Action<Vector3, ItemType, EffectType> OnMergeCompleted;
 
         private void OnEnable()
         {
@@ -92,7 +92,7 @@ namespace _Project.Scripts.Managers
                 Destroy(matchedItem.gameObject);
             }
 
-            OnMergeCompleted?.Invoke(mergePosition, mergedType);
+            OnMergeCompleted?.Invoke(mergePosition, mergedType, EffectType.MergeSparks);
         }
 
         private void OnDisable()

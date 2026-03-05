@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using _Project.Scripts.Enums;
 using _Project.Scripts.Static;
 using _Project.Scripts.Structs;
+using _Project.Scripts.UI.Components;
 using UnityEngine;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
@@ -12,9 +13,6 @@ namespace _Project.Scripts.Managers
     public class SoundManager : MonoBehaviour
     {
         public static SoundManager Instance { get; private set; }
-
-        [Header("References")] [SerializeField]
-        private AudioSource audioSource;
 
         [Space(10)] [Header("Pool Settings")] [SerializeField]
         private SoundEmitter soundEmitterPrefab;
@@ -35,6 +33,9 @@ namespace _Project.Scripts.Managers
         [Header("Audio Clips")] [SerializeField]
         private AudioClip mergeSmashClip;
 
+        [Tooltip("Goal Decrease Audio Clip")] [SerializeField]
+        private AudioClip goalDecreaseClip;
+
         private void Awake()
         {
             if (Instance != null && Instance != this) Destroy(this.gameObject);
@@ -46,9 +47,22 @@ namespace _Project.Scripts.Managers
         private void OnEnable()
         {
             MergeManager.OnMergeCompleted += HandleMergeCompleted;
+            GoalCardUI.OnCardVisualUpdated += HandleGoalCardUpdated;
         }
 
-        private void HandleMergeCompleted(Vector3 pos, ItemType itemType)
+        private void HandleGoalCardUpdated(Vector3 pos, EffectType type)
+        {
+            SoundData mergeSoundData = new SoundData(
+                clip: goalDecreaseClip,
+                position: pos,
+                volume: 1,
+                pitch: Random.Range(1f, 1f),
+                isFrequent: true
+            );
+            PlaySound(mergeSoundData);
+        }
+
+        private void HandleMergeCompleted(Vector3 pos, ItemType itemType, EffectType effectType)
         {
             SoundData mergeSoundData = new SoundData(
                 clip: mergeSmashClip,
@@ -110,7 +124,7 @@ namespace _Project.Scripts.Managers
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
-        private void PlaySound(SoundData data)
+        public void PlaySound(SoundData data)
         {
             if (!data.Clip) return;
 
@@ -139,6 +153,7 @@ namespace _Project.Scripts.Managers
         private void OnDisable()
         {
             MergeManager.OnMergeCompleted -= HandleMergeCompleted;
+            GoalCardUI.OnCardVisualUpdated -= HandleGoalCardUpdated;
         }
     }
 }
