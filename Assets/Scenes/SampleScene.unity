@@ -456,7 +456,7 @@ MonoBehaviour:
   defaultCapacity: 10
   maxPoolSize: 100
   poolContainer: {fileID: 1176385315}
-  defaultScale: {x: 0.25, y: 0.25, z: 0.25}
+  defaultScale: 0.25
   effectSetupList:
   - EffectType: 0
     EmitterPrefab: {fileID: 7410307019635123809, guid: 6653c330d7bd645468ab1162cf1b5662, type: 3}
@@ -913,7 +913,7 @@ Transform:
   m_GameObject: {fileID: 340825496}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 7, z: -4.2}
+  m_LocalPosition: {x: 0, y: 7, z: -3.8}
   m_LocalScale: {x: 1, y: 14, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3163,7 +3163,7 @@ Transform:
   m_GameObject: {fileID: 1549332512}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 7, z: 4.19}
+  m_LocalPosition: {x: -0, y: 7, z: 3.48}
   m_LocalScale: {x: 1, y: 14, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3534,7 +3534,9 @@ MonoBehaviour:
   maxSoundInstances: 30
   poolContainer: {fileID: 277205591}
   mergeSmashClip: {fileID: 8300000, guid: 30c701c89b43b3141bae3515ab341d28, type: 3}
-  goalDecreaseClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
+  goalDecreaseClip: {fileID: 8300000, guid: 1e0ba9ad3a2f746d890c1fe2d0c87b2f, type: 3}
+  itemSelectClip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
+  itemCollectedClip: {fileID: 8300000, guid: fe0b1f9aeb45b41b089175aeeabd5d95, type: 3}
 --- !u!1 &1747995036
 GameObject:
   m_ObjectHideFlags: 0
@@ -3642,8 +3644,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1827028338}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
-  m_LocalPosition: {x: 0, y: 9.45, z: -1.35}
+  m_LocalRotation: {x: 0.5735764, y: 0, z: 0, w: 0.8191521}
+  m_LocalPosition: {x: 0, y: 9.513, z: -1.176}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3655,7 +3657,7 @@ Transform:
   - {fileID: 937511636}
   - {fileID: 905521589}
   m_Father: {fileID: 1247410734}
-  m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 70, y: 0, z: 0}
 --- !u!1001 &1836064144
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3984,7 +3986,7 @@ Transform:
   m_GameObject: {fileID: 1950083822}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -1.13, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

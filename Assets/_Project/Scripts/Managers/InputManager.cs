@@ -8,6 +8,8 @@ namespace _Project.Scripts.Managers
     public class InputManager : MonoBehaviour
     {
         public static event Action<IInteractable> OnItemClicked;
+        public static event Action<IInteractable> OnItemSelected;
+
         private Camera _mainCamera;
         private IInteractable _interactable;
         private GameObject _currentItem;
@@ -52,6 +54,8 @@ namespace _Project.Scripts.Managers
             _interactable = interactable;
 
             _interactable.Select();
+
+            OnItemSelected?.Invoke(_interactable);
         }
 
         private void HandleMouseRelease()

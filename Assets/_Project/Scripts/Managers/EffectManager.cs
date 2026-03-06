@@ -21,7 +21,7 @@ namespace _Project.Scripts.Managers
         [SerializeField] private Transform poolContainer;
 
         [Header("Default Effects Settings")] [SerializeField]
-        private Vector3 defaultScale = new Vector3();
+        private float defaultScale = 0.25f;
 
         private IObjectPool<EffectEmitter> effectEmitterPool;
 
@@ -45,12 +45,14 @@ namespace _Project.Scripts.Managers
             GoalCardUI.OnCardVisualUpdated += HandleGoalCardUpdated;
         }
 
-        private void HandleGoalCardUpdated(Vector3 pos, EffectType type)
+        private void HandleGoalCardUpdated(Vector3 pos, EffectType type, Transform uiParent)
         {
             EffectData goalCardEffectData = new EffectData(
                 position: pos,
                 rotation: Quaternion.identity,
-                scale: defaultScale);
+                scale: defaultScale * Vector3.one,
+                parentTransform: uiParent
+            );
 
             PlayEffect(goalCardEffectData, type);
         }
@@ -60,7 +62,9 @@ namespace _Project.Scripts.Managers
             EffectData mergeEffectData = new EffectData(
                 position: position,
                 rotation: Quaternion.identity,
-                scale: defaultScale);
+                scale: defaultScale * Vector3.one,
+                parentTransform: null
+            );
 
             PlayEffect(mergeEffectData, effectType);
         }
@@ -118,10 +122,6 @@ namespace _Project.Scripts.Managers
                 EffectEmitter emitter = pool.Get();
                 emitter.Initialize(data, pool);
                 emitter.Play();
-            }
-            else
-            {
-                Debug.LogWarning($"{type} havuzu bulunamadı!");
             }
         }
 

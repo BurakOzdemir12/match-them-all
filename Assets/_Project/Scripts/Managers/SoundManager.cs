@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Project.Scripts.Enums;
+using _Project.Scripts.Interfaces;
 using _Project.Scripts.Static;
 using _Project.Scripts.Structs;
 using _Project.Scripts.UI.Components;
@@ -30,14 +31,23 @@ namespace _Project.Scripts.Managers
 
         private IObjectPool<SoundEmitter> soundEmitterPool;
 
-        [Header("Audio Clips")] [SerializeField]
+        [Header("Audio Clips")] [Tooltip("Items Merge smash audio clip")] [SerializeField]
         private AudioClip mergeSmashClip;
 
         [Tooltip("Goal Decrease Audio Clip")] [SerializeField]
         private AudioClip goalDecreaseClip;
 
+        [Tooltip("Audio for when item clicked")] [SerializeField]
+        private AudioClip itemSelectClip;
+
+        [Tooltip("Audio clip for item collected")] [SerializeField]
+        private AudioClip itemCollectedClip;
+
+        private Camera _camera;
+
         private void Awake()
         {
+            _camera = Camera.main;
             if (Instance != null && Instance != this) Destroy(this.gameObject);
             Instance = this;
 
@@ -48,15 +58,42 @@ namespace _Project.Scripts.Managers
         {
             MergeManager.OnMergeCompleted += HandleMergeCompleted;
             GoalCardUI.OnCardVisualUpdated += HandleGoalCardUpdated;
+            InputManager.OnItemSelected += HandleItemSelected;
+            ItemSpotsManager.ItemCollected += HandleItemCollected;
         }
 
-        private void HandleGoalCardUpdated(Vector3 pos, EffectType type)
+
+        private void HandleItemCollected(ItemType type)
+        {
+            SoundData itemCollectedSoundData = new SoundData(
+                clip: itemCollectedClip,
+                position: _camera.transform.position,
+                volume: 0.3f,
+                pitch: Random.Range(1f, 1f),
+                isFrequent: true
+            );
+            PlaySound(itemCollectedSoundData);
+        }
+
+        private void HandleItemSelected(IInteractable interactable)
+        {
+            SoundData itemSelectedSoundData = new SoundData(
+                clip: itemSelectClip,
+                position: _camera.transform.position,
+                volume: 1,
+                pitch: Random.Range(1f, 1f),
+                isFrequent: true
+            );
+            PlaySound(itemSelectedSoundData);
+        }
+
+        private void HandleGoalCardUpdated(Vector3 pos, EffectType type, Transform uiParent)
         {
             SoundData mergeSoundData = new SoundData(
                 clip: goalDecreaseClip,
-                position: pos,
-                volume: 1,
-                pitch: Random.Range(0.9f, 1f),
+                position: _camera.transform.position,
+                volume: 0.1f,
+                pitch: Random.Range(1f, 1f),
                 isFrequent: true
             );
             PlaySound(mergeSoundData);
@@ -154,6 +191,8 @@ namespace _Project.Scripts.Managers
         {
             MergeManager.OnMergeCompleted -= HandleMergeCompleted;
             GoalCardUI.OnCardVisualUpdated -= HandleGoalCardUpdated;
+            InputManager.OnItemSelected -= HandleItemSelected;
+            ItemSpotsManager.ItemCollected -= HandleItemCollected;
         }
     }
 }

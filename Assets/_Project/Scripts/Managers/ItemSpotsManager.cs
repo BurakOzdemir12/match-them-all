@@ -71,6 +71,7 @@ namespace _Project.Scripts.Managers
                 availableSpots = GetComponentsInChildren<ItemSpot>();
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         private void HandleItemClicked(IInteractable interactable)
         {
             if (isBusy)
@@ -114,13 +115,13 @@ namespace _Project.Scripts.Managers
             ItemCollected?.Invoke(itemComponent.itemType);
 
             // ? If the items are merging, then the game is not over yet, wait for the merge to finish.
-            bool isMergeTriggered = itemMergeDataDictionary[itemComponent.itemType].items.Count == 3;
-            if (!isMergeTriggered)
-            {
-                float totalFlyTime = (animationDuration * 2) + 1.5f;
-
-                DOVirtual.DelayedCall(totalFlyTime, CheckForGameOver);
-            }
+            // bool isMergeTriggered = itemMergeDataDictionary[itemComponent.itemType].items.Count == 3;
+            // if (!isMergeTriggered)
+            // {
+            //     float totalFlyTime = (animationDuration * 2) + 1.5f;
+            //
+            //     DOVirtual.DelayedCall(totalFlyTime, CheckForGameOver);
+            // }
 
             isBusy = false;
         }
@@ -173,6 +174,8 @@ namespace _Project.Scripts.Managers
                     //? RECOVERY: Then it immediately returns to its original size (itemScaleOnSpot) by shaking like jell
                     itemSeq.Append(currentItem.transform.DOScale(itemScaleOnSpot, animationDuration)
                         .SetEase(Ease.OutBack));
+
+                    itemSeq.AppendCallback(CheckForGameOver);
                 }
                 else
                 {

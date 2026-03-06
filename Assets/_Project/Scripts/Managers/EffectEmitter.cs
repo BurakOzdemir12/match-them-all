@@ -24,6 +24,12 @@ namespace _Project.Scripts.Managers
         public void Initialize(EffectData data, IObjectPool<EffectEmitter> poolRef)
         {
             this._pool = poolRef;
+            //! If it's UI effect it must be a child of the (Canvas) UI root
+            if (data.ParentTransform != null)
+            {
+                transform.SetParent(data.ParentTransform);
+                transform.SetAsLastSibling();
+            }
 
             transform.position = data.Position;
             transform.rotation = data.Rotation;

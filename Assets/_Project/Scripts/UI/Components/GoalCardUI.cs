@@ -36,9 +36,15 @@ namespace _Project.Scripts.UI.Components
         [Space(10)] [SerializeField] private float scaleDownDuration;
         [SerializeField] private float scaleUpDuration = 0.2f;
         [SerializeField] private float scaleUpScale = 1.2f;
+        private Camera _camera;
 
 
-        public static event Action<Vector3, EffectType> OnCardVisualUpdated;
+        public static event Action<Vector3, EffectType, Transform> OnCardVisualUpdated;
+
+        private void Awake()
+        {
+            _camera = Camera.main;
+        }
 
         public void Setup(int initialAmount, Sprite icon = null)
         {
@@ -62,7 +68,8 @@ namespace _Project.Scripts.UI.Components
                     elasticity: 1f)
             );
 
-            OnCardVisualUpdated?.Invoke(Camera.main.transform.position, EffectType.UIDecreaseSparks);
+            OnCardVisualUpdated?.Invoke(goalRemainingText.transform.position, EffectType.UIDecreaseSparks,
+                transform.parent.parent);
 
             //? Goal Archived Phase Animations
             if (currentAmount <= 0)
@@ -80,7 +87,7 @@ namespace _Project.Scripts.UI.Components
                 //? Play goal achived audio clip
                 SoundData soundData = new SoundData(
                     clip: goalAchievedClip,
-                    position: Camera.main.transform.position,
+                    position: _camera.transform.position,
                     volume: 1,
                     pitch: 1,
                     isFrequent: true
@@ -114,7 +121,7 @@ namespace _Project.Scripts.UI.Components
                 {
                     SoundData soundData = new SoundData(
                         clip: cardWhooshClip,
-                        position: Camera.main.transform.position,
+                        position: _camera.transform.position,
                         volume: 1,
                         pitch: 1,
                         isFrequent: true
