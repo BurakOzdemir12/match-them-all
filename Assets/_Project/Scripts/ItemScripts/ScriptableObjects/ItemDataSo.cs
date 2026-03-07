@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using _Project.Scripts.Enums;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace _Project.Scripts.ItemScripts.ScriptableObjects
 {
