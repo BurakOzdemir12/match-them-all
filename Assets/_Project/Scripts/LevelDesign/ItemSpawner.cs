@@ -44,9 +44,19 @@ namespace _Project.Scripts.LevelDesign
 
         private void HandleLevelStarted(LevelDataSo data)
         {
+            ClearBoard();
+
             SpawnAllItemsInstantly(data);
             // if (spawnCoroutine != null) StopCoroutine(spawnCoroutine);
             // spawnCoroutine = StartCoroutine(SpawnItemRoutine(data));
+        }
+
+        private void ClearBoard()
+        {
+            foreach (Transform child in itemsParent)
+            {
+                Destroy(child.gameObject);
+            }
         }
 
         // ReSharper disable Unity.PerformanceAnalysis

@@ -5,6 +5,7 @@ using System.Numerics;
 using _Project.Scripts.Enums;
 using _Project.Scripts.Interfaces;
 using _Project.Scripts.ItemScripts;
+using _Project.Scripts.LevelDesign.ScriptableObjects;
 using _Project.Scripts.Static;
 using DG.Tweening;
 using UnityEngine;
@@ -63,6 +64,43 @@ namespace _Project.Scripts.Managers
         private void OnEnable()
         {
             InputManager.OnItemClicked += HandleItemClicked;
+            GameEvents.OnGameRevived += HandleGameRevived;
+            GameEvents.OnLevelStarted += HandleLevelStarted;
+        }
+
+        private void HandleLevelStarted(LevelDataSo levelData)
+        {
+            ClearAllSpots();
+            isBusy = false;
+        }
+
+        private void HandleGameRevived(FailType type)
+        {
+            if (type == FailType.SpotFull)
+            {
+                ClearAllSpots();
+            }
+        }
+
+        private void ClearAllSpots()
+        {
+            foreach (var item in itemsInBar)
+            {
+                if (item != null && item.gameObject != null)
+                {
+                    item.transform.DOKill();
+                    Destroy(item.gameObject);
+                }
+            }
+
+            itemsInBar.Clear();
+            itemMergeDataDictionary.Clear();
+
+            foreach (var spot in availableSpots)
+            {
+                spot.Clear();
+            }
+            //TODO Create Animations
         }
 
         private void InitSpots()
@@ -245,7 +283,7 @@ namespace _Project.Scripts.Managers
 
             if (!isMergePending)
             {
-                GameEvents.TriggerLevelFailed();
+                GameEvents.TriggerLevelFailed(FailType.SpotFull);
                 Debug.Log("Game Over!");
             }
         }
@@ -253,6 +291,8 @@ namespace _Project.Scripts.Managers
         private void OnDisable()
         {
             InputManager.OnItemClicked -= HandleItemClicked;
+            GameEvents.OnGameRevived -= HandleGameRevived;
+            GameEvents.OnLevelStarted -= HandleLevelStarted;
         }
     }
 }

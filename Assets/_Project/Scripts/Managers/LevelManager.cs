@@ -24,9 +24,10 @@ namespace _Project.Scripts.Managers
         private void OnEnable()
         {
             GameEvents.OnLevelCompleted += AdvanceToNextLevel;
+            GameEvents.OnGameStarted += HandleGameStarted;
         }
 
-        private void Start()
+        private void HandleGameStarted()
         {
             LoadCurrentLevel();
         }
@@ -59,6 +60,7 @@ namespace _Project.Scripts.Managers
         private void OnDisable()
         {
             GameEvents.OnLevelCompleted -= AdvanceToNextLevel;
+            GameEvents.OnGameStarted -= HandleGameStarted;
         }
     }
 }

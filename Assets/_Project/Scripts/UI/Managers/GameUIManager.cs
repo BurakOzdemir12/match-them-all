@@ -8,28 +8,29 @@ namespace _Project.Scripts.UI.Managers
 {
     public class GameUIManager : MonoBehaviour
     {
-        [Header("UI References")] 
-        [SerializeField] private GameObject mainMenu;
-        [Tooltip("Main in-game UI, shown during gameplay")] 
-        [SerializeField] private GameObject gamePlayPanel;
+        [Header("UI References")] [SerializeField]
+        private GameObject mainMenu;
 
-        [Tooltip("Time is up panel, shown when player runs out of time")] 
-        [SerializeField] private GameObject timeIsUpPanel;
+        [Tooltip("Main in-game UI, shown during gameplay")] [SerializeField]
+        private GameObject gamePlayPanel;
 
-        [Tooltip("No Space left panel, shown when player runs out of spot space")] 
-        [SerializeField] private GameObject noSpaceLeftPanel;
+        [Tooltip("Time is up panel, shown when player runs out of time")] [SerializeField]
+        private GameObject timeIsUpPanel;
 
-        [Tooltip("Main game over panel")] 
-        [SerializeField] private GameObject gameOverPanel;
+        [Tooltip("No Space left panel, shown when player runs out of spot space")] [SerializeField]
+        private GameObject noSpaceLeftPanel;
 
-        [Tooltip("Main level completed panel")] 
-        [SerializeField] private GameObject levelCompletedPanel;
+        [Tooltip("Main game over panel")] [SerializeField]
+        private GameObject gameOverPanel;
 
-        [Tooltip("paused panel In Game")] 
-        [SerializeField] private GameObject pauseGamePanel;
+        [Tooltip("Main level completed panel")] [SerializeField]
+        private GameObject levelCompletedPanel;
 
-        [Header("Warning Carousel Controller")] 
-        [SerializeField] private SecondChancePanelUI secondChancePanelUI;
+        [Tooltip("paused panel In Game")] [SerializeField]
+        private GameObject pauseGamePanel;
+
+        [Header("Warning Carousel Controller")] [SerializeField]
+        private SecondChancePanelUI secondChancePanelUI;
 
         private void OnEnable()
         {
@@ -37,22 +38,27 @@ namespace _Project.Scripts.UI.Managers
             GameEvents.OnGamePaused += HandleGamePaused;
             GameEvents.OnLevelCompleted += HandleLevelCompleted;
             GameEvents.OnLevelFailed += HandleGameFailed;
-            
             secondChancePanelUI.OnFullyDismissed += FinalizeGameOver;
+            GameEvents.OnGameRevived += HandleGameRevived;
+        }
+
+        private void HandleGameRevived(FailType type)
+        {
+            ResetPanels();
         }
 
         private void FinalizeGameOver(FailType failType)
         {
             if (failType == FailType.SpotFull) noSpaceLeftPanel.SetActive(false);
             if (failType == FailType.TimeIsUp) timeIsUpPanel.SetActive(false);
-            
+
             gameOverPanel.SetActive(true);
         }
 
         private void HandleGameFailed(FailType failType)
         {
             gamePlayPanel.SetActive(false);
-            
+
             switch (failType)
             {
                 case FailType.SpotFull:
@@ -78,11 +84,16 @@ namespace _Project.Scripts.UI.Managers
 
         private void HandleGameStarted()
         {
+            ResetPanels();
+        }
+
+        private void ResetPanels()
+        {
             mainMenu.SetActive(false);
             gamePlayPanel.SetActive(true);
-            
+
             timeIsUpPanel.SetActive(false);
-            noSpaceLeftPanel.SetActive(false); 
+            noSpaceLeftPanel.SetActive(false);
             gameOverPanel.SetActive(false);
             levelCompletedPanel.SetActive(false);
             pauseGamePanel.SetActive(false);
@@ -94,8 +105,8 @@ namespace _Project.Scripts.UI.Managers
             GameEvents.OnGamePaused -= HandleGamePaused;
             GameEvents.OnLevelCompleted -= HandleLevelCompleted;
             GameEvents.OnLevelFailed -= HandleGameFailed;
-            
             secondChancePanelUI.OnFullyDismissed -= FinalizeGameOver;
+            GameEvents.OnGameRevived -= HandleGameRevived;
         }
     }
 }

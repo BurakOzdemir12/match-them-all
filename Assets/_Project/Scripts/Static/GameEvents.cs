@@ -9,9 +9,12 @@ namespace _Project.Scripts.Static
     {
         public static event Action<LevelDataSo> OnLevelStarted;
         public static event Action OnLevelCompleted;
-        public static event Action OnLevelFailed;
+        public static event Action<FailType> OnLevelFailed;
         public static event Action OnGameStarted;
         public static event Action OnGamePaused;
+
+        public static event Action<FailType> OnReviveRequested;
+        public static event Action<FailType> OnGameRevived;
 
         public static void TriggerLevelStarted(LevelDataSo levelData)
         {
@@ -23,9 +26,9 @@ namespace _Project.Scripts.Static
             OnLevelCompleted?.Invoke();
         }
 
-        public static void TriggerLevelFailed()
+        public static void TriggerLevelFailed(FailType failType)
         {
-            OnLevelFailed?.Invoke();
+            OnLevelFailed?.Invoke(failType);
         }
 
         public static void TriggerGameStarted()
@@ -36,6 +39,16 @@ namespace _Project.Scripts.Static
         public static void TriggerGamePaused()
         {
             OnGamePaused?.Invoke();
+        }
+
+        public static void TriggerGameRevived(FailType failType)
+        {
+            OnGameRevived?.Invoke(failType);
+        }
+
+        public static void TriggerReviveRequested(FailType failType)
+        {
+            OnReviveRequested?.Invoke(failType);
         }
     }
 }
