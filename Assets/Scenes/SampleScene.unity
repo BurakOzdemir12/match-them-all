@@ -2778,6 +2778,53 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 340825496}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &372440204
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 372440205}
+  - component: {fileID: 372440206}
+  m_Layer: 0
+  m_Name: GoalUIManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &372440205
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 372440204}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1017882692}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &372440206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 372440204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d899dcce17f04876af08b38c825efb7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.UI.Managers.GoalUIManager
+  goalCardPrefab: {fileID: 5966265755321504289, guid: 0cff5ac2eb97bcd4c9729f6209621425, type: 3}
+  gridContainer: {fileID: 591566872}
+  itemDatabase: {fileID: 11400000, guid: 85eaea9a8e6eff244b70f03e931a66c2, type: 2}
 --- !u!1 &406804657
 GameObject:
   m_ObjectHideFlags: 0
@@ -4172,7 +4219,6 @@ GameObject:
   m_Component:
   - component: {fileID: 591566872}
   - component: {fileID: 591566874}
-  - component: {fileID: 591566875}
   - component: {fileID: 591566876}
   m_Layer: 0
   m_Name: GoalCards_Panel
@@ -4209,21 +4255,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 591566871}
   m_CullTransparentMesh: 1
---- !u!114 &591566875
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 591566871}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d899dcce17f04876af08b38c825efb7b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.UI.Managers.GoalUIManager
-  goalCardPrefab: {fileID: 5966265755321504289, guid: 0cff5ac2eb97bcd4c9729f6209621425, type: 3}
-  gridContainer: {fileID: 591566872}
-  itemDatabase: {fileID: 11400000, guid: 85eaea9a8e6eff244b70f03e931a66c2, type: 2}
 --- !u!114 &591566876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6477,6 +6508,7 @@ Transform:
   - {fileID: 1066566583}
   - {fileID: 331713355}
   - {fileID: 800208888}
+  - {fileID: 372440205}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1042688287
@@ -6883,7 +6915,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -49.9}
+  m_AnchoredPosition: {x: 0, y: -49.899902}
   m_SizeDelta: {x: 650, y: 301.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1175055900
@@ -7214,8 +7246,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.ItemSpotsManager
   availableSpots: []
   itemSpotsParent: {fileID: 1827028339}
+  itemsParent: {fileID: 29397348}
   itemOffsetOnSpot: {x: 0, y: 0.1, z: 0}
   itemScaleOnSpot: {x: 0.13, y: 0.13, z: 0.13}
+  itemBaseScale: {x: 0.6, y: 0.6, z: 0.6}
   isBusy: 0
   itemsInBar: []
   animationDuration: 0.35
@@ -12028,7 +12062,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 101.4}
+  m_AnchoredPosition: {x: 0, y: 101.3999}
   m_SizeDelta: {x: 600, y: 720}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2076361358
@@ -12388,7 +12422,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 119.1}
+  m_AnchoredPosition: {x: 0, y: 119.1001}
   m_SizeDelta: {x: 758.5, y: 637.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2120137401

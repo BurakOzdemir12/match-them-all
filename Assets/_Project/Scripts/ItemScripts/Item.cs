@@ -34,6 +34,22 @@ namespace _Project.Scripts.ItemScripts
             DisablePhysics();
         }
 
+        public void ReSpawn()
+        {
+            EnableShadows();
+            EnablePhysics();
+        }
+
+        private void EnablePhysics()
+        {
+            rigidbody.isKinematic = false;
+            collider.enabled = true;
+        }
+
+        private void EnableShadows()
+        {
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+        }
 
         private void DisableShadows()
         {

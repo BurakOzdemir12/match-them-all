@@ -9,7 +9,9 @@ using _Project.Scripts.LevelDesign.ScriptableObjects;
 using _Project.Scripts.Static;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Quaternion = UnityEngine.Quaternion;
+using Random = UnityEngine.Random;
 using Vector3 = UnityEngine.Vector3;
 
 namespace _Project.Scripts.Managers
@@ -20,11 +22,15 @@ namespace _Project.Scripts.Managers
         private ItemSpot[] availableSpots;
 
         [SerializeField] private Transform itemSpotsParent;
+        [SerializeField] private Transform itemsParent;
 
         [Header("Item Pos Settings")] [SerializeField]
         private Vector3 itemOffsetOnSpot;
 
         [SerializeField] private Vector3 itemScaleOnSpot;
+
+        [Space(10)] [Header("Item Returned (Base) Settings")] [Tooltip("Item Base scale ")] [SerializeField]
+        private Vector3 itemBaseScale = new Vector3(0.6f, 0.6f, 0.6f);
 
         [Header("ItemSettings")] [SerializeField]
         private bool isBusy = false;
@@ -52,9 +58,11 @@ namespace _Project.Scripts.Managers
         [Tooltip("How strong the item will jump to right or left spot")] [SerializeField]
         private float jumpPowerOnSpot = 0.5f;
 
+
         //Event Actions
         public static event Action<List<Item>> OnItemsMergeRequested;
         public static event Action<ItemType> ItemCollected;
+        public static event Action<ItemType> OnItemReturnedToBoard;
 
         private void Awake()
         {
@@ -78,7 +86,47 @@ namespace _Project.Scripts.Managers
         {
             if (type == FailType.SpotFull)
             {
-                ClearAllSpots();
+                SpillItemsBackToBoard();
+            }
+        }
+
+        private void SpillItemsBackToBoard()
+        {
+            foreach (var item in itemsInBar)
+            {
+                if (item != null && item.gameObject != null)
+                {
+                    item.transform.DOKill();
+                    item.transform.SetParent(itemsParent);
+
+                    Vector3 randomDropPos = new Vector3(
+                        Random.Range(-3f, 3f),
+                        1f,
+                        Random.Range(-3f, 3f)
+                    );
+
+                    Vector3 randomRotation =
+                        new Vector3(Random.Range(0, 360), Random.Range(0, 360), Random.Range(0, 360));
+
+                    Sequence itemSeq = DOTween.Sequence().SetLink(item.gameObject);
+
+                    itemSeq.Join(item.transform.DOJump(randomDropPos, jumpPower, numJumps, animationDuration)
+                        .SetEase(Ease.OutQuad));
+                    itemSeq.Join(item.transform.DORotate(randomRotation, animationDuration, RotateMode.FastBeyond360));
+                    itemSeq.Join(item.transform.DOScale(itemBaseScale, animationDuration));
+
+                    itemSeq.OnComplete(() => { item.ReSpawn(); });
+
+                    OnItemReturnedToBoard?.Invoke(item.itemType);
+                }
+            }
+
+            itemsInBar.Clear();
+            itemMergeDataDictionary.Clear();
+
+            foreach (var spot in availableSpots)
+            {
+                spot.Clear();
             }
         }
 
@@ -89,6 +137,8 @@ namespace _Project.Scripts.Managers
                 if (item != null && item.gameObject != null)
                 {
                     item.transform.DOKill();
+                    DOTween.Kill(item.gameObject);
+
                     Destroy(item.gameObject);
                 }
             }
@@ -100,8 +150,8 @@ namespace _Project.Scripts.Managers
             {
                 spot.Clear();
             }
-            //TODO Create Animations
         }
+
 
         private void InitSpots()
         {
@@ -112,13 +162,19 @@ namespace _Project.Scripts.Managers
         // ReSharper disable Unity.PerformanceAnalysis
         private void HandleItemClicked(IInteractable interactable)
         {
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) 
+            {
+                return;
+            }
             if (isBusy)
             {
                 Debug.Log("Item Spots Manager is busy");
                 return;
             }
 
-            if (interactable is not Item itemComponent) return;
+            // if (interactable is not Item itemComponent) return;
+            if (interactable is not Item itemComponent || itemComponent == null ||
+                itemComponent.gameObject == null) return;
 
             //? If we already clicked and item in the bar, then ignore it
             if (itemsInBar.Contains(itemComponent)) return;
@@ -169,6 +225,8 @@ namespace _Project.Scripts.Managers
             for (int i = 0; i < itemsInBar.Count; i++)
             {
                 Item currentItem = itemsInBar[i];
+                if (currentItem == null || currentItem.gameObject == null) continue;
+
                 ItemSpot targetSpot = availableSpots[i];
 
                 bool isNewToBar = (currentItem == newlyAddedItem);
@@ -229,7 +287,13 @@ namespace _Project.Scripts.Managers
                 int indexOfItem = itemMergeDataDictionary[currentItem.itemType].items.IndexOf(currentItem);
                 if ((indexOfItem + 1) % 3 == 0)
                 {
-                    itemSeq.OnComplete(() => { PrepareForMerge(currentItem); });
+                    itemSeq.OnComplete(() =>
+                    {
+                        if (currentItem != null && currentItem.gameObject != null)
+                        {
+                            PrepareForMerge(currentItem);
+                        }
+                    });
                 }
             }
 
@@ -243,10 +307,14 @@ namespace _Project.Scripts.Managers
         private void PrepareForMerge(Item item)
         {
             // isMerging = true;
+            if (item == null || item.gameObject == null) return;
+
             if (!itemMergeDataDictionary.TryGetValue(item.itemType, out var mergeData)) return;
 
             if (mergeData.items.Count < 3) return;
-
+            
+            if (mergeData.items.Any(i => i == null || i.gameObject == null)) return;
+            
             List<Item> itemsToMerge = mergeData.items.GetRange(0, 3);
 
             mergeData.items.RemoveRange(0, 3);

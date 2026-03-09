@@ -19,6 +19,23 @@ namespace _Project.Scripts.Managers
         {
             GameEvents.OnLevelStarted += HandleLevelStarted;
             ItemSpotsManager.ItemCollected += HandleItemCollected;
+            ItemSpotsManager.OnItemReturnedToBoard += HandleItemReturnedToBoard;
+        }
+
+        private void HandleItemReturnedToBoard(ItemType itemType)
+        {
+            if (activeGoals.ContainsKey(itemType))
+            {
+                activeGoals[itemType]++;
+
+                if (activeGoals[itemType] == 1)
+                {
+                    _remainingGoalTypes++;
+                }
+
+                int displayAmount = Mathf.Max(0, activeGoals[itemType]);
+                OnGoalProgressUpdated?.Invoke(itemType, displayAmount);
+            }
         }
 
         private void HandleItemCollected(ItemType itemType)
@@ -26,11 +43,13 @@ namespace _Project.Scripts.Managers
             if (activeGoals.ContainsKey(itemType))
             {
                 activeGoals[itemType]--;
-                OnGoalProgressUpdated?.Invoke(itemType, activeGoals[itemType]);
+                
+                int displayAmount = Mathf.Max(0, activeGoals[itemType]);
+                OnGoalProgressUpdated?.Invoke(itemType, displayAmount);
 
                 if (activeGoals[itemType] <= 0)
                 {
-                    activeGoals.Remove(itemType);
+                    // activeGoals.Remove(itemType);
                     _remainingGoalTypes--;
 
                     CheckForLevelWin();
@@ -70,6 +89,7 @@ namespace _Project.Scripts.Managers
         {
             GameEvents.OnLevelStarted -= HandleLevelStarted;
             ItemSpotsManager.ItemCollected -= HandleItemCollected;
+            ItemSpotsManager.OnItemReturnedToBoard -= HandleItemReturnedToBoard;
         }
     }
 }
