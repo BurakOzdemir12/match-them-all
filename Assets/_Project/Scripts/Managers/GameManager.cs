@@ -89,10 +89,6 @@ namespace _Project.Scripts.Managers
             Time.timeScale = 1f;
         }
 
-        private void TurnToLobby()
-        {
-        }
-
         private void OnDisable()
         {
             GameEvents.OnGameStarted -= HandleGameStarted;
