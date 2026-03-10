@@ -32,6 +32,15 @@ namespace _Project.Scripts.Managers
         [Space(10)] [Header("Item Returned (Base) Settings")] [Tooltip("Item Base scale ")] [SerializeField]
         private Vector3 itemBaseScale = new Vector3(0.6f, 0.6f, 0.6f);
 
+        [Tooltip("Delay between throwing items")] [SerializeField]
+        private float delayBetweenItems;
+
+        [Tooltip("Throw(Return to board) duration")] [SerializeField]
+        private float returnDuration = 0.5f;
+
+        [Tooltip("How strong the item will jump to return to board")] [SerializeField]
+        private float returnJumpPower = 2.5f;
+
         [Header("ItemSettings")] [SerializeField]
         private bool isBusy = false;
 
@@ -92,17 +101,19 @@ namespace _Project.Scripts.Managers
 
         private void SpillItemsBackToBoard()
         {
-            foreach (var item in itemsInBar)
+            isBusy = true;
+
+            for (var i = 0; i < itemsInBar.Count; i++)
             {
+                Item item = itemsInBar[i];
                 if (item != null && item.gameObject != null)
                 {
                     item.transform.DOKill();
-                    item.transform.SetParent(itemsParent);
 
                     Vector3 randomDropPos = new Vector3(
-                        Random.Range(-3f, 3f),
+                        Random.Range(-1.5f, 1.5f),
                         1f,
-                        Random.Range(-3f, 3f)
+                        Random.Range(-1.5f, 3f)
                     );
 
                     Vector3 randomRotation =
@@ -110,16 +121,33 @@ namespace _Project.Scripts.Managers
 
                     Sequence itemSeq = DOTween.Sequence().SetLink(item.gameObject);
 
-                    itemSeq.Join(item.transform.DOJump(randomDropPos, jumpPower, numJumps, animationDuration)
-                        .SetEase(Ease.OutQuad));
-                    itemSeq.Join(item.transform.DORotate(randomRotation, animationDuration, RotateMode.FastBeyond360));
-                    itemSeq.Join(item.transform.DOScale(itemBaseScale, animationDuration));
+                    itemSeq.AppendInterval(i * delayBetweenItems);
 
-                    itemSeq.OnComplete(() => { item.ReSpawn(); });
+                    itemSeq.AppendCallback(() =>
+                    {
+                        if (item != null && item.gameObject != null)
+                        {
+                            item.transform.SetParent(itemsParent, true);
+                        }
+                    });
 
-                    OnItemReturnedToBoard?.Invoke(item.itemType);
+                    itemSeq.Append(item.transform.DOJump(randomDropPos, returnJumpPower, numJumps, returnDuration)
+                        .SetEase(Ease.Linear));
+                    itemSeq.Join(item.transform.DORotate(randomRotation, returnDuration, RotateMode.FastBeyond360));
+                    itemSeq.Join(item.transform.DOScale(itemBaseScale, returnDuration));
+
+                    itemSeq.OnComplete(() =>
+                    {
+                        if (item != null && item.gameObject != null)
+                        {
+                            item.ReSpawn();
+                            OnItemReturnedToBoard?.Invoke(item.itemType);
+                        }
+                    });
                 }
             }
+
+            int totalItemsSpilled = itemsInBar.Count;
 
             itemsInBar.Clear();
             itemMergeDataDictionary.Clear();
@@ -128,6 +156,10 @@ namespace _Project.Scripts.Managers
             {
                 spot.Clear();
             }
+
+            float totalSpillTime = (totalItemsSpilled * delayBetweenItems) + animationDuration;
+
+            DOVirtual.DelayedCall(totalSpillTime, () => { isBusy = false; });
         }
 
         private void ClearAllSpots()
@@ -162,10 +194,11 @@ namespace _Project.Scripts.Managers
         // ReSharper disable Unity.PerformanceAnalysis
         private void HandleItemClicked(IInteractable interactable)
         {
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) 
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             {
                 return;
             }
+
             if (isBusy)
             {
                 Debug.Log("Item Spots Manager is busy");
@@ -312,9 +345,9 @@ namespace _Project.Scripts.Managers
             if (!itemMergeDataDictionary.TryGetValue(item.itemType, out var mergeData)) return;
 
             if (mergeData.items.Count < 3) return;
-            
+
             if (mergeData.items.Any(i => i == null || i.gameObject == null)) return;
-            
+
             List<Item> itemsToMerge = mergeData.items.GetRange(0, 3);
 
             mergeData.items.RemoveRange(0, 3);

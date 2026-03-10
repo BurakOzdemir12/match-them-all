@@ -7250,6 +7250,9 @@ MonoBehaviour:
   itemOffsetOnSpot: {x: 0, y: 0.1, z: 0}
   itemScaleOnSpot: {x: 0.13, y: 0.13, z: 0.13}
   itemBaseScale: {x: 0.6, y: 0.6, z: 0.6}
+  delayBetweenItems: 0.31
+  returnDuration: 0.5
+  returnJumpPower: 3
   isBusy: 0
   itemsInBar: []
   animationDuration: 0.35
