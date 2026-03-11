@@ -8,13 +8,22 @@ namespace _Project.Scripts.Managers
 {
     public class TimeManager : MonoBehaviour
     {
+        public static TimeManager Instance { get; private set; }
+
         private float _remainingTime;
+        public float RemainingTime => _remainingTime;
+        
         private bool _isTimerRunning = false;
 
         private int lastBroadcastedTime = -1;
 
         //Events
         public static event Action<int> OnTimeUpdated;
+
+        private void Awake()
+        {
+            if (Instance != null && Instance != this) Destroy(this.gameObject);
+        }
 
         private void OnEnable()
         {
@@ -48,7 +57,8 @@ namespace _Project.Scripts.Managers
         {
             _remainingTime = timeLimit;
             _isTimerRunning = true;
-            OnTimeUpdated?.Invoke(lastBroadcastedTime);
+
+            BroadcastTimeUpdate();
         }
 
         private void StopTimer()
@@ -66,9 +76,22 @@ namespace _Project.Scripts.Managers
                 {
                     _remainingTime = 0f;
                     _isTimerRunning = false;
+                    BroadcastTimeUpdate();
                     GameEvents.TriggerLevelFailed(FailType.TimeIsUp);
                 }
+                else
+                {
+                    BroadcastTimeUpdate();
+                }
+            }
+        }
 
+        private void BroadcastTimeUpdate()
+        {
+            int currentSecond = Mathf.CeilToInt(_remainingTime);
+            if (currentSecond != lastBroadcastedTime)
+            {
+                lastBroadcastedTime = currentSecond;
                 OnTimeUpdated?.Invoke(lastBroadcastedTime);
             }
         }
