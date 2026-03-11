@@ -30,7 +30,9 @@ namespace _Project.Scripts.UI.Managers
         private GameObject pauseGamePanel;
 
         [Header("Warning Carousel Controller")] [SerializeField]
-        private SecondChancePanelUI secondChancePanelUI;
+        private SecondChancePanelUI noSpotLeftSecondChance;
+
+        [SerializeField] private SecondChancePanelUI timeIsUpSecondChance;
 
         private void OnEnable()
         {
@@ -38,7 +40,8 @@ namespace _Project.Scripts.UI.Managers
             GameEvents.OnGamePaused += HandleGamePaused;
             GameEvents.OnLevelCompleted += HandleLevelCompleted;
             GameEvents.OnLevelFailed += HandleGameFailed;
-            secondChancePanelUI.OnFullyDismissed += FinalizeGameOver;
+            noSpotLeftSecondChance.OnFullyDismissed += FinalizeGameOver;
+            timeIsUpSecondChance.OnFullyDismissed += FinalizeGameOver;
             GameEvents.OnGameRevived += HandleGameRevived;
         }
 
@@ -63,11 +66,11 @@ namespace _Project.Scripts.UI.Managers
             {
                 case FailType.SpotFull:
                     noSpaceLeftPanel.SetActive(true);
-                    secondChancePanelUI.Setup(FailType.SpotFull);
+                    noSpotLeftSecondChance.Setup(FailType.SpotFull);
                     break;
                 case FailType.TimeIsUp:
                     timeIsUpPanel.SetActive(true);
-                    secondChancePanelUI.Setup(FailType.TimeIsUp);
+                    timeIsUpSecondChance.Setup(FailType.TimeIsUp);
                     break;
             }
         }
@@ -105,7 +108,8 @@ namespace _Project.Scripts.UI.Managers
             GameEvents.OnGamePaused -= HandleGamePaused;
             GameEvents.OnLevelCompleted -= HandleLevelCompleted;
             GameEvents.OnLevelFailed -= HandleGameFailed;
-            secondChancePanelUI.OnFullyDismissed -= FinalizeGameOver;
+            noSpotLeftSecondChance.OnFullyDismissed -= FinalizeGameOver;
+            timeIsUpSecondChance.OnFullyDismissed -= FinalizeGameOver;
             GameEvents.OnGameRevived -= HandleGameRevived;
         }
     }

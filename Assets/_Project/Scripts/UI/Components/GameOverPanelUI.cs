@@ -21,6 +21,8 @@ namespace _Project.Scripts.UI.Components
             OnLobbyClicked?.Invoke();
         }
 
+        //TODO-------------------
+        //! Doesnt show up on inspector !!!!! solve this later
         public void BoosterButtonClick(BoosterType boosterType)
         {
             OnBoosterClicked?.Invoke(boosterType);

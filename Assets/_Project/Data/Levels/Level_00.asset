@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level_00
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.LevelDesign.ScriptableObjects.LevelDataSo
   <LevelIndex>k__BackingField: 0
-  <LevelTimeLimit>k__BackingField: 30
+  <LevelTimeLimit>k__BackingField: 5
   itemLevelDataList:
   - ItemType: 0
     Amount: 6

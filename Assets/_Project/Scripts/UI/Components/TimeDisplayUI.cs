@@ -25,6 +25,11 @@ namespace _Project.Scripts.UI.Components
         {
             TimeManager.OnTimeUpdated += HandleTimeUpdated;
             GameEvents.OnLevelStarted += HandleLevelStarted;
+
+            if (TimeManager.Instance != null)
+            {
+                HandleTimeUpdated(Mathf.CeilToInt(TimeManager.Instance.RemainingTime));
+            }
         }
 
         private void HandleLevelStarted(LevelDataSo data)
@@ -32,7 +37,7 @@ namespace _Project.Scripts.UI.Components
             timerSlider.maxValue = data.LevelTimeLimit;
             timerSlider.value = data.LevelTimeLimit;
 
-            // timerIcon.color = timeGradient.Evaluate(1f);
+            sliderFillImage.color = timeGradient.Evaluate(1f);
         }
 
         private void HandleTimeUpdated(int time)
