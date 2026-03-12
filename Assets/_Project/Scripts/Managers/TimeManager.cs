@@ -126,6 +126,7 @@ namespace _Project.Scripts.Managers
             GameEvents.OnLevelCompleted -= HandleLevelCompleted;
             GameEvents.OnLevelFailed -= HandleLevelFailed;
             GameEvents.OnGamePaused -= HandleGamePaused;
+            GameEvents.OnGameRevived -= HandleGameRevived;
         }
     }
 }
