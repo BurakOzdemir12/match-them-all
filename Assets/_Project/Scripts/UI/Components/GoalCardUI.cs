@@ -85,14 +85,7 @@ namespace _Project.Scripts.UI.Components
                 spawnedParticle.transform.SetSiblingIndex(transform.parent.GetSiblingIndex());
 
                 //? Play goal achived audio clip
-                SoundData soundData = new SoundData(
-                    clip: goalAchievedClip,
-                    position: _camera.transform.position,
-                    volume: 1,
-                    pitch: 1,
-                    isFrequent: true
-                );
-                SoundManager.Instance.PlaySound(soundData);
+                SoundManager.Instance.PlaySoundByType(SoundType.GoalAchieved, _camera.transform.position);
 
                 //? Shake Anim and scale up together
                 seq.Append(transform.DOScale(Vector3.one * scaleUpScale, scaleUpDuration));
@@ -119,14 +112,7 @@ namespace _Project.Scripts.UI.Components
                 float exactTime = seq.Duration() - (scaleDownDuration / 2f);
                 seq.InsertCallback(exactTime, () =>
                 {
-                    SoundData soundData = new SoundData(
-                        clip: cardWhooshClip,
-                        position: _camera.transform.position,
-                        volume: 1,
-                        pitch: 1,
-                        isFrequent: true
-                    );
-                    SoundManager.Instance.PlaySound(soundData);
+                    SoundManager.Instance.PlaySoundByType(SoundType.GoalCardWhoosh, _camera.transform.position);
                 });
 
                 seq.OnComplete(() => { Destroy(this.gameObject); });

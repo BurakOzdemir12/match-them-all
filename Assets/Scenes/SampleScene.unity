@@ -5428,7 +5428,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.00012207031, y: 119.10022}
+  m_AnchoredPosition: {x: 0.00012207031, y: 119.10034}
   m_SizeDelta: {x: 758.5, y: 637.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &778981686
@@ -10329,6 +10329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce7011256dd94ec68c26132af6f0b4aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Managers.SoundManager
+  audioLibrary: {fileID: 11400000, guid: 955dcfbb407dd3049bc259537e9d2fd1, type: 2}
   soundEmitterPrefab: {fileID: 4337413558226726556, guid: 823b26778a5b07e41bb2cb6d7cfd2ee4, type: 3}
   defaultCapacity: 10
   maxPoolSize: 100

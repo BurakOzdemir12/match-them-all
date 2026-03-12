@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Project.Scripts.Audio.ScriptableObects;
 using _Project.Scripts.Enums;
 using _Project.Scripts.Interfaces;
 using _Project.Scripts.Static;
@@ -14,6 +15,9 @@ namespace _Project.Scripts.Managers
     public class SoundManager : MonoBehaviour
     {
         public static SoundManager Instance { get; private set; }
+
+        [Header("Audio Data")] [SerializeField]
+        private AudioLibrarySo audioLibrary;
 
         [Space(10)] [Header("Pool Settings")] [SerializeField]
         private SoundEmitter soundEmitterPrefab;
@@ -65,50 +69,22 @@ namespace _Project.Scripts.Managers
 
         private void HandleItemCollected(ItemType type)
         {
-            SoundData itemCollectedSoundData = new SoundData(
-                clip: itemCollectedClip,
-                position: _camera.transform.position,
-                volume: 0.3f,
-                pitch: Random.Range(1f, 1f),
-                isFrequent: true
-            );
-            PlaySound(itemCollectedSoundData);
+            PlaySoundByType(SoundType.ItemCollected, _camera.transform.position);
         }
 
         private void HandleItemSelected(IInteractable interactable)
         {
-            SoundData itemSelectedSoundData = new SoundData(
-                clip: itemSelectClip,
-                position: _camera.transform.position,
-                volume: 1,
-                pitch: Random.Range(1f, 1f),
-                isFrequent: true
-            );
-            PlaySound(itemSelectedSoundData);
+            PlaySoundByType(SoundType.ItemSelected, _camera.transform.position);
         }
 
         private void HandleGoalCardUpdated(Vector3 pos, EffectType type, Transform uiParent)
         {
-            SoundData mergeSoundData = new SoundData(
-                clip: goalDecreaseClip,
-                position: _camera.transform.position,
-                volume: 0.1f,
-                pitch: Random.Range(1f, 1f),
-                isFrequent: true
-            );
-            PlaySound(mergeSoundData);
+            PlaySoundByType(SoundType.GoalDecrease, pos);
         }
 
         private void HandleMergeCompleted(Vector3 pos, ItemType itemType, EffectType effectType)
         {
-            SoundData mergeSoundData = new SoundData(
-                clip: mergeSmashClip,
-                position: pos,
-                volume: 1,
-                pitch: Random.Range(0.9f, 1.1f),
-                isFrequent: true
-            );
-            PlaySound(mergeSoundData);
+            PlaySoundByType(SoundType.MergeSmash, pos);
         }
 
         private void InitializePool()
@@ -185,6 +161,23 @@ namespace _Project.Scripts.Managers
             {
                 emitter.PoolNode = FrequentSoundEmitters.AddLast(emitter);
             }
+        }
+
+        public void PlaySoundByType(SoundType soundType, Vector3 pos)
+        {
+            SoundEntry entry = audioLibrary.GetSound(soundType);
+
+            if (entry.clip == null) return;
+
+            SoundData soundData = new SoundData(
+                clip: entry.clip,
+                position: pos,
+                volume: entry.volume,
+                pitch: entry.pitch,
+                isFrequent: true
+            );
+
+            PlaySound(soundData);
         }
 
         private void OnDisable()
