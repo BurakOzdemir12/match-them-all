@@ -2,15 +2,28 @@
 {
     public enum SoundType
     {
+        //?Basic GamePlay Sounds
         ItemCollected,
         ItemDropped,
         ItemSelected,
         MergeSmash,
-        LevelCompleted,
-        LevelFailed,
+
+        //? Gaol Sounds
         GoalDecrease,
         GoalAchieved,
         GoalCardWhoosh,
-        ButtonClick,
+
+        //? Level Feedbacks
+        LevelFailed,
+        LevelCompletedMain,
+        FireWorksPop,
+        StarPop,
+        PlaneSwoosh,
+        RewardEarned,
+
+        //? Boosters sounds
+        TimeRenewed,
+        TimeFrozenBooster,
+        ButtonClick
     }
 }

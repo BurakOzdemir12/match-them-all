@@ -16,6 +16,10 @@ namespace _Project.Scripts.Managers
         private float _remainingTime;
         public float RemainingTime => _remainingTime;
 
+        //? Use for level completed grade calcualtion
+        private float totalLevelTime;
+        public float TotalLevelTime => totalLevelTime;
+
         private bool _isTimerRunning = false;
 
         private int lastBroadcastedTime = -1;
@@ -74,6 +78,7 @@ namespace _Project.Scripts.Managers
 
         private void HandleLevelStarted(LevelDataSo levelData)
         {
+            totalLevelTime = levelData.LevelTimeLimit;
             StartTimer(levelData.LevelTimeLimit);
         }
 

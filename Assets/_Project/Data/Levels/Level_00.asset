@@ -16,11 +16,11 @@ MonoBehaviour:
   <LevelTimeLimit>k__BackingField: 25.01
   itemLevelDataList:
   - ItemType: 0
-    Amount: 6
+    Amount: 3
     IsGoal: 1
   - ItemType: 2
     Amount: 6
-    IsGoal: 1
+    IsGoal: 0
   - ItemType: 1
     Amount: 27
     IsGoal: 0

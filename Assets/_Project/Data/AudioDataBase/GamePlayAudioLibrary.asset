@@ -49,3 +49,9 @@ MonoBehaviour:
     isFrequent: 1
     volume: 1
     pitch: 1
+  - name: Level Failed
+    soundType: 5
+    clip: {fileID: 8300000, guid: 30c701c89b43b3141bae3515ab341d28, type: 3}
+    isFrequent: 1
+    volume: 1
+    pitch: 1
