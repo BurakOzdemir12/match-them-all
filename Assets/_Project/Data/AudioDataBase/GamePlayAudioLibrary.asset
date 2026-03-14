@@ -25,18 +25,18 @@ MonoBehaviour:
     isFrequent: 1
     volume: 0.8
     pitch: 1
-  - name: Goal Decrease Sfx
-    soundType: 6
-    clip: {fileID: 8300000, guid: 1e0ba9ad3a2f746d890c1fe2d0c87b2f, type: 3}
-    isFrequent: 1
-    volume: 0.1
-    pitch: 1
   - name: Goal Achieved Sfx
     soundType: 5
     clip: {fileID: 8300000, guid: 79180f511d89441b9aa23ccae1992fe0, type: 3}
     isFrequent: 1
     volume: 1
     pitch: 1
+  - name: Goal Decrease Sfx
+    soundType: 4
+    clip: {fileID: 8300000, guid: 1e0ba9ad3a2f746d890c1fe2d0c87b2f, type: 3}
+    isFrequent: 1
+    volume: 0.2
+    pitch: 0.996
   - name: Goal Card Whoosh Sgx
     soundType: 6
     clip: {fileID: 8300000, guid: fe0b1f9aeb45b41b089175aeeabd5d95, type: 3}
