@@ -11,8 +11,6 @@ namespace _Project.Scripts.Managers
         public static GameManager Instance { get; private set; }
         public GameState currentGameState { get; private set; }
 
-        private const string PlayerCoin = "PlayerCoin";
-        private int _currentCoin;
 
         private void Awake()
         {
@@ -36,9 +34,6 @@ namespace _Project.Scripts.Managers
         private void Start()
         {
             GameEvents.TriggerGameStarted();
-
-            PlayerPrefs.SetInt(PlayerCoin, 100);
-            _currentCoin = PlayerPrefs.GetInt(PlayerCoin, 0);
         }
 
         private void HandleTryAgainClicked()
@@ -49,10 +44,9 @@ namespace _Project.Scripts.Managers
         private void HandleReviveRequested(FailType failType)
         {
             int reviveCost = 100;
-            if (_currentCoin >= reviveCost)
+            if (EconomyManager.Instance.CurrentCoin >= reviveCost)
             {
-                PlayerPrefs.SetInt(PlayerCoin, _currentCoin - reviveCost);
-                _currentCoin -= reviveCost;
+                EconomyManager.Instance.TrySpendResource(ResourceType.Coin, reviveCost);
 
                 GameEvents.TriggerGameRevived(failType);
 

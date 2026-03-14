@@ -9,7 +9,7 @@ namespace _Project.Scripts.UI.Components
     {
         public static event Action OnTryAgainClicked;
         public static event Action OnLobbyClicked;
-        public static event Action<BoosterType> OnBoosterClicked;
+        public static event Action<ResourceType> OnBoosterClicked;
 
         public void TryAgainButtonClick()
         {
@@ -23,9 +23,9 @@ namespace _Project.Scripts.UI.Components
 
         //TODO-------------------
         //! Doesnt show up on inspector !!!!! solve this later
-        public void BoosterButtonClick(BoosterType boosterType)
+        public void BoosterButtonClick(ResourceType resourceType)
         {
-            OnBoosterClicked?.Invoke(boosterType);
+            OnBoosterClicked?.Invoke(resourceType);
         }
     }
 }
