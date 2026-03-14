@@ -32,13 +32,13 @@ MonoBehaviour:
     volume: 0.1
     pitch: 1
   - name: Goal Achieved Sfx
-    soundType: 7
+    soundType: 5
     clip: {fileID: 8300000, guid: 79180f511d89441b9aa23ccae1992fe0, type: 3}
     isFrequent: 1
     volume: 1
     pitch: 1
   - name: Goal Card Whoosh Sgx
-    soundType: 8
+    soundType: 6
     clip: {fileID: 8300000, guid: fe0b1f9aeb45b41b089175aeeabd5d95, type: 3}
     isFrequent: 1
     volume: 1
@@ -49,9 +49,9 @@ MonoBehaviour:
     isFrequent: 1
     volume: 1
     pitch: 1
-  - name: Level Failed
-    soundType: 5
-    clip: {fileID: 8300000, guid: 30c701c89b43b3141bae3515ab341d28, type: 3}
+  - name: Main LevelComplete Sound
+    soundType: 8
+    clip: {fileID: 8300000, guid: 7478151cf36724a7dada558f746c3633, type: 3}
     isFrequent: 1
-    volume: 1
+    volume: 0.854
     pitch: 1
