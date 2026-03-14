@@ -35,18 +35,6 @@ namespace _Project.Scripts.Managers
 
         private IObjectPool<SoundEmitter> soundEmitterPool;
 
-        [Header("Audio Clips")] [Tooltip("Items Merge smash audio clip")] [SerializeField]
-        private AudioClip mergeSmashClip;
-
-        [Tooltip("Goal Decrease Audio Clip")] [SerializeField]
-        private AudioClip goalDecreaseClip;
-
-        [Tooltip("Audio for when item clicked")] [SerializeField]
-        private AudioClip itemSelectClip;
-
-        [Tooltip("Audio clip for item collected")] [SerializeField]
-        private AudioClip itemCollectedClip;
-
         private Camera _camera;
 
         private void Awake()
@@ -79,7 +67,7 @@ namespace _Project.Scripts.Managers
 
         private void HandleGoalCardUpdated(Vector3 pos, EffectType type, Transform uiParent)
         {
-            PlaySoundByType(SoundType.GoalDecrease, pos);
+            PlaySoundByType(SoundType.GoalDecrease, _camera.transform.position);
         }
 
         private void HandleMergeCompleted(Vector3 pos, ItemType itemType, EffectType effectType)
