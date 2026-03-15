@@ -64,6 +64,8 @@ namespace _Project.Scripts.UI.Components
         [Header("Animation Settings")] [SerializeField]
         private float fadeDuration = 0.3f;
 
+        [SerializeField] private float delayBetweenPhases = 1f;
+
         private Camera _mainCamera;
 
         private void Awake()
@@ -154,7 +156,7 @@ namespace _Project.Scripts.UI.Components
                     .SetEase(Ease.InOutSine));
             }
 
-            seq.AppendInterval(2f);
+            seq.AppendInterval(delayBetweenPhases);
             seq.Append(phase1Group.DOFade(0f, fadeDuration));
 
             seq.OnComplete(PlaySecondChoreography);
