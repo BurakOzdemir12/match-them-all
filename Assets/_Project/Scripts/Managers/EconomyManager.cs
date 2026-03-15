@@ -9,9 +9,6 @@ namespace _Project.Scripts.Managers
     {
         public static EconomyManager Instance { get; private set; }
 
-        private const string PlayerCoin = "PlayerCoin";
-        public int CurrentCoin { get; set; }
-
         public Dictionary<ResourceType, int> inventory = new Dictionary<ResourceType, int>();
 
         public static event Action<ResourceType, int> OnResourceAmountChanged;
@@ -32,15 +29,15 @@ namespace _Project.Scripts.Managers
 
         private void Start()
         {
-            CurrentCoin = PlayerPrefs.GetInt(PlayerCoin, 0);
         }
 
         private void LoadInventory()
         {
             foreach (ResourceType resource in Enum.GetValues(typeof(ResourceType)))
             {
-                PlayerPrefs.SetInt(PlayerCoin, 100);
-                int savedAmount = PlayerPrefs.GetInt(resource.ToString(), 0);
+                int defaultValue = (resource == ResourceType.Coin) ? 100 : 0;
+
+                int savedAmount = PlayerPrefs.GetInt(resource.ToString(), defaultValue);
                 inventory[resource] = savedAmount;
             }
         }
@@ -77,6 +74,17 @@ namespace _Project.Scripts.Managers
             }
 
             return false;
+        }
+
+        public void SetResource(ResourceType resource, int amount)
+        {
+            if (amount < 0) return;
+            inventory[resource] = amount;
+
+            PlayerPrefs.SetInt(resource.ToString(), inventory[resource]);
+            PlayerPrefs.Save();
+
+            OnResourceAmountChanged?.Invoke(resource, inventory[resource]);
         }
     }
 }
