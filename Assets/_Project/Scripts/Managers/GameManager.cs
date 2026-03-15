@@ -44,10 +44,8 @@ namespace _Project.Scripts.Managers
         private void HandleReviveRequested(FailType failType)
         {
             int reviveCost = 100;
-            if (EconomyManager.Instance.CurrentCoin >= reviveCost)
+            if (EconomyManager.Instance.TrySpendResource(ResourceType.Coin, reviveCost))
             {
-                EconomyManager.Instance.TrySpendResource(ResourceType.Coin, reviveCost);
-
                 GameEvents.TriggerGameRevived(failType);
 
                 currentGameState = GameState.Playing;
