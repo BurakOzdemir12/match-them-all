@@ -12,7 +12,7 @@ namespace _Project.Scripts.Managers
 
         //? If level failed due to time is up, player can revive with a time bonus. This variable defines how much time will be added as bonus.
         [SerializeField] private float timeRenewalBonus = 60f;
-
+        [SerializeField] private float freezeDuration = 10f;
         private float _remainingTime;
         public float RemainingTime => _remainingTime;
 
@@ -23,10 +23,17 @@ namespace _Project.Scripts.Managers
         private bool _isTimerRunning = false;
 
         private int lastBroadcastedTime = -1;
+        private int lastBroadcastedFreezeTime = -1;
 
+        private float _remainFrozeTime = 0f;
+        private bool _isTimeFroze = false;
 
         //Events
         public static event Action<int> OnTimeUpdated;
+
+        public static event Action<float> OnTimeFreezeStarted;
+        public static event Action<int> OnFreezeTimeUpdated;
+        public static event Action OnTimeFreezeEnded;
 
         private void Awake()
         {
@@ -46,6 +53,18 @@ namespace _Project.Scripts.Managers
             GameEvents.OnLevelFailed += HandleLevelFailed;
             GameEvents.OnGamePaused += HandleGamePaused;
             GameEvents.OnGameRevived += HandleGameRevived;
+        }
+
+
+        public void FreezeTime()
+        {
+            if (!_isTimerRunning) return;
+
+            _isTimeFroze = true;
+            _remainFrozeTime = freezeDuration;
+            lastBroadcastedFreezeTime = -1;
+
+            OnTimeFreezeStarted?.Invoke(freezeDuration);
         }
 
         private void HandleGameRevived(FailType type)
@@ -97,21 +116,34 @@ namespace _Project.Scripts.Managers
 
         private void Update()
         {
-            if (_isTimerRunning)
-            {
-                _remainingTime -= Time.deltaTime;
+            if (!_isTimerRunning) return;
 
-                if (_remainingTime <= 0f)
+            if (_isTimeFroze)
+            {
+                _remainFrozeTime -= Time.deltaTime;
+                BroadcastFrozeTimeUpdate();
+
+                if (_remainFrozeTime <= 0f)
                 {
-                    _remainingTime = 0f;
-                    _isTimerRunning = false;
-                    BroadcastTimeUpdate();
-                    GameEvents.TriggerLevelFailed(FailType.TimeIsUp);
+                    _isTimeFroze = false;
+                    OnTimeFreezeEnded?.Invoke();
                 }
-                else
-                {
-                    BroadcastTimeUpdate();
-                }
+
+                return;
+            }
+
+            _remainingTime -= Time.deltaTime;
+
+            if (_remainingTime <= 0f)
+            {
+                _remainingTime = 0f;
+                _isTimerRunning = false;
+                BroadcastTimeUpdate();
+                GameEvents.TriggerLevelFailed(FailType.TimeIsUp);
+            }
+            else
+            {
+                BroadcastTimeUpdate();
             }
         }
 
@@ -122,6 +154,16 @@ namespace _Project.Scripts.Managers
             {
                 lastBroadcastedTime = currentSecond;
                 OnTimeUpdated?.Invoke(lastBroadcastedTime);
+            }
+        }
+
+        private void BroadcastFrozeTimeUpdate()
+        {
+            int currentSecond = Mathf.CeilToInt(_remainFrozeTime);
+            if (currentSecond != lastBroadcastedFreezeTime)
+            {
+                lastBroadcastedFreezeTime = currentSecond;
+                OnFreezeTimeUpdated?.Invoke(lastBroadcastedFreezeTime);
             }
         }
 
