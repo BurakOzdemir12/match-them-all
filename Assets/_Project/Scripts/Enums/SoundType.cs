@@ -23,7 +23,7 @@
 
         //? Boosters sounds
         TimeRenewed,
-        TimeFrozenBooster,
+        TimeFreezeBooster,
         ButtonClick
     }
 }

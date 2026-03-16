@@ -52,8 +52,13 @@ namespace _Project.Scripts.Managers
             GoalCardUI.OnCardVisualUpdated += HandleGoalCardUpdated;
             InputManager.OnItemSelected += HandleItemSelected;
             ItemSpotsManager.ItemCollected += HandleItemCollected;
+            TimeManager.OnTimeFreezeStarted += HandleTimeFreezeStarted;
         }
 
+        private void HandleTimeFreezeStarted(float obj)
+        {
+            PlaySoundByType(SoundType.TimeFreezeBooster, _camera.transform.position);
+        }
 
         private void HandleItemCollected(ItemType type)
         {
@@ -174,6 +179,7 @@ namespace _Project.Scripts.Managers
             GoalCardUI.OnCardVisualUpdated -= HandleGoalCardUpdated;
             InputManager.OnItemSelected -= HandleItemSelected;
             ItemSpotsManager.ItemCollected -= HandleItemCollected;
+            TimeManager.OnTimeFreezeStarted -= HandleTimeFreezeStarted;
         }
     }
 }
