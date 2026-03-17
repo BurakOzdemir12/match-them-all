@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Project.Scripts.Enums;
+using _Project.Scripts.ItemScripts;
 using _Project.Scripts.LevelDesign.ScriptableObjects;
 using _Project.Scripts.Static;
 using UnityEngine;
@@ -20,6 +21,12 @@ namespace _Project.Scripts.Managers
             GameEvents.OnLevelStarted += HandleLevelStarted;
             ItemSpotsManager.ItemCollected += HandleItemCollected;
             ItemSpotsManager.OnItemReturnedToBoard += HandleItemReturnedToBoard;
+            GameEvents.OnBoosterUsed += HandleBoosterUsed;
+        }
+
+        private void HandleBoosterUsed(ResourceType resource, Item item)
+        {
+            CheckIsItemInGoal(item.itemType);
         }
 
         private void HandleItemReturnedToBoard(ItemType itemType)
@@ -40,10 +47,15 @@ namespace _Project.Scripts.Managers
 
         private void HandleItemCollected(ItemType itemType)
         {
+            CheckIsItemInGoal(itemType);
+        }
+
+        private void CheckIsItemInGoal(ItemType itemType)
+        {
             if (activeGoals.ContainsKey(itemType))
             {
                 activeGoals[itemType]--;
-                
+
                 int displayAmount = Mathf.Max(0, activeGoals[itemType]);
                 OnGoalProgressUpdated?.Invoke(itemType, displayAmount);
 
@@ -90,6 +102,7 @@ namespace _Project.Scripts.Managers
             GameEvents.OnLevelStarted -= HandleLevelStarted;
             ItemSpotsManager.ItemCollected -= HandleItemCollected;
             ItemSpotsManager.OnItemReturnedToBoard -= HandleItemReturnedToBoard;
+            GameEvents.OnBoosterUsed -= HandleBoosterUsed;
         }
     }
 }

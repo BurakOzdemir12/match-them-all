@@ -24,6 +24,7 @@
         //? Boosters sounds
         TimeRenewed,
         TimeFreezeBooster,
+        HammerBooster,
         ButtonClick
     }
 }

@@ -18,6 +18,8 @@ namespace _Project.Scripts.Managers
 {
     public class ItemSpotsManager : MonoBehaviour
     {
+        public static ItemSpotsManager Instance { get; private set; }
+
         [Header("References")] [SerializeField]
         private ItemSpot[] availableSpots;
 
@@ -67,6 +69,8 @@ namespace _Project.Scripts.Managers
         [Tooltip("How strong the item will jump to right or left spot")] [SerializeField]
         private float jumpPowerOnSpot = 0.5f;
 
+        [Header("Optimization Data")] [Tooltip("Item list that in active in game board")] [SerializeField]
+        private List<Item> activeItemsOnPool = new List<Item>();
 
         //Event Actions
         public static event Action<List<Item>> OnItemsMergeRequested;
@@ -75,6 +79,14 @@ namespace _Project.Scripts.Managers
 
         private void Awake()
         {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(this.gameObject);
+                return;
+            }
+
+            Instance = this;
+
             InitSpots();
         }
 
@@ -88,6 +100,7 @@ namespace _Project.Scripts.Managers
         private void HandleLevelStarted(LevelDataSo levelData)
         {
             ClearAllSpots();
+            activeItemsOnPool.Clear();
             isBusy = false;
         }
 
@@ -141,6 +154,7 @@ namespace _Project.Scripts.Managers
                         if (item != null && item.gameObject != null)
                         {
                             item.ReSpawn();
+                            RegisterItemToPool(item);
                             OnItemReturnedToBoard?.Invoke(item.itemType);
                         }
                     });
@@ -233,6 +247,8 @@ namespace _Project.Scripts.Managers
 
             //? If an item is inserted, all the items in the List move to the right
             itemsInBar.Insert(insertIndex, itemComponent);
+
+            UnregisterItemToPool(itemComponent);
 
             interactable.Interact();
 
@@ -387,6 +403,55 @@ namespace _Project.Scripts.Managers
                 GameEvents.TriggerLevelFailed(FailType.SpotFull);
                 Debug.Log("Game Over!");
             }
+        }
+
+        public void RegisterItemToPool(Item item)
+        {
+            if (!activeItemsOnPool.Contains(item))
+            {
+                activeItemsOnPool.Add(item);
+            }
+        }
+
+        public void UnregisterItemToPool(Item item)
+        {
+            if (activeItemsOnPool.Contains(item))
+            {
+                activeItemsOnPool.Remove(item);
+            }
+        }
+
+        public void DestroyItemsFromBoard(List<Item> itemsToRemove)
+        {
+            foreach (var item in itemsToRemove)
+            {
+                if (item != null && item.gameObject != null)
+                {
+                    UnregisterItemToPool(item);
+
+                    item.transform.DOKill();
+
+                    Destroy(item.gameObject);
+                }
+            }
+        }
+
+        public List<Item> GetRandomIdenticalItemsFromPool(int count)
+        {
+            // Item[] itemsOnBoard = itemsParent.GetComponentsInChildren<Item>();
+
+            var validGroups =
+                //itemsOnBoard
+                activeItemsOnPool
+                    .GroupBy(item => item.itemType)
+                    .Where(group => group.Count() >= count)
+                    .ToList();
+
+            if (validGroups.Count == 0) return null;
+
+            var randomGroup = validGroups[Random.Range(0, validGroups.Count)];
+
+            return randomGroup.Take(count).ToList();
         }
 
         private void OnDisable()

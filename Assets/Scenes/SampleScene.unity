@@ -1061,6 +1061,38 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 82459847}
   m_CullTransparentMesh: 1
+--- !u!1 &91179994
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 91179995}
+  m_Layer: 0
+  m_Name: Boosters
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &91179995
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 91179994}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2138840970}
+  m_Father: {fileID: 267384031}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &97568184
 GameObject:
   m_ObjectHideFlags: 0
@@ -2961,7 +2993,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 91179995}
   m_Father: {fileID: 1017882692}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &267384032
@@ -5003,6 +5036,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.UI.Components.BoosterCardUI
   boosterAmountText: {fileID: 968851433}
   myBoosterType: 2
+  boosterIcon: {fileID: 512027437}
 --- !u!114 &512027437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7098,6 +7132,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.UI.Components.BoosterCardUI
   boosterAmountText: {fileID: 714073683}
   myBoosterType: 3
+  boosterIcon: {fileID: 799503488}
 --- !u!114 &799503488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10101,6 +10136,7 @@ MonoBehaviour:
   numJumps: 1
   itemScaleOnGoing: {x: 0.1, y: 0.1, z: 0.1}
   jumpPowerOnSpot: 0.35
+  activeItemsOnPool: []
 --- !u!1 &1267052484
 GameObject:
   m_ObjectHideFlags: 0
@@ -16940,6 +16976,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2138179769}
   m_CullTransparentMesh: 1
+--- !u!1 &2138840969
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2138840970}
+  - component: {fileID: 2138840971}
+  m_Layer: 0
+  m_Name: HammerBoosterMechanic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2138840970
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2138840969}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 91179995}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2138840971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2138840969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d114eb1b20c942e08724e00e6ca27e76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Mechanics.Boosters.HammerBoosterMechanic
+  hammerPrefab: {fileID: 6500621671454452470, guid: eac400a7c8d17d640a3bcc0921f59188, type: 3}
+  hammerScale: 6
+  hammerHitDuration: 0.4
 --- !u!114 &495774110871363377
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -5,6 +5,6 @@
         Coin,
         Wrench,
         FreezeTimeBooster,
-        LaserBooster
+        HammerBooster,
     }
 }

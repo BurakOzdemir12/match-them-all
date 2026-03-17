@@ -5,6 +5,7 @@ using _Project.Scripts.Enums;
 using _Project.Scripts.ItemScripts;
 using _Project.Scripts.ItemScripts.ScriptableObjects;
 using _Project.Scripts.LevelDesign.ScriptableObjects;
+using _Project.Scripts.Managers;
 using _Project.Scripts.Static;
 using _Project.Scripts.Structs.Level;
 using UnityEngine;
@@ -80,10 +81,13 @@ namespace _Project.Scripts.LevelDesign
                     );
                     Item spawnedItem = Instantiate(prefabToSpawn, randomPos, Random.rotation, itemsParent);
 
+                    ItemSpotsManager.Instance.RegisterItemToPool(spawnedItem);
+
                     if (spawnedItem.TryGetComponent(out Rigidbody rb))
                     {
                         spawnedRigidbodies.Add(rb);
                     }
+
                     // yield return new WaitForSeconds(spawnDelay);
                 }
             }

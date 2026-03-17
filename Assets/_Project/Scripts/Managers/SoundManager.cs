@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using _Project.Scripts.Audio.ScriptableObects;
 using _Project.Scripts.Enums;
 using _Project.Scripts.Interfaces;
+using _Project.Scripts.ItemScripts;
 using _Project.Scripts.Static;
 using _Project.Scripts.Structs;
 using _Project.Scripts.UI.Components;
@@ -53,6 +54,17 @@ namespace _Project.Scripts.Managers
             InputManager.OnItemSelected += HandleItemSelected;
             ItemSpotsManager.ItemCollected += HandleItemCollected;
             TimeManager.OnTimeFreezeStarted += HandleTimeFreezeStarted;
+            GameEvents.OnBoosterUsed += HandleBoosterUsed;
+        }
+
+        private void HandleBoosterUsed(ResourceType resourceType, Item item)
+        {
+            switch (resourceType)
+            {
+                case ResourceType.HammerBooster:
+                    PlaySoundByType(SoundType.HammerBooster, _camera.transform.position);
+                    break;
+            }
         }
 
         private void HandleTimeFreezeStarted(float obj)
@@ -180,6 +192,7 @@ namespace _Project.Scripts.Managers
             InputManager.OnItemSelected -= HandleItemSelected;
             ItemSpotsManager.ItemCollected -= HandleItemCollected;
             TimeManager.OnTimeFreezeStarted -= HandleTimeFreezeStarted;
+            GameEvents.OnBoosterUsed -= HandleBoosterUsed;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using _Project.Scripts.Enums;
+using _Project.Scripts.ItemScripts;
 using _Project.Scripts.LevelDesign.ScriptableObjects;
 using UnityEngine;
 
@@ -15,6 +16,12 @@ namespace _Project.Scripts.Static
 
         public static event Action<FailType> OnReviveRequested;
         public static event Action<FailType> OnGameRevived;
+
+        #region Booster Events
+
+        public static event Action<ResourceType, Item> OnBoosterUsed;
+
+        #endregion
 
         public static void TriggerLevelStarted(LevelDataSo levelData)
         {
@@ -50,5 +57,14 @@ namespace _Project.Scripts.Static
         {
             OnReviveRequested?.Invoke(failType);
         }
+
+        #region Booster Events
+
+        public static void TriggerBoosterUseRequested(ResourceType type, Item item)
+        {
+            OnBoosterUsed?.Invoke(type, item);
+        }
+
+        #endregion
     }
 }
