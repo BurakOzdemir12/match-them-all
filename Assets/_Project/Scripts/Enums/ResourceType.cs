@@ -6,5 +6,7 @@
         Wrench,
         FreezeTimeBooster,
         HammerBooster,
+        PlaneBombBooster,
+        PlaneWindBooster
     }
 }

@@ -20,6 +20,8 @@ namespace _Project.Scripts.Static
         #region Booster Events
 
         public static event Action<ResourceType, Item> OnBoosterUsed;
+        public static event Action<ResourceType> OnBoosterAnimationStarted;
+        public static event Action<ResourceType> OnBoosterAnimationEnded;
 
         #endregion
 
@@ -63,6 +65,16 @@ namespace _Project.Scripts.Static
         public static void TriggerBoosterUseRequested(ResourceType type, Item item)
         {
             OnBoosterUsed?.Invoke(type, item);
+        }
+
+        public static void TriggerBoosterAnimationStarted(ResourceType type)
+        {
+            OnBoosterAnimationStarted?.Invoke(type);
+        }
+
+        public static void TriggerBoosterAnimationEnded(ResourceType type)
+        {
+            OnBoosterAnimationEnded?.Invoke(type);
         }
 
         #endregion
