@@ -53,6 +53,8 @@ namespace _Project.Scripts.Managers
             GameEvents.OnLevelFailed += HandleLevelFailed;
             GameEvents.OnGamePaused += HandleGamePaused;
             GameEvents.OnGameRevived += HandleGameRevived;
+            GameEvents.OnBoosterAnimationStarted += HandleBoosterAnimationStarted;
+            GameEvents.OnBoosterAnimationEnded += HandleBoosterAnimationEnded;
         }
 
 
@@ -65,6 +67,16 @@ namespace _Project.Scripts.Managers
             lastBroadcastedFreezeTime = -1;
 
             OnTimeFreezeStarted?.Invoke(freezeDuration);
+        }
+
+        private void HandleBoosterAnimationEnded(ResourceType type)
+        {
+            _isTimerRunning = true;
+        }
+
+        private void HandleBoosterAnimationStarted(ResourceType type)
+        {
+            _isTimerRunning = false;
         }
 
         private void HandleGameRevived(FailType type)
@@ -174,6 +186,8 @@ namespace _Project.Scripts.Managers
             GameEvents.OnLevelFailed -= HandleLevelFailed;
             GameEvents.OnGamePaused -= HandleGamePaused;
             GameEvents.OnGameRevived -= HandleGameRevived;
+            GameEvents.OnBoosterAnimationStarted -= HandleBoosterAnimationStarted;
+            GameEvents.OnBoosterAnimationEnded -= HandleBoosterAnimationEnded;
         }
     }
 }

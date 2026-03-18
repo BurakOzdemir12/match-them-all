@@ -25,6 +25,10 @@
         TimeRenewed,
         TimeFreezeBooster,
         HammerBooster,
-        ButtonClick
+        
+        //? Hammer booster sounds
+        HammerMove,
+        HammerHit,
+        ItemExplode
     }
 }

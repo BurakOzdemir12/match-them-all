@@ -3,6 +3,7 @@
     public enum EffectType
     {
         MergeSparks,
-        UIDecreaseSparks
+        UIDecreaseSparks,
+        HammerHitItem
     }
 }

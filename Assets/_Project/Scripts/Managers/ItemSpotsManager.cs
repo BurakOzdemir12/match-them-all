@@ -428,11 +428,19 @@ namespace _Project.Scripts.Managers
                 if (item != null && item.gameObject != null)
                 {
                     UnregisterItemToPool(item);
-
                     item.transform.DOKill();
-
                     Destroy(item.gameObject);
                 }
+            }
+        }
+
+        public void DestroySingleItemFromBoard(Item item)
+        {
+            if (item != null && item.gameObject != null)
+            {
+                UnregisterItemToPool(item);
+                item.transform.DOKill();
+                Destroy(item.gameObject);
             }
         }
 

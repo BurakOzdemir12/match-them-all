@@ -4,6 +4,7 @@ using _Project.Scripts.Enums;
 using _Project.Scripts.ItemScripts;
 using _Project.Scripts.Managers;
 using _Project.Scripts.Static;
+using _Project.Scripts.Structs;
 using DG.Tweening;
 using UnityEngine;
 
@@ -36,6 +37,7 @@ namespace _Project.Scripts.Mechanics.Boosters
         [Tooltip("Hammer Hit duration")] [SerializeField]
         private float hammerHitDuration = 0.5f;
 
+        private Camera _mainCamera;
 
         private void Awake()
         {
@@ -46,6 +48,8 @@ namespace _Project.Scripts.Mechanics.Boosters
             }
 
             Instance = this;
+
+            _mainCamera = Camera.main;
         }
 
         public void PlayHammerBoost(Vector3 pos)
@@ -73,8 +77,11 @@ namespace _Project.Scripts.Mechanics.Boosters
 
                 targetEuler.y = -90f;
 
-                //TODO Sound effect for move 
-                
+                seq.AppendCallback(() =>
+                {
+                    SoundManager.Instance.PlaySoundByType(SoundType.HammerMove, _mainCamera.transform.position);
+                });
+
                 //? Hammer moves to the target pos with specified offset
                 seq.Append(hammer.transform.DOMove(targetPos + hammerMovePosOffset, hammerMoveDuration)
                     .SetEase(Ease.OutQuad));
@@ -87,18 +94,35 @@ namespace _Project.Scripts.Mechanics.Boosters
                 seq.Append(hammer.transform
                     .DORotate(hammerHitRotationVector, hammerHitDuration, RotateMode.LocalAxisAdd)
                     .SetEase(Ease.InBack));
-                //TODO Sound effect for hammering
 
                 //? whenever hit animation complete play sound or decrease goal or something else
                 seq.AppendCallback(() =>
                 {
+                    EffectData hammerHitEffectData = new EffectData(
+                        position: target.transform.position,
+                        rotation: Quaternion.identity,
+                        scale: Vector3.one * 0.35f,
+                        parentTransform: null
+                    );
                     GameEvents.TriggerBoosterUseRequested(ResourceType.HammerBooster, target);
+
+                    EffectManager.Instance.PlayEffect(hammerHitEffectData, EffectType.HammerHitItem);
+
+                    SoundManager.Instance.PlaySoundByType(SoundType.HammerHit, _mainCamera.transform.position);
+                    seq.AppendInterval(0.3f);
                 });
 
                 //? This is the hit Target object explosion effect
                 seq.Append(target.transform.DOPunchScale(Vector3.one * targetPunchScale, 0.2f)
                     .SetEase(Ease.OutElastic));
-                //TODO target Explosion sound effect
+
+                seq.AppendCallback(() =>
+                {
+                    SoundManager.Instance.PlaySoundByType(SoundType.ItemExplode, _mainCamera.transform.position);
+
+                    ItemSpotsManager.Instance.DestroySingleItemFromBoard(target);
+                });
+
                 //? Just before the returning back to the spawn pos move a little bit higher
                 seq.Append(hammer.transform.DOMoveY(targetPos.y + 1f, 0f));
             }
@@ -107,9 +131,6 @@ namespace _Project.Scripts.Mechanics.Boosters
             {
                 //? Animation ends then publish event icon must listen for fade in fade out transactions.
                 GameEvents.TriggerBoosterAnimationEnded(ResourceType.HammerBooster);
-
-                //? Target items will destroy
-                ItemSpotsManager.Instance.DestroyItemsFromBoard(targets);
 
                 //? Hammer Return back to the first spawned position.
                 Sequence finishSeq = DOTween.Sequence().SetLink(this.gameObject);
