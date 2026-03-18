@@ -55,3 +55,21 @@ MonoBehaviour:
     isFrequent: 1
     volume: 0.854
     pitch: 1
+  - name: Hammer Move Sfx
+    soundType: 16
+    clip: {fileID: 8300000, guid: d46323e22e74e46baa241cbf48c85671, type: 3}
+    isFrequent: 1
+    volume: 0.6
+    pitch: 1
+  - name: Hammer Hit Sfx
+    soundType: 17
+    clip: {fileID: 8300000, guid: 0dd2569d1b69449e0ae35fab72a5e5b0, type: 3}
+    isFrequent: 1
+    volume: 0.6
+    pitch: 1
+  - name: Item Explode Sfx
+    soundType: 18
+    clip: {fileID: 8300000, guid: 7bef0064f8567430cac22499c6b93d4f, type: 3}
+    isFrequent: 1
+    volume: 0.2
+    pitch: 1
