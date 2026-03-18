@@ -17022,7 +17022,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Mechanics.Boosters.HammerBoosterMechanic
   hammerPrefab: {fileID: 6500621671454452470, guid: eac400a7c8d17d640a3bcc0921f59188, type: 3}
   hammerScale: 6
-  hammerHitDuration: 0.4
+  hammerMoveDuration: 0.65
+  hammerMovePosOffset: {x: 0, y: 0, z: -2}
+  hammerRotateDuration: 0.65
+  hammerHitRotationVector: {x: 0, y: 0, z: -90}
+  targetPunchScale: 0.5
+  hammerHitDuration: 0.3
 --- !u!114 &495774110871363377
 MonoBehaviour:
   m_ObjectHideFlags: 0
