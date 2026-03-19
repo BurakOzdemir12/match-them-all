@@ -38,9 +38,6 @@ namespace _Project.Scripts.UI.Components
         [SerializeField] private float scaleUpScale = 1.2f;
         private Camera _camera;
 
-
-        public static event Action<Vector3, EffectType, Transform> OnCardVisualUpdated;
-
         private void Awake()
         {
             _camera = Camera.main;
@@ -68,8 +65,11 @@ namespace _Project.Scripts.UI.Components
                     elasticity: 1f)
             );
 
-            OnCardVisualUpdated?.Invoke(goalRemainingText.transform.position, EffectType.UIDecreaseSparks,
-                transform.parent.parent);
+            //? Play Virtual Effect
+           
+            EffectManager.Instance.PlayEffect(EffectType.UIDecreaseSparks, goalRemainingText.transform.position);
+            //? Play Sound Effect     
+            SoundManager.Instance.PlaySoundByType(SoundType.GoalDecrease, _camera.transform.position);
 
             //? Goal Archived Phase Animations
             if (currentAmount <= 0)
@@ -110,10 +110,11 @@ namespace _Project.Scripts.UI.Components
                 //? play wind/whoosh sound effect while in half scaledown anim
 
                 float exactTime = seq.Duration() - (scaleDownDuration / 2f);
-                seq.InsertCallback(exactTime, () =>
-                {
-                    SoundManager.Instance.PlaySoundByType(SoundType.GoalCardWhoosh, _camera.transform.position);
-                });
+                seq.InsertCallback(exactTime,
+                    () =>
+                    {
+                        SoundManager.Instance.PlaySoundByType(SoundType.GoalCardWhoosh, _camera.transform.position);
+                    });
 
                 seq.OnComplete(() => { Destroy(this.gameObject); });
             }

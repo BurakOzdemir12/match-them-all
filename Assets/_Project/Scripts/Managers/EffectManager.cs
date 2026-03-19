@@ -41,32 +41,6 @@ namespace _Project.Scripts.Managers
 
         private void OnEnable()
         {
-            MergeManager.OnMergeCompleted += HandleMergeCompleted;
-            GoalCardUI.OnCardVisualUpdated += HandleGoalCardUpdated;
-        }
-
-        private void HandleGoalCardUpdated(Vector3 pos, EffectType type, Transform uiParent)
-        {
-            EffectData goalCardEffectData = new EffectData(
-                position: pos,
-                rotation: Quaternion.identity,
-                scale: defaultScale * Vector3.one,
-                parentTransform: uiParent
-            );
-
-            PlayEffect(goalCardEffectData, type);
-        }
-
-        private void HandleMergeCompleted(Vector3 position, ItemType itemType, EffectType effectType)
-        {
-            EffectData mergeEffectData = new EffectData(
-                position: position,
-                rotation: Quaternion.identity,
-                scale: defaultScale * Vector3.one,
-                parentTransform: null
-            );
-
-            PlayEffect(mergeEffectData, effectType);
         }
 
         private void InitializePool()
@@ -115,20 +89,25 @@ namespace _Project.Scripts.Managers
         }
 
 
-        public void PlayEffect(EffectData data, EffectType type)
+        public void PlayEffect(EffectType type, Vector3 position, Transform parent = null, float? customScale = null)
         {
-            if (effectPools.TryGetValue(type, out var pool))
-            {
-                EffectEmitter emitter = pool.Get();
-                emitter.Initialize(data, pool);
-                emitter.Play();
-            }
+            if (!effectPools.TryGetValue(type, out var pool)) return;
+
+            float finalScale = customScale ?? defaultScale;
+            
+            EffectData data = new EffectData(
+                position: position,
+                rotation: Quaternion.identity,
+                scale: Vector3.one * finalScale,
+                parentTransform: parent);
+
+            EffectEmitter emitter = pool.Get();
+            emitter.Initialize(data, pool);
+            emitter.Play();
         }
 
         private void OnDisable()
         {
-            MergeManager.OnMergeCompleted -= HandleMergeCompleted;
-            GoalCardUI.OnCardVisualUpdated -= HandleGoalCardUpdated;
         }
     }
 }

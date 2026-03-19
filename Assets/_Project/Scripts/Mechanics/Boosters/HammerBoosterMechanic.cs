@@ -98,15 +98,10 @@ namespace _Project.Scripts.Mechanics.Boosters
                 //? whenever hit animation complete play sound or decrease goal or something else
                 seq.AppendCallback(() =>
                 {
-                    EffectData hammerHitEffectData = new EffectData(
-                        position: target.transform.position,
-                        rotation: Quaternion.identity,
-                        scale: Vector3.one * 0.35f,
-                        parentTransform: null
-                    );
                     GameEvents.TriggerBoosterUseRequested(ResourceType.HammerBooster, target);
 
-                    EffectManager.Instance.PlayEffect(hammerHitEffectData, EffectType.HammerHitItem);
+                    EffectManager.Instance.PlayEffect(EffectType.HammerHitItem, target.transform.position,
+                        customScale: 0.35f);
 
                     SoundManager.Instance.PlaySoundByType(SoundType.HammerHit, _mainCamera.transform.position);
                     seq.AppendInterval(0.3f);

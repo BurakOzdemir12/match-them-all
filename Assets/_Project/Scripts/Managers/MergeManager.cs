@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using _Project.Scripts.Enums;
 using _Project.Scripts.ItemScripts;
+using _Project.Scripts.Structs;
 using DG.Tweening;
 using UnityEngine;
 
@@ -27,7 +28,12 @@ namespace _Project.Scripts.Managers
         [Tooltip("How long items wait in the air before smashing")] [SerializeField]
         private float waitBeforeSmashDuration = 0.3f;
 
-        public static event Action<Vector3, ItemType, EffectType> OnMergeCompleted;
+        private Camera _mainCamera;
+
+        private void Awake()
+        {
+            _mainCamera = Camera.main;
+        }
 
         private void OnEnable()
         {
@@ -92,7 +98,9 @@ namespace _Project.Scripts.Managers
                 Destroy(matchedItem.gameObject);
             }
 
-            OnMergeCompleted?.Invoke(mergePosition, mergedType, EffectType.MergeSparks);
+            EffectManager.Instance.PlayEffect(EffectType.MergeSparks, mergePosition);
+
+            SoundManager.Instance.PlaySoundByType(SoundType.MergeSmash, _mainCamera.transform.position);
         }
 
         private void OnDisable()

@@ -49,8 +49,6 @@ namespace _Project.Scripts.Managers
 
         private void OnEnable()
         {
-            MergeManager.OnMergeCompleted += HandleMergeCompleted;
-            GoalCardUI.OnCardVisualUpdated += HandleGoalCardUpdated;
             InputManager.OnItemSelected += HandleItemSelected;
             ItemSpotsManager.ItemCollected += HandleItemCollected;
             TimeManager.OnTimeFreezeStarted += HandleTimeFreezeStarted;
@@ -176,8 +174,6 @@ namespace _Project.Scripts.Managers
 
         private void OnDisable()
         {
-            MergeManager.OnMergeCompleted -= HandleMergeCompleted;
-            GoalCardUI.OnCardVisualUpdated -= HandleGoalCardUpdated;
             InputManager.OnItemSelected -= HandleItemSelected;
             ItemSpotsManager.ItemCollected -= HandleItemCollected;
             TimeManager.OnTimeFreezeStarted -= HandleTimeFreezeStarted;
