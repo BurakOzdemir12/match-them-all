@@ -57,14 +57,15 @@ namespace _Project.Scripts.Mechanics.Boosters
             List<Item> targets = ItemSpotsManager.Instance.GetRandomIdenticalItemsFromPool(3);
             if (targets == null || targets.Count < 3) return;
 
-            Sequence seq = DOTween.Sequence().SetLink(this.gameObject);
 
             GameEvents.TriggerBoosterAnimationStarted(ResourceType.HammerBooster);
 
             GameObject hammer = Instantiate(hammerPrefab, pos,
                 Quaternion.identity);
+            
             hammer.transform.localScale = Vector3.one * hammerScale;
 
+            Sequence seq = DOTween.Sequence().SetLink(hammer.gameObject);
 
             foreach (var target in targets)
             {
