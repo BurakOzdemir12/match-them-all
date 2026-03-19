@@ -14,6 +14,8 @@ namespace _Project.Scripts.UI.Components
         [SerializeField] private TextMeshProUGUI boosterAmountText;
         [SerializeField] private ResourceType myBoosterType;
         [SerializeField] private Image boosterIcon;
+        [SerializeField] private Image boosterAmountIcon;
+        [SerializeField] private Button boosterButton;
 
         public static event Action<ResourceType, int, Vector3> OnBoosterUseRequested;
 
@@ -43,20 +45,25 @@ namespace _Project.Scripts.UI.Components
 
         private void HandleBoosterAnimationEnded(ResourceType type)
         {
+            if (boosterButton != null) boosterButton.interactable = true;
+
             if (type != myBoosterType) return;
             Fade(1, 0.3f);
         }
 
         private void HandleBoosterAnimationStarted(ResourceType type)
         {
+            if (boosterButton != null) boosterButton.interactable = false;
+
             if (type != myBoosterType) return;
-            Fade(0, 0.3f);
+            Fade(0.5f, 0.3f);
         }
 
         private void Fade(float value, float duration)
         {
-            boosterIcon.DOFade(value, duration);
-            boosterAmountText.DOFade(value, duration);
+            if (boosterIcon != null) boosterIcon.DOFade(value, duration);
+            if (boosterAmountText != null) boosterAmountText.DOFade(value, duration);
+            if (boosterAmountIcon != null) boosterAmountIcon.DOFade(value, duration);
         }
 
         private void HandleResourceAmountChanged(ResourceType type, int amount)
@@ -70,6 +77,7 @@ namespace _Project.Scripts.UI.Components
         private void UpdateBoosterAmount(int amount)
         {
             boosterAmountText.text = amount.ToString();
+            if (amount <= 0 && boosterButton != null) boosterButton.interactable = false;
         }
 
         public void OnBoosterClicked()
@@ -83,6 +91,10 @@ namespace _Project.Scripts.UI.Components
         private void OnDisable()
         {
             EconomyManager.OnResourceAmountChanged -= HandleResourceAmountChanged;
+            GameEvents.OnBoosterAnimationStarted -= HandleBoosterAnimationStarted;
+            GameEvents.OnBoosterAnimationEnded -= HandleBoosterAnimationEnded;
+
+            this.gameObject.transform.DOKill();
         }
     }
 }
