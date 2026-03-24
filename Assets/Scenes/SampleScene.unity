@@ -3135,8 +3135,12 @@ MonoBehaviour:
   bombPrefab: {fileID: 1757347643579741168, guid: ed0e3044f719d634aa18f650c656aca0, type: 3}
   planeFlyStartPos: {fileID: 2117157359}
   planeFlyEndPos: {fileID: 1692504850}
-  flightDuration: 4
+  flightDuration: 2.5
   planeRotateDuration: 0
+  bombSpawnOffset: {x: 0, y: -1, z: 0}
+  bombDropDuration: 1
+  cameraShakeDuration: 0.3
+  cameraShakeStrength: 0.3
 --- !u!1 &277205590
 GameObject:
   m_ObjectHideFlags: 0

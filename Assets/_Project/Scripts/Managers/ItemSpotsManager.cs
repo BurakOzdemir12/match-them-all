@@ -421,7 +421,7 @@ namespace _Project.Scripts.Managers
             }
         }
 
-        public void DestroyItemsFromBoard(List<Item> itemsToRemove)
+        public void DestroyMultipleItemsFromBoard(List<Item> itemsToRemove)
         {
             foreach (var item in itemsToRemove)
             {

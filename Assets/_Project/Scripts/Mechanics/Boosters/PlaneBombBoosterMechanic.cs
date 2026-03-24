@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using _Project.Scripts.Enums;
 using _Project.Scripts.ItemScripts;
 using _Project.Scripts.Managers;
+using _Project.Scripts.Static;
 using DG.Tweening;
 using UnityEngine;
 
@@ -26,9 +27,23 @@ namespace _Project.Scripts.Mechanics.Boosters
         [Tooltip("total Flight duration")] [SerializeField]
         private float flightDuration;
 
-        [SerializeField] private float planeRotateDuration;
+        [Tooltip("Plane Rotate anim duration")] [SerializeField]
+        private float planeRotateDuration;
+
+        [Header("Bomb drop flow")] [Tooltip("Bomb Spawn position offset")] [SerializeField]
+        private Vector3 bombSpawnOffset = new Vector3(0f, 0f, 0f);
+
+        [Tooltip("Bomb Drop Duration")] [SerializeField]
+        private float bombDropDuration;
 
         private Camera _mainCamera;
+
+        [Tooltip("Camera Shake duration")] [SerializeField]
+        private float cameraShakeDuration = 0.3f;
+
+        [Tooltip("Camera shake strength")] [SerializeField]
+        private float cameraShakeStrength = 0.5f;
+
 
         private void Awake()
         {
@@ -47,6 +62,8 @@ namespace _Project.Scripts.Mechanics.Boosters
         {
             List<Item> targets = ItemSpotsManager.Instance.GetRandomIdenticalItemsFromPool(3);
 
+            GameEvents.TriggerBoosterAnimationStarted(ResourceType.PlaneBombBooster);
+
             GameObject plane = Instantiate(planePrefab, planeFlyStartPos.position, Quaternion.identity);
             plane.transform.localScale = Vector3.one * 0.1f;
 
@@ -61,10 +78,10 @@ namespace _Project.Scripts.Mechanics.Boosters
 
                 Quaternion lookRotation = Quaternion.LookRotation(directionToTarget);
                 Vector3 targetEuler = lookRotation.eulerAngles;
-                
+
                 seq.Append(plane.transform.DORotate(targetEuler, planeRotateDuration, RotateMode.Fast)
                     .SetEase(Ease.OutQuad));
-                
+
                 //? Move Plane
                 Tween flightTween = seq.Append(plane.transform.DOMove(planeFlyEndPos.position, flightDuration)
                     .SetEase(Ease.Linear));
@@ -78,6 +95,8 @@ namespace _Project.Scripts.Mechanics.Boosters
                 //? Plane Bomb drop transactions
                 float dropStartTime = (flightDuration / 2f);
                 seq.InsertCallback(dropStartTime, () => { CreateBombDropSequence(targets, plane.transform); });
+
+                seq.OnComplete(() => { Destroy(plane.gameObject); });
             }
         }
 
@@ -86,7 +105,35 @@ namespace _Project.Scripts.Mechanics.Boosters
             Vector3 planesPos = new Vector3(planeTransform.position.x, planeTransform.position.y,
                 planeTransform.position.z);
 
-            GameObject bomb = Instantiate(bombPrefab, planesPos, Quaternion.identity);
+            Vector3 bombSpawnPos = planesPos + bombSpawnOffset;
+            GameObject bomb = Instantiate(bombPrefab, bombSpawnPos, Quaternion.identity);
+
+            Vector3 groundTargetPos = new Vector3(bombSpawnPos.x, 0f, bombSpawnPos.z);
+
+            Sequence bombSeq = DOTween.Sequence().SetLink(bomb.gameObject);
+
+            bombSeq.Append(bomb.transform.DOMove(groundTargetPos, bombDropDuration).SetEase(Ease.InQuad)); //InCubic
+
+            bombSeq.AppendCallback(() =>
+            {
+                //TODO Effects
+                // SoundManager.Instance.PlaySoundByType();
+                // EffectManager.Instance.PlayEffect();
+
+                _mainCamera.transform.DOShakePosition(cameraShakeDuration, cameraShakeStrength, 10);
+
+                foreach (var target in targets)
+                {
+                    if (target != null && target.gameObject != null)
+                    {
+                        ItemSpotsManager.Instance.DestroySingleItemFromBoard(target);
+                        GameEvents.TriggerBoosterUseRequested(ResourceType.PlaneBombBooster, target);
+                    }
+                }
+
+                Destroy(bomb);
+            });
+            bombSeq.OnComplete(() => { GameEvents.TriggerBoosterAnimationEnded(ResourceType.PlaneBombBooster); });
         }
     }
 }
