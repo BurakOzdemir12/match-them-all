@@ -4,6 +4,8 @@
     {
         MergeSparks,
         UIDecreaseSparks,
-        HammerHitItem
+        HammerHitItem,
+        BombExplode,
+        ItemExplode
     }
 }

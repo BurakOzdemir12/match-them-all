@@ -36,14 +36,19 @@ namespace _Project.Scripts.Mechanics.Boosters
         [Tooltip("Bomb Drop Duration")] [SerializeField]
         private float bombDropDuration;
 
-        private Camera _mainCamera;
-
         [Tooltip("Camera Shake duration")] [SerializeField]
         private float cameraShakeDuration = 0.3f;
 
         [Tooltip("Camera shake strength")] [SerializeField]
         private float cameraShakeStrength = 0.5f;
 
+        [Tooltip("Bomb explosion anim scale")] [SerializeField]
+        private float bombExplosionScale = 0.7f;
+
+        [Tooltip("Item explosion anim scale")] [SerializeField]
+        private float itemExplosionScale = 0.7f;
+
+        private Camera _mainCamera;
 
         private void Awake()
         {
@@ -83,14 +88,21 @@ namespace _Project.Scripts.Mechanics.Boosters
                     .SetEase(Ease.OutQuad));
 
                 //? Move Plane
+                SoundEmitter planeEngineSound = null;
                 Tween flightTween = seq.Append(plane.transform.DOMove(planeFlyEndPos.position, flightDuration)
-                    .SetEase(Ease.Linear));
-
-                seq.InsertCallback(0f,
-                    () =>
+                    .SetEase(Ease.Linear)
+                    .OnStart(() =>
                     {
-                        SoundManager.Instance.PlaySoundByType(SoundType.PlaneSwoosh, _mainCamera.transform.position);
-                    });
+                        planeEngineSound = SoundManager.Instance.PlaySoundByType(SoundType.PlaneEngine,
+                            _mainCamera.transform.position);
+                    })
+                    .OnComplete(() =>
+                    {
+                        if (planeEngineSound != null)
+                        {
+                            planeEngineSound.Stop();
+                        }
+                    }));
 
                 //? Plane Bomb drop transactions
                 float dropStartTime = (flightDuration / 2f);
@@ -112,13 +124,20 @@ namespace _Project.Scripts.Mechanics.Boosters
 
             Sequence bombSeq = DOTween.Sequence().SetLink(bomb.gameObject);
 
-            bombSeq.Append(bomb.transform.DOMove(groundTargetPos, bombDropDuration).SetEase(Ease.InQuad)); //InCubic
+            SoundEmitter bombWhistleEmitter = null;
+            bombSeq.Append(bomb.transform.DOMove(groundTargetPos, bombDropDuration).SetEase(Ease.InQuad)
+                .OnStart(() =>
+                {
+                    bombWhistleEmitter =
+                        SoundManager.Instance.PlaySoundByType(SoundType.BombWhistle, _mainCamera.transform.position);
+                }).OnComplete(() => { bombWhistleEmitter?.Stop(); })); //InCubic
 
             bombSeq.AppendCallback(() =>
             {
-                //TODO Effects
-                // SoundManager.Instance.PlaySoundByType();
-                // EffectManager.Instance.PlayEffect();
+                //? Bomb Explosion flow
+                SoundManager.Instance.PlaySoundByType(SoundType.BombExplode, _mainCamera.transform.position);
+                EffectManager.Instance.PlayEffect(EffectType.BombExplode, bomb.transform.position, null,
+                    bombExplosionScale);
 
                 _mainCamera.transform.DOShakePosition(cameraShakeDuration, cameraShakeStrength, 10);
 
@@ -126,6 +145,11 @@ namespace _Project.Scripts.Mechanics.Boosters
                 {
                     if (target != null && target.gameObject != null)
                     {
+                        EffectManager.Instance.PlayEffect(EffectType.ItemExplode, target.transform.position, null,
+                            itemExplosionScale);
+                        SoundManager.Instance.PlaySoundByType(SoundType.ItemExplodeWBomb,
+                            _mainCamera.transform.position);
+
                         ItemSpotsManager.Instance.DestroySingleItemFromBoard(target);
                         GameEvents.TriggerBoosterUseRequested(ResourceType.PlaneBombBooster, target);
                     }

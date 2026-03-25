@@ -18,17 +18,22 @@
         LevelCompletedMain,
         FireWorksPop,
         StarPop,
-        PlaneSwoosh,
+        PlaneEngine,
         RewardEarned,
 
         //? Boosters sounds
         TimeRenewed,
         TimeFreezeBooster,
         HammerBooster,
-        
+
         //? Hammer booster sounds
         HammerMove,
         HammerHit,
-        ItemExplode
+        ItemExplode,
+
+        //? Plane bomb booster sounds
+        BombExplode,
+        BombWhistle,
+        ItemExplodeWBomb
     }
 }

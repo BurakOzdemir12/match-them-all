@@ -69,16 +69,6 @@ namespace _Project.Scripts.Managers
             PlaySoundByType(SoundType.ItemSelected, _camera.transform.position);
         }
 
-        private void HandleGoalCardUpdated(Vector3 pos, EffectType type, Transform uiParent)
-        {
-            PlaySoundByType(SoundType.GoalDecrease, _camera.transform.position);
-        }
-
-        private void HandleMergeCompleted(Vector3 pos, ItemType itemType, EffectType effectType)
-        {
-            PlaySoundByType(SoundType.MergeSmash, pos);
-        }
-
         private void InitializePool()
         {
             if (poolContainer == null) poolContainer = new GameObject("SoundEmitter_Pool").transform;
@@ -129,9 +119,9 @@ namespace _Project.Scripts.Managers
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
-        public void PlaySound(SoundData data)
+        public SoundEmitter PlaySound(SoundData data)
         {
-            if (!data.Clip) return;
+            if (!data.Clip) return null;
 
             if (data.IsFrequent && FrequentSoundEmitters.Count >= maxSoundInstances)
             {
@@ -153,13 +143,15 @@ namespace _Project.Scripts.Managers
             {
                 emitter.PoolNode = FrequentSoundEmitters.AddLast(emitter);
             }
+
+            return emitter;
         }
 
-        public void PlaySoundByType(SoundType soundType, Vector3 pos)
+        public SoundEmitter PlaySoundByType(SoundType soundType, Vector3 pos)
         {
             SoundEntry entry = audioLibrary.GetSound(soundType);
 
-            if (entry.clip == null) return;
+            if (entry.clip == null) return null;
 
             SoundData soundData = new SoundData(
                 clip: entry.clip,
@@ -169,8 +161,9 @@ namespace _Project.Scripts.Managers
                 isFrequent: true
             );
 
-            PlaySound(soundData);
+            return PlaySound(soundData);
         }
+
 
         private void OnDisable()
         {

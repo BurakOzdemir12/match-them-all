@@ -1334,6 +1334,10 @@ MonoBehaviour:
     EmitterPrefab: {fileID: 1818228962275752081, guid: d02faafe3fa371b46a03435750df01aa, type: 3}
   - EffectType: 2
     EmitterPrefab: {fileID: 8304017164105941505, guid: c6413fa309717ec43b387e4943e2181b, type: 3}
+  - EffectType: 4
+    EmitterPrefab: {fileID: 4569089827620580361, guid: ea726aa01515f6d47af581018a8cdc0c, type: 3}
+  - EffectType: 3
+    EmitterPrefab: {fileID: 3607530236967350222, guid: 6530791fbc688e841978d06d06ace107, type: 3}
 --- !u!1 &108713091
 GameObject:
   m_ObjectHideFlags: 0
@@ -3138,9 +3142,11 @@ MonoBehaviour:
   flightDuration: 2.5
   planeRotateDuration: 0
   bombSpawnOffset: {x: 0, y: -1, z: 0}
-  bombDropDuration: 1
-  cameraShakeDuration: 0.3
-  cameraShakeStrength: 0.3
+  bombDropDuration: 2
+  cameraShakeDuration: 0.2
+  cameraShakeStrength: 0.1
+  bombExplosionScale: 2
+  itemExplosionScale: 0.7
 --- !u!1 &277205590
 GameObject:
   m_ObjectHideFlags: 0

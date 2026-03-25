@@ -69,7 +69,31 @@ MonoBehaviour:
     pitch: 1
   - name: Item Explode Sfx
     soundType: 18
-    clip: {fileID: 8300000, guid: 7bef0064f8567430cac22499c6b93d4f, type: 3}
+    clip: {fileID: 8300000, guid: 7e26c9daf4c32483b9c2790e662d3f1b, type: 3}
     isFrequent: 1
     volume: 0.2
+    pitch: 1
+  - name: Bomb Falling Whistle Sfx
+    soundType: 20
+    clip: {fileID: 8300000, guid: 6be6f34a11d1c554bb7f2ccc3beed3e1, type: 3}
+    isFrequent: 1
+    volume: 0.1
+    pitch: 1
+  - name: Bomb Explode Sfx
+    soundType: 19
+    clip: {fileID: 8300000, guid: 7bef0064f8567430cac22499c6b93d4f, type: 3}
+    isFrequent: 1
+    volume: 0.756
+    pitch: 1
+  - name: Item Explode W bombSfx
+    soundType: 21
+    clip: {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
+    isFrequent: 1
+    volume: 0.2
+    pitch: 1
+  - name: Airplane Engine Sfx
+    soundType: 11
+    clip: {fileID: 8300000, guid: 10527673ea076ce40a4cdc5174de4ada, type: 3}
+    isFrequent: 1
+    volume: 0.3
     pitch: 1

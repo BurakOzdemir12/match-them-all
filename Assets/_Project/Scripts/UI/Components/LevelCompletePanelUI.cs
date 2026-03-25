@@ -146,7 +146,7 @@ namespace _Project.Scripts.UI.Components
 
                 seq.AppendCallback(() =>
                 {
-                    SoundManager.Instance.PlaySoundByType(SoundType.PlaneSwoosh, _mainCamera.transform.position);
+                    SoundManager.Instance.PlaySoundByType(SoundType.PlaneEngine, _mainCamera.transform.position);
                 });
                 // ? Plane Spiral Effect
                 float spiralStartTime = fadeDuration + (flightDuration / 2f) - (spiralDuration / 2f);
