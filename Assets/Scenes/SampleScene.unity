@@ -3136,17 +3136,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Mechanics.Boosters.PlaneBombBoosterMechanic
   planePrefab: {fileID: 5857397102570494226, guid: 3c52f5ed9b2094abeb34f5a0d6da0250, type: 3}
-  bombPrefab: {fileID: 1757347643579741168, guid: ed0e3044f719d634aa18f650c656aca0, type: 3}
+  bombPrefab: {fileID: 3935042716755717129, guid: ca8539a7782d1d447ac6a18155e2f9ed, type: 3}
   planeFlyStartPos: {fileID: 2117157359}
   planeFlyEndPos: {fileID: 1692504850}
   flightDuration: 2.5
-  planeRotateDuration: 0
-  bombSpawnOffset: {x: 0, y: -1, z: 0}
-  bombDropDuration: 2
+  planeRotateDuration: 0.05
+  bombSpawnOffset: {x: 0, y: -0.5, z: 0}
+  bombDropDuration: 1.8
+  dropStartTimeMultiplier: 0.8
   cameraShakeDuration: 0.2
   cameraShakeStrength: 0.1
   bombExplosionScale: 2
   itemExplosionScale: 0.7
+  forceRadius: 50
+  explosionForce: 4
+  upwardsModifier: 3
 --- !u!1 &277205590
 GameObject:
   m_ObjectHideFlags: 0
@@ -17106,63 +17110,6 @@ MonoBehaviour:
   hammerHitRotationVector: {x: 0, y: 0, z: -90}
   targetPunchScale: 0.5
   hammerHitDuration: 0.3
---- !u!1001 &25857055536853320
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1757347643579741168, guid: ed0e3044f719d634aa18f650c656aca0, type: 3}
-      propertyPath: m_Name
-      value: Bomb
-      objectReference: {fileID: 0}
-    - target: {fileID: 2599453744449770707, guid: ed0e3044f719d634aa18f650c656aca0, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 192.42918
-      objectReference: {fileID: 0}
-    - target: {fileID: 2599453744449770707, guid: ed0e3044f719d634aa18f650c656aca0, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2599453744449770707, guid: ed0e3044f719d634aa18f650c656aca0, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -71.90882
-      objectReference: {fileID: 0}
-    - target: {fileID: 2599453744449770707, guid: ed0e3044f719d634aa18f650c656aca0, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2599453744449770707, guid: ed0e3044f719d634aa18f650c656aca0, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2599453744449770707, guid: ed0e3044f719d634aa18f650c656aca0, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2599453744449770707, guid: ed0e3044f719d634aa18f650c656aca0, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2599453744449770707, guid: ed0e3044f719d634aa18f650c656aca0, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2599453744449770707, guid: ed0e3044f719d634aa18f650c656aca0, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2599453744449770707, guid: ed0e3044f719d634aa18f650c656aca0, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: ed0e3044f719d634aa18f650c656aca0, type: 3}
 --- !u!114 &495774110871363377
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18195,6 +18142,5 @@ SceneRoots:
   - {fileID: 839140373}
   - {fileID: 1747995037}
   - {fileID: 2022628549}
-  - {fileID: 25857055536853320}
   - {fileID: 2117157359}
   - {fileID: 1692504850}

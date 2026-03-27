@@ -36,6 +36,9 @@ namespace _Project.Scripts.Mechanics.Boosters
         [Tooltip("Bomb Drop Duration")] [SerializeField]
         private float bombDropDuration;
 
+        [Tooltip("Drop start time multiplier for set time for Bomb drop")] [SerializeField]
+        private float dropStartTimeMultiplier;
+
         [Tooltip("Camera Shake duration")] [SerializeField]
         private float cameraShakeDuration = 0.3f;
 
@@ -48,7 +51,19 @@ namespace _Project.Scripts.Mechanics.Boosters
         [Tooltip("Item explosion anim scale")] [SerializeField]
         private float itemExplosionScale = 0.7f;
 
+        [Tooltip("Force radius")] [SerializeField]
+        private float forceRadius;
+
+        [Tooltip("Explosion Force")] [SerializeField]
+        private float explosionForce;
+
+        [Tooltip("Explosion upwards modifier")] [SerializeField]
+        private float upwardsModifier = 2f;
+
+
         private Camera _mainCamera;
+
+        private readonly Collider[] _explosionCollidersBuffer = new Collider[50];
 
         private void Awake()
         {
@@ -105,7 +120,7 @@ namespace _Project.Scripts.Mechanics.Boosters
                     }));
 
                 //? Plane Bomb drop transactions
-                float dropStartTime = (flightDuration / 2f);
+                float dropStartTime = ((flightDuration / 2) * dropStartTimeMultiplier);
                 seq.InsertCallback(dropStartTime, () => { CreateBombDropSequence(targets, plane.transform); });
 
                 seq.OnComplete(() => { Destroy(plane.gameObject); });
@@ -119,19 +134,19 @@ namespace _Project.Scripts.Mechanics.Boosters
 
             Vector3 bombSpawnPos = planesPos + bombSpawnOffset;
             GameObject bomb = Instantiate(bombPrefab, bombSpawnPos, Quaternion.identity);
+            bomb.transform.Rotate(181, -38, -44f);
 
-            Vector3 groundTargetPos = new Vector3(bombSpawnPos.x, 0f, bombSpawnPos.z);
+            Vector3 groundTargetPos = new Vector3(0, 0f, 0);
 
             Sequence bombSeq = DOTween.Sequence().SetLink(bomb.gameObject);
 
             SoundEmitter bombWhistleEmitter = null;
-            bombSeq.Append(bomb.transform.DOMove(groundTargetPos, bombDropDuration).SetEase(Ease.InQuad)
+            bombSeq.Append(bomb.transform.DOMove(groundTargetPos, bombDropDuration).SetEase(Ease.InQuad) //InCubic
                 .OnStart(() =>
                 {
                     bombWhistleEmitter =
                         SoundManager.Instance.PlaySoundByType(SoundType.BombWhistle, _mainCamera.transform.position);
-                }).OnComplete(() => { bombWhistleEmitter?.Stop(); })); //InCubic
-
+                }).OnComplete(() => { bombWhistleEmitter?.Stop(); })); 
             bombSeq.AppendCallback(() =>
             {
                 //? Bomb Explosion flow
@@ -155,9 +170,37 @@ namespace _Project.Scripts.Mechanics.Boosters
                     }
                 }
 
+                ApplyBombForceToObjects(groundTargetPos);
+
+                GameEvents.TriggerBoosterAnimationEnded(ResourceType.PlaneBombBooster);
+
                 Destroy(bomb);
             });
-            bombSeq.OnComplete(() => { GameEvents.TriggerBoosterAnimationEnded(ResourceType.PlaneBombBooster); });
         }
+
+        private void ApplyBombForceToObjects(Vector3 explosionPos)
+        {
+            int objectCount = Physics.OverlapSphereNonAlloc(explosionPos, forceRadius, _explosionCollidersBuffer);
+
+            for (var i = 0; i < objectCount; i++)
+            {
+                Collider col = _explosionCollidersBuffer[i];
+                if (!col) continue;
+
+                Rigidbody rb = col.GetComponent<Rigidbody>();
+                if (!rb) continue;
+
+                rb.AddExplosionForce(explosionForce, explosionPos, forceRadius, upwardsModifier, ForceMode.Impulse);
+            }
+        }
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+
+            Vector3 explosionRadiusPos = new Vector3(0, 0, 0) + Vector3.one * forceRadius;
+            Gizmos.DrawWireSphere(explosionRadiusPos, forceRadius);
+        }
+#endif
     }
 }
