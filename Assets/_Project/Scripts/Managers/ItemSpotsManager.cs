@@ -77,6 +77,8 @@ namespace _Project.Scripts.Managers
         public static event Action<ItemType> ItemCollected;
         public static event Action<ItemType> OnItemReturnedToBoard;
 
+        private LevelDataSo _levelData;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -102,6 +104,7 @@ namespace _Project.Scripts.Managers
             ClearAllSpots();
             activeItemsOnPool.Clear();
             isBusy = false;
+            _levelData = levelData;
         }
 
         private void HandleGameRevived(FailType type)
@@ -446,14 +449,33 @@ namespace _Project.Scripts.Managers
 
         public List<Item> GetRandomIdenticalItemsFromPool(int count)
         {
-            // Item[] itemsOnBoard = itemsParent.GetComponentsInChildren<Item>();
+            List<ItemType> goalItemTypes = _levelData.ItemLevelDataList
+                .Where(data => data.IsGoal)
+                .Select(data => data.ItemType)
+                .ToList();
 
-            var validGroups =
-                //itemsOnBoard
-                activeItemsOnPool
-                    .GroupBy(item => item.itemType)
-                    .Where(group => group.Count() >= count)
-                    .ToList();
+            var allPotentialGroups = activeItemsOnPool
+                .GroupBy(item => item.itemType)
+                .Where(group => group.Count() >= count)
+                .ToList();
+
+            var validGroups = allPotentialGroups
+                .Where(group => !goalItemTypes.Contains(group.Key))
+                .ToList();
+
+            // ! ig goal items never affected use this  
+            // var validGroups =
+            //     //itemsOnBoard
+            //     activeItemsOnPool
+            //         .Where(item => !goalItemTypes.Contains(item.itemType))
+            //         .GroupBy(item => item.itemType)
+            //         .Where(group => group.Count() >= count)
+            //         .ToList();
+
+            if (validGroups.Count == 0)
+            {
+                validGroups = allPotentialGroups;
+            }
 
             if (validGroups.Count == 0) return null;
 
