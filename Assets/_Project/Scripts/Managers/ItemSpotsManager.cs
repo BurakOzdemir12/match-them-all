@@ -441,6 +441,11 @@ namespace _Project.Scripts.Managers
         {
             if (item != null && item.gameObject != null)
             {
+                if (itemsInBar.Contains(item))
+                {
+                    itemsInBar.Remove(item);
+                }
+
                 UnregisterItemToPool(item);
                 item.transform.DOKill();
                 Destroy(item.gameObject);
@@ -454,7 +459,9 @@ namespace _Project.Scripts.Managers
                 .Select(data => data.ItemType)
                 .ToList();
 
-            var allPotentialGroups = activeItemsOnPool
+            var allActiveAndSpotItems = activeItemsOnPool.Concat(itemsInBar).ToList();
+
+            var allPotentialGroups = allActiveAndSpotItems
                 .GroupBy(item => item.itemType)
                 .Where(group => group.Count() >= count)
                 .ToList();
