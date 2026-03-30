@@ -78,7 +78,7 @@ namespace _Project.Scripts.Managers
         public static event Action<ItemType> OnItemReturnedToBoard;
 
         private LevelDataSo _levelData;
-
+     
         private void Awake()
         {
             if (Instance != null && Instance != this)

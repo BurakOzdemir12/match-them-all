@@ -20,6 +20,7 @@
         StarPop,
         PlaneEngine,
         RewardEarned,
+        PlaneSwoosh,
 
         //? Boosters sounds
         TimeRenewed,
@@ -34,6 +35,9 @@
         //? Plane bomb booster sounds
         BombExplode,
         BombWhistle,
-        ItemExplodeWBomb
+        ItemExplodeWBomb,
+
+        //? Luggage vehicle sounds
+        LuggageVehicleEngine
     }
 }

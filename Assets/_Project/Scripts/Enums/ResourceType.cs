@@ -7,6 +7,7 @@
         FreezeTimeBooster,
         HammerBooster,
         PlaneBombBooster,
-        PlaneWindBooster
+        PlaneWindBooster,
+        ReviveSlot
     }
 }

@@ -29,6 +29,8 @@ namespace _Project.Scripts.Managers
 
         private void Start()
         {
+            //! For Testing
+            AddResource(ResourceType.Coin, 100);
         }
 
         private void LoadInventory()
