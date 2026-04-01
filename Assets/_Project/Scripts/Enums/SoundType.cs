@@ -39,6 +39,10 @@
 
         //? Luggage vehicle sounds
         LuggageVehicleEngine,
-        HornHonk
+        HornHonk,
+
+        //? Heli sounds
+        HelicopterEngine,
+        WindSound,
     }
 }

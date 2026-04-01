@@ -55,6 +55,12 @@ MonoBehaviour:
     isFrequent: 1
     volume: 0.854
     pitch: 1
+  - name: Time Freeze Sfx
+    soundType: 15
+    clip: {fileID: 8300000, guid: aadd9ff1eaa683a4590ded8f8b24c3a3, type: 3}
+    isFrequent: 1
+    volume: 0.5
+    pitch: 1
   - name: Hammer Move Sfx
     soundType: 17
     clip: {fileID: 8300000, guid: d46323e22e74e46baa241cbf48c85671, type: 3}
@@ -112,6 +118,12 @@ MonoBehaviour:
   - name: Vehicle Horn Honk sfx
     soundType: 24
     clip: {fileID: 8300000, guid: 301fd4beb2d70e14b8d68b6d6e910f1a, type: 3}
+    isFrequent: 1
+    volume: 0.3
+    pitch: 1
+  - name: Helicopter Engine Sfx
+    soundType: 25
+    clip: {fileID: 8300000, guid: 6d063c5357cdc744bb73f1df44800a68, type: 3}
     isFrequent: 1
     volume: 0.3
     pitch: 1

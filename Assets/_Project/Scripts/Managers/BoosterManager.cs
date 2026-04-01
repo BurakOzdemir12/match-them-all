@@ -42,12 +42,20 @@ namespace _Project.Scripts.Managers
                     case ResourceType.PlaneBombBooster:
                         ProcessPlaneBombBooster(pos);
                         break;
+                    case ResourceType.WindBooster:
+                        ProcessWindBooster(pos);
+                        break;
                 }
             }
             else
             {
                 Debug.Log("Not enough resource to use booster");
             }
+        }
+
+        private void ProcessWindBooster(Vector3 pos)
+        {
+            WindBoosterMechanic.Instance.PlayWindBoost(pos);
         }
 
         private void ProcessPlaneBombBooster(Vector3 pos)

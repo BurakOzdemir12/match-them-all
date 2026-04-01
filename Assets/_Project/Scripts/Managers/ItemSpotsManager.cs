@@ -498,6 +498,16 @@ namespace _Project.Scripts.Managers
             return randomGroup.Take(count).ToList();
         }
 
+        public List<Item> GetAllItemsOnTheBoard()
+        {
+            List<Item> itemListOnTheBoard = activeItemsOnPool
+                .Where(item => item != null && item.gameObject != null)
+                .ToList();
+            if (itemListOnTheBoard.Count == 0) return null;
+            
+            return itemListOnTheBoard;
+        }
+
         private void OnDisable()
         {
             InputManager.OnItemClicked -= HandleItemClicked;
