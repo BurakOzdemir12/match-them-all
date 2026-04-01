@@ -4,7 +4,7 @@
     {
         //?Basic GamePlay Sounds
         ItemCollected,
-        ItemDropped,
+        ItemReturnToBoard,
         ItemSelected,
         MergeSmash,
 
@@ -38,6 +38,7 @@
         ItemExplodeWBomb,
 
         //? Luggage vehicle sounds
-        LuggageVehicleEngine
+        LuggageVehicleEngine,
+        HornHonk
     }
 }

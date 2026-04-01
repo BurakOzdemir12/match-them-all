@@ -78,7 +78,8 @@ namespace _Project.Scripts.Managers
         public static event Action<ItemType> OnItemReturnedToBoard;
 
         private LevelDataSo _levelData;
-     
+        private Camera _mainCamera;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -88,6 +89,8 @@ namespace _Project.Scripts.Managers
             }
 
             Instance = this;
+
+            _mainCamera = Camera.main;
 
             InitSpots();
         }
@@ -146,7 +149,11 @@ namespace _Project.Scripts.Managers
                             item.transform.SetParent(itemsParent, true);
                         }
                     });
-
+                    itemSeq.AppendCallback(() =>
+                    {
+                        SoundManager.Instance.PlaySoundByType(SoundType.ItemReturnToBoard,
+                            _mainCamera.transform.position);
+                    });
                     itemSeq.Append(item.transform.DOJump(randomDropPos, returnJumpPower, numJumps, returnDuration)
                         .SetEase(Ease.Linear));
                     itemSeq.Join(item.transform.DORotate(randomRotation, returnDuration, RotateMode.FastBeyond360));

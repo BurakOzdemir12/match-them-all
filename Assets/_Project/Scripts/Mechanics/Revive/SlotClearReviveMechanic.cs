@@ -42,7 +42,7 @@ namespace _Project.Scripts.Mechanics.Revive
         private void HandleGameRevived(FailType failType)
         {
             if (failType != FailType.SpotFull) return;
-            
+
             ProcessVehicleAnimation();
         }
 
@@ -65,6 +65,8 @@ namespace _Project.Scripts.Mechanics.Revive
                 vehicle.transform.DOMove(vehicleExitPos.transform.position, totalDuration)
                     .SetEase(Ease.Linear).OnStart(() =>
                     {
+                        SoundManager.Instance.PlaySoundByType(SoundType.HornHonk, _mainCamera.transform.position);
+                        seq.AppendInterval(0.3f);
                         vehicleSoundEmitter =
                             SoundManager.Instance.PlaySoundByType(SoundType.LuggageVehicleEngine,
                                 _mainCamera.transform.position);
@@ -73,9 +75,11 @@ namespace _Project.Scripts.Mechanics.Revive
                         if (vehicleSoundEmitter != null) vehicleSoundEmitter.Stop();
                     }));
 
-            GameEvents.TriggerBoosterAnimationEnded(ResourceType.ReviveSlot);
-
-            seq.OnComplete(() => Destroy(vehicle));
+            seq.OnComplete(() =>
+            {
+                GameEvents.TriggerBoosterAnimationEnded(ResourceType.ReviveSlot);
+                Destroy(vehicle);
+            });
         }
 
         private void OnDisable()

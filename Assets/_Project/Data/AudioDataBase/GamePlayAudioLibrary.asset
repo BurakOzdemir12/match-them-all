@@ -97,3 +97,21 @@ MonoBehaviour:
     isFrequent: 1
     volume: 0.3
     pitch: 1
+  - name: Luggage vehicle Engine Sfx
+    soundType: 23
+    clip: {fileID: 8300000, guid: 1185051e252b2bd44923565eaf7de5ca, type: 3}
+    isFrequent: 1
+    volume: 0.25
+    pitch: 1
+  - name: Item Return To Board (Vehicle hit Item)
+    soundType: 1
+    clip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
+    isFrequent: 1
+    volume: 0.2
+    pitch: 1
+  - name: Vehicle Horn Honk sfx
+    soundType: 24
+    clip: {fileID: 8300000, guid: 301fd4beb2d70e14b8d68b6d6e910f1a, type: 3}
+    isFrequent: 1
+    volume: 0.3
+    pitch: 1
