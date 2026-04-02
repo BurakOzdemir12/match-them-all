@@ -64,6 +64,7 @@ namespace _Project.Scripts.Mechanics.Boosters
         private Camera _mainCamera;
 
         private readonly Collider[] _explosionCollidersBuffer = new Collider[50];
+        private Vector3 groundTargetPos = new Vector3(0, 0f, 0);
 
         private void Awake()
         {
@@ -136,7 +137,7 @@ namespace _Project.Scripts.Mechanics.Boosters
             GameObject bomb = Instantiate(bombPrefab, bombSpawnPos, Quaternion.identity);
             bomb.transform.Rotate(181, -38, -44f);
 
-            Vector3 groundTargetPos = new Vector3(0, 0f, 0);
+            groundTargetPos = new Vector3(0, 0f, 0);
 
             Sequence bombSeq = DOTween.Sequence().SetLink(bomb.gameObject);
 
@@ -146,7 +147,7 @@ namespace _Project.Scripts.Mechanics.Boosters
                 {
                     bombWhistleEmitter =
                         SoundManager.Instance.PlaySoundByType(SoundType.BombWhistle, _mainCamera.transform.position);
-                }).OnComplete(() => { bombWhistleEmitter?.Stop(); })); 
+                }).OnComplete(() => { bombWhistleEmitter?.Stop(); }));
             bombSeq.AppendCallback(() =>
             {
                 //? Bomb Explosion flow
@@ -198,7 +199,7 @@ namespace _Project.Scripts.Mechanics.Boosters
         {
             Gizmos.color = Color.red;
 
-            Vector3 explosionRadiusPos = new Vector3(0, 0, 0) + Vector3.one * forceRadius;
+            Vector3 explosionRadiusPos = groundTargetPos * forceRadius;
             Gizmos.DrawWireSphere(explosionRadiusPos, forceRadius);
         }
 #endif

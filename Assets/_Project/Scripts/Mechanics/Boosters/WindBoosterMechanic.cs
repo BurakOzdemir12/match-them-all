@@ -6,6 +6,7 @@ using _Project.Scripts.Managers;
 using _Project.Scripts.Static;
 using DG.Tweening;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace _Project.Scripts.Mechanics.Boosters
 {
@@ -42,6 +43,25 @@ namespace _Project.Scripts.Mechanics.Boosters
 
         [Tooltip("Loops Count")] [SerializeField]
         private int loopsCount = 4;
+
+        [Space(5)]
+        [Header("Object Wind Settings")]
+        [Range(0f, 2f)]
+        [Tooltip("Random Range value for X")]
+        [SerializeField]
+        private float randomX;
+
+        [Tooltip("Random Range value for Y")] [Range(0.5f, 2f)] [SerializeField]
+        private float randomY;
+
+        [Tooltip("Random Range value for Z")] [Range(0f, 2f)] [SerializeField]
+        private float randomZ;
+
+        [Tooltip("How strong the wind pushes items")] [SerializeField]
+        private float windForce;
+
+        [Tooltip("How fast items spin in the ai")] [SerializeField]
+        private float windSpinTorque;
 
         private Camera _mainCamera;
 
@@ -98,8 +118,11 @@ namespace _Project.Scripts.Mechanics.Boosters
             {
                 //? This is the main effects for items, wind, objects flying aroun
                 SoundManager.Instance.PlaySoundByType(SoundType.WindSound, _mainCamera.transform.position);
+
                 List<Item> targets = ItemSpotsManager.Instance.GetAllItemsOnTheBoard();
                 if (targets == null || targets.Count == 0) return;
+
+                ApplyWindForceToObjects(targets);
             });
 
             //? Heli moves out of the screen with rotation.
@@ -118,6 +141,29 @@ namespace _Project.Scripts.Mechanics.Boosters
                 GameEvents.TriggerBoosterAnimationEnded(ResourceType.WindBooster);
                 Destroy(heli.gameObject);
             });
+        }
+
+        private void ApplyWindForceToObjects(List<Item> targets)
+        {
+            foreach (var item in targets)
+            {
+                if (item == null || item.gameObject == null || item.Rigidbody == null) continue;
+
+                Vector3 windDirection = new Vector3(
+                    Random.Range(-randomX, randomX),
+                    Random.Range(0.5f, randomY),
+                    Random.Range(-randomZ, randomZ)
+                ).normalized;
+
+                item.Rigidbody.AddForce(windDirection * windForce, ForceMode.Force);
+
+                Vector3 randomSpin = new Vector3(
+                    Random.Range(-randomX, randomX),
+                    Random.Range(0.5f, randomY),
+                    Random.Range(-randomZ, randomZ)).normalized;
+
+                item.Rigidbody.AddTorque(randomSpin * windSpinTorque, ForceMode.Force);
+            }
         }
     }
 }

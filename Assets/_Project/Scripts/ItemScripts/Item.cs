@@ -10,7 +10,8 @@ namespace _Project.Scripts.ItemScripts
     {
         [Header("Element References")] [SerializeField]
         private new Rigidbody rigidbody;
-
+        public Rigidbody Rigidbody => rigidbody;
+        
         [SerializeField] private new Collider collider;
         [SerializeField] private new Renderer renderer;
 

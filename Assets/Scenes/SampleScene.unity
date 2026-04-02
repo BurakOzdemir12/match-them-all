@@ -6531,6 +6531,11 @@ MonoBehaviour:
   heliMoveYPos: 0.5
   heliYoyoDuration: 0.5
   loopsCount: 5
+  randomX: 1
+  randomY: 1.5
+  randomZ: 1
+  windForce: 8
+  windSpinTorque: 3
 --- !u!1 &677225357
 GameObject:
   m_ObjectHideFlags: 0
