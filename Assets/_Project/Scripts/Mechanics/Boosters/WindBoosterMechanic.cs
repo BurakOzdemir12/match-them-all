@@ -34,6 +34,15 @@ namespace _Project.Scripts.Mechanics.Boosters
         [Tooltip("Heli rotate animation duration -> (Rotate Speed)")] [SerializeField]
         private float heliRotateDuration;
 
+        [Space(10)] [Tooltip("Heli move Y position")] [SerializeField]
+        private float heliMoveYPos;
+
+        [Tooltip("Heli yoyo Animation duration")] [SerializeField]
+        private float heliYoyoDuration;
+
+        [Tooltip("Loops Count")] [SerializeField]
+        private int loopsCount = 4;
+
         private Camera _mainCamera;
 
         private void Awake()
@@ -51,9 +60,6 @@ namespace _Project.Scripts.Mechanics.Boosters
 
         public void PlayWindBoost(Vector3 pos)
         {
-            List<Item> targets = ItemSpotsManager.Instance.GetAllItemsOnTheBoard();
-            if (targets == null || targets.Count == 0) return;
-
             GameEvents.TriggerBoosterAnimationStarted(ResourceType.WindBooster);
 
             GameObject heli = Instantiate(heliPrefab, heliSpawnPos.transform.position, Quaternion.identity);
@@ -61,22 +67,55 @@ namespace _Project.Scripts.Mechanics.Boosters
 
             Sequence seq = DOTween.Sequence().SetLink(heli.gameObject);
 
+            //? Helicopter moves to specified position
             SoundEmitter heliSoundEmitter = null;
-            seq.Append(heli.transform.DOMove(heliHoldPos.transform.position, heliAnimDuration).SetEase(Ease.InOutSine)
+            seq.Append(heli.transform.DOMove(heliHoldPos.transform.position, heliAnimDuration)
+                .SetEase(Ease.InOutSine)
                 .OnStart(() =>
                 {
                     heliSoundEmitter = SoundManager.Instance.PlaySoundByType(SoundType.HelicopterEngine,
                         _mainCamera.transform.position);
-                }));
-            seq.Join(heli.transform.DORotate(new Vector3(30f, 90f, 0f), heliRotateDuration, RotateMode.FastBeyond360)
-                .SetEase(Ease.InOutSine));
+                })
+            );
+            //? X rotation sets 30f while moving.
+            seq.Join(heli.transform.DORotate(new Vector3(30f, 90f, 0f), heliRotateDuration, RotateMode.Fast)
+                .SetEase(Ease.OutSine)
+            );
 
-//TODO Create Ease animation -> up down effect
-//TODO create  animation for move to end position
+            //? Just before the movement to hold pos, it rotates back to 0f X rotation.
+            float pitchBackStartTime = heliAnimDuration - heliRotateDuration;
+            seq.Insert(pitchBackStartTime,
+                heli.transform.DORotate(new Vector3(0f, 90f, 0f), heliRotateDuration, RotateMode.Fast)
+                    .SetEase(Ease.InOutSine));
+
+            //? it's lilke yoyo animation up-down up-down
+            //! Remember the formula heliYoyoDuration * loopsCount gives total animation duration
+            seq.Append(heli.transform.DOMoveY(heliMoveYPos, heliYoyoDuration)
+                .SetRelative()
+                .SetLoops(loopsCount, LoopType.Yoyo)
+                .SetEase(Ease.InOutSine)
+            ).OnStart(() =>
+            {
+                //? This is the main effects for items, wind, objects flying aroun
+                SoundManager.Instance.PlaySoundByType(SoundType.WindSound, _mainCamera.transform.position);
+                List<Item> targets = ItemSpotsManager.Instance.GetAllItemsOnTheBoard();
+                if (targets == null || targets.Count == 0) return;
+            });
+
+            //? Heli moves out of the screen with rotation.
+            seq.Append(heli.transform.DOMove(heliEndPos.transform.position, heliAnimDuration)
+                .SetEase(Ease.InOutSine)
+                .OnStart(() =>
+                {
+                    heli.transform.DORotate(new Vector3(30f, 90f, 0f), heliRotateDuration,
+                        RotateMode.FastBeyond360);
+                })
+            );
 
             seq.OnComplete(() =>
             {
                 heliSoundEmitter?.Stop();
+                GameEvents.TriggerBoosterAnimationEnded(ResourceType.WindBooster);
                 Destroy(heli.gameObject);
             });
         }
