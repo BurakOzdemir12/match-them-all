@@ -6,6 +6,7 @@
         UIDecreaseSparks,
         HammerHitItem,
         BombExplode,
-        ItemExplode
+        ItemExplode,
+        HeliPropellerWind
     }
 }

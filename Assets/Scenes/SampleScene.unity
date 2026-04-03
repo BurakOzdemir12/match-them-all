@@ -1339,6 +1339,8 @@ MonoBehaviour:
     EmitterPrefab: {fileID: 4569089827620580361, guid: ea726aa01515f6d47af581018a8cdc0c, type: 3}
   - EffectType: 3
     EmitterPrefab: {fileID: 3607530236967350222, guid: 6530791fbc688e841978d06d06ace107, type: 3}
+  - EffectType: 5
+    EmitterPrefab: {fileID: 8320996492568194270, guid: a77d552e7cfa0e44189de42f00f23e10, type: 3}
 --- !u!1 &108713091
 GameObject:
   m_ObjectHideFlags: 0
@@ -3167,7 +3169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4f080cd88404c2ba5e041921f29018c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Mechanics.Boosters.PlaneBombBoosterMechanic
-  planePrefab: {fileID: 5857397102570494226, guid: 3c52f5ed9b2094abeb34f5a0d6da0250, type: 3}
+  planePrefab: {fileID: 0}
   bombPrefab: {fileID: 3935042716755717129, guid: ca8539a7782d1d447ac6a18155e2f9ed, type: 3}
   planeFlyStartPos: {fileID: 2117157359}
   planeFlyEndPos: {fileID: 1692504850}
@@ -6531,11 +6533,11 @@ MonoBehaviour:
   heliMoveYPos: 0.5
   heliYoyoDuration: 0.5
   loopsCount: 5
-  randomX: 1
-  randomY: 1.5
-  randomZ: 1
-  windForce: 8
-  windSpinTorque: 3
+  windForce: 15
+  windSpinTorque: 5
+  pullMultiplier: 0.3
+  swirlMultiplier: 0.8
+  windScale: 3.1
 --- !u!1 &677225357
 GameObject:
   m_ObjectHideFlags: 0
@@ -11768,7 +11770,7 @@ Transform:
   m_GameObject: {fileID: 1441641041}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.79, y: 8.64, z: 0.32}
+  m_LocalPosition: {x: 4.402, y: 8.64, z: 0.32}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

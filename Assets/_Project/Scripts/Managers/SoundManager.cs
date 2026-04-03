@@ -147,7 +147,7 @@ namespace _Project.Scripts.Managers
             return emitter;
         }
 
-        public SoundEmitter PlaySoundByType(SoundType soundType, Vector3 pos)
+        public SoundEmitter PlaySoundByType(SoundType soundType, Vector3 pos, Transform followTarget = null)
         {
             SoundEntry entry = audioLibrary.GetSound(soundType);
 
@@ -158,7 +158,8 @@ namespace _Project.Scripts.Managers
                 position: pos,
                 volume: entry.volume,
                 pitch: entry.pitch,
-                isFrequent: true
+                isFrequent: true,
+                followTarget: followTarget
             );
 
             return PlaySound(soundData);

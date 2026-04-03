@@ -6,6 +6,7 @@ using _Project.Scripts.Managers;
 using _Project.Scripts.Static;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace _Project.Scripts.Mechanics.Boosters
@@ -44,26 +45,27 @@ namespace _Project.Scripts.Mechanics.Boosters
         [Tooltip("Loops Count")] [SerializeField]
         private int loopsCount = 4;
 
-        [Space(5)]
-        [Header("Object Wind Settings")]
-        [Range(0f, 2f)]
-        [Tooltip("Random Range value for X")]
-        [SerializeField]
-        private float randomX;
-
-        [Tooltip("Random Range value for Y")] [Range(0.5f, 2f)] [SerializeField]
-        private float randomY;
-
-        [Tooltip("Random Range value for Z")] [Range(0f, 2f)] [SerializeField]
-        private float randomZ;
-
-        [Tooltip("How strong the wind pushes items")] [SerializeField]
+        [Space(5)] [Header("Object Wind Settings")] [Tooltip("How strong the wind pushes items")] [SerializeField]
         private float windForce;
 
         [Tooltip("How fast items spin in the ai")] [SerializeField]
         private float windSpinTorque;
 
+        [Tooltip("How much the items are pulled towards the center of the hose")] [SerializeField]
+        private float pullMultiplier = 0.3f;
+
+        [Tooltip("How much the items swirl around the center of the hose")] [SerializeField]
+        private float swirlMultiplier = 0.8f;
+
+        [Tooltip("Wind Effect Scale")] [SerializeField]
+        private float windScale = 3.1f;
+
         private Camera _mainCamera;
+
+        private bool _isWindBlowing = false;
+        private float _currentWindMultiplier = 0f;
+        private List<Item> _targets = new List<Item>();
+
 
         private void Awake()
         {
@@ -76,6 +78,39 @@ namespace _Project.Scripts.Mechanics.Boosters
             Instance = this;
 
             _mainCamera = Camera.main;
+        }
+
+        private void FixedUpdate()
+        {
+            if (!_isWindBlowing || _targets == null || _targets.Count == 0) return;
+            Vector3 windCenter = new Vector3(0, 0, 0);
+
+            foreach (var item in _targets)
+            {
+                if (!item || !item.gameObject || !item.Rigidbody) continue;
+
+                //? Lifting Force (to overcome Gravity)
+                Vector3 liftForce = Vector3.up * (windForce * _currentWindMultiplier);
+
+                //? Hose-Vorty Force (Circular Rotation)
+                Vector3 directionFromCenter = item.transform.position - windCenter;
+                directionFromCenter.y = 0;
+
+                //? Cross finds the direction that will rotate the object AROUND the center rather than towards it.
+                Vector3 swirlDirection = Vector3.Cross(directionFromCenter.normalized, Vector3.up);
+                Vector3 swirlForce = swirlDirection * (windForce * swirlMultiplier * _currentWindMultiplier);
+
+                //?Drawing Force (To prevent objects from moving too far left and right, but to gather in the center of the hose)
+                Vector3 pullForce = -directionFromCenter.normalized *
+                                    (windForce * pullMultiplier * _currentWindMultiplier);
+
+                //? Applying all forces
+                item.Rigidbody.AddForce(liftForce + swirlForce + pullForce, ForceMode.Force);
+
+                //? Add Torque to Objects 
+                item.Rigidbody.AddTorque(Random.onUnitSphere * (windSpinTorque * _currentWindMultiplier),
+                    ForceMode.Force);
+            }
         }
 
         public void PlayWindBoost(Vector3 pos)
@@ -94,36 +129,53 @@ namespace _Project.Scripts.Mechanics.Boosters
                 .OnStart(() =>
                 {
                     heliSoundEmitter = SoundManager.Instance.PlaySoundByType(SoundType.HelicopterEngine,
-                        _mainCamera.transform.position);
+                        heli.transform.position, followTarget: heli.transform);
                 })
             );
             //? X rotation sets 30f while moving.
             seq.Join(heli.transform.DORotate(new Vector3(30f, 90f, 0f), heliRotateDuration, RotateMode.Fast)
                 .SetEase(Ease.OutSine)
             );
-
             //? Just before the movement to hold pos, it rotates back to 0f X rotation.
             float pitchBackStartTime = heliAnimDuration - heliRotateDuration;
             seq.Insert(pitchBackStartTime,
                 heli.transform.DORotate(new Vector3(0f, 90f, 0f), heliRotateDuration, RotateMode.Fast)
                     .SetEase(Ease.InOutSine));
 
+            seq.AppendCallback(() =>
+            {
+                //? This is the main effects for items, wind, objects flying aroun
+                SoundManager.Instance.PlaySoundByType(SoundType.WindSound, _mainCamera.transform.position);
+
+                EffectEmitter windEffectEmitter = null;
+                windEffectEmitter = EffectManager.Instance.PlayEffect(EffectType.HeliPropellerWind,
+                    heliHoldPos.transform.position,
+                    null,
+                    windScale);
+
+                _targets = ItemSpotsManager.Instance.GetAllItemsOnTheBoard();
+                if (_targets == null || _targets.Count == 0) return;
+
+                _isWindBlowing = true;
+                _currentWindMultiplier = 0f;
+
+                float totalWindApplyDuration = heliYoyoDuration * loopsCount;
+                DOVirtual.Float(0f, 1f, totalWindApplyDuration / 2f, v => _currentWindMultiplier = v)
+                    .SetLoops(2, LoopType.Yoyo)
+                    .SetEase(Ease.InOutSine)
+                    .OnComplete(() =>
+                    {
+                        windEffectEmitter?.Stop();
+                        _isWindBlowing = false;
+                    });
+            });
             //? it's lilke yoyo animation up-down up-down
             //! Remember the formula heliYoyoDuration * loopsCount gives total animation duration
             seq.Append(heli.transform.DOMoveY(heliMoveYPos, heliYoyoDuration)
                 .SetRelative()
                 .SetLoops(loopsCount, LoopType.Yoyo)
                 .SetEase(Ease.InOutSine)
-            ).OnStart(() =>
-            {
-                //? This is the main effects for items, wind, objects flying aroun
-                SoundManager.Instance.PlaySoundByType(SoundType.WindSound, _mainCamera.transform.position);
-
-                List<Item> targets = ItemSpotsManager.Instance.GetAllItemsOnTheBoard();
-                if (targets == null || targets.Count == 0) return;
-
-                ApplyWindForceToObjects(targets);
-            });
+            );
 
             //? Heli moves out of the screen with rotation.
             seq.Append(heli.transform.DOMove(heliEndPos.transform.position, heliAnimDuration)
@@ -141,29 +193,6 @@ namespace _Project.Scripts.Mechanics.Boosters
                 GameEvents.TriggerBoosterAnimationEnded(ResourceType.WindBooster);
                 Destroy(heli.gameObject);
             });
-        }
-
-        private void ApplyWindForceToObjects(List<Item> targets)
-        {
-            foreach (var item in targets)
-            {
-                if (item == null || item.gameObject == null || item.Rigidbody == null) continue;
-
-                Vector3 windDirection = new Vector3(
-                    Random.Range(-randomX, randomX),
-                    Random.Range(0.5f, randomY),
-                    Random.Range(-randomZ, randomZ)
-                ).normalized;
-
-                item.Rigidbody.AddForce(windDirection * windForce, ForceMode.Force);
-
-                Vector3 randomSpin = new Vector3(
-                    Random.Range(-randomX, randomX),
-                    Random.Range(0.5f, randomY),
-                    Random.Range(-randomZ, randomZ)).normalized;
-
-                item.Rigidbody.AddTorque(randomSpin * windSpinTorque, ForceMode.Force);
-            }
         }
     }
 }

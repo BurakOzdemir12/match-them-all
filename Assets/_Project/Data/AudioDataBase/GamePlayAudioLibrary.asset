@@ -125,5 +125,5 @@ MonoBehaviour:
     soundType: 25
     clip: {fileID: 8300000, guid: 6d063c5357cdc744bb73f1df44800a68, type: 3}
     isFrequent: 1
-    volume: 0.3
+    volume: 1
     pitch: 1
