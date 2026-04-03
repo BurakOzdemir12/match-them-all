@@ -16,6 +16,8 @@ namespace _Project.Scripts.Managers
 
         public LinkedListNode<SoundEmitter> PoolNode { get; set; }
 
+        private Transform _followTarget;
+
         private void Awake()
         {
             _audioSource = GetComponent<AudioSource>();
@@ -24,12 +26,13 @@ namespace _Project.Scripts.Managers
         public void Initialize(SoundData data, IObjectPool<SoundEmitter> poolRef)
         {
             this._pool = poolRef;
+            this._followTarget = data.FollowTarget;
             transform.position = data.Position;
 
             _audioSource.clip = data.Clip;
             _audioSource.volume = data.Volume;
             _audioSource.pitch = data.Pitch;
-            
+
             _audioSource.spatialBlend = 1f;
             _audioSource.minDistance = 1f;
             _audioSource.maxDistance = 25f;
@@ -49,7 +52,15 @@ namespace _Project.Scripts.Managers
 
         private IEnumerator WaitForSoundEnd()
         {
-            yield return new WaitWhile(() => _audioSource.isPlaying);
+            yield return new WaitWhile(() =>
+            {
+                if (_followTarget != null)
+                {
+                    transform.position = _followTarget.position;
+                }
+
+                return _audioSource.isPlaying;
+            });
             Stop();
         }
 

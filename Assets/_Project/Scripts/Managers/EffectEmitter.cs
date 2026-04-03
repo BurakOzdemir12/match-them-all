@@ -12,6 +12,7 @@ namespace _Project.Scripts.Managers
     {
         private ParticleSystem _particleSystem;
         private IObjectPool<EffectEmitter> _pool;
+        private Coroutine _playingCoroutine;
 
         private void Awake()
         {
@@ -41,8 +42,13 @@ namespace _Project.Scripts.Managers
 
         public void Play()
         {
+            if (_playingCoroutine != null)
+            {
+                StopCoroutine(_playingCoroutine);
+            }
+
             _particleSystem.Play(true);
-            StartCoroutine(WaitForEffectEnd());
+            _playingCoroutine = StartCoroutine(WaitForEffectEnd());
         }
 
         private IEnumerator WaitForEffectEnd()
@@ -53,6 +59,12 @@ namespace _Project.Scripts.Managers
 
         public void Stop()
         {
+            if (_playingCoroutine != null)
+            {
+                StopCoroutine(_playingCoroutine);
+                _playingCoroutine = null;
+            }
+
             _particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             _pool?.Release(this);
         }

@@ -89,12 +89,13 @@ namespace _Project.Scripts.Managers
         }
 
 
-        public void PlayEffect(EffectType type, Vector3 position, Transform parent = null, float? customScale = null)
+        public EffectEmitter PlayEffect(EffectType type, Vector3 position, Transform parent = null,
+            float? customScale = null)
         {
-            if (!effectPools.TryGetValue(type, out var pool)) return;
+            if (!effectPools.TryGetValue(type, out var pool)) return null;
 
             float finalScale = customScale ?? defaultScale;
-            
+
             EffectData data = new EffectData(
                 position: position,
                 rotation: Quaternion.identity,
@@ -104,6 +105,8 @@ namespace _Project.Scripts.Managers
             EffectEmitter emitter = pool.Get();
             emitter.Initialize(data, pool);
             emitter.Play();
+
+            return emitter;
         }
 
         private void OnDisable()
