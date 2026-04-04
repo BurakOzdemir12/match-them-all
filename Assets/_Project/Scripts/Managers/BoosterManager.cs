@@ -1,6 +1,8 @@
 ﻿using System;
 using _Project.Scripts.Enums;
+using _Project.Scripts.LevelDesign.ScriptableObjects;
 using _Project.Scripts.Mechanics.Boosters;
+using _Project.Scripts.Static;
 using _Project.Scripts.UI.Components;
 using UnityEngine;
 
@@ -9,7 +11,7 @@ namespace _Project.Scripts.Managers
     public class BoosterManager : MonoBehaviour
     {
         public static BoosterManager Instance { get; private set; }
-
+        private bool _isLevelFinishing;
 
         private void Awake()
         {
@@ -25,10 +27,20 @@ namespace _Project.Scripts.Managers
         private void OnEnable()
         {
             BoosterCardUI.OnBoosterUseRequested += TryUseBooster;
+
+            GameEvents.OnLevelFinishing += HandleLevelFinishing;
+            GameEvents.OnLevelStarted += HandleLevelStarted;
+            GameEvents.OnGameRevived += HandleGameRevived;
         }
+
+        private void HandleLevelFinishing() => _isLevelFinishing = true;
+        private void HandleLevelStarted(LevelDataSo data) => _isLevelFinishing = false;
+        private void HandleGameRevived(FailType type) => _isLevelFinishing = false;
 
         private void TryUseBooster(ResourceType type, int amount, Vector3 pos)
         {
+            if (_isLevelFinishing) return;
+
             if (EconomyManager.Instance.TrySpendResource(type, amount))
             {
                 switch (type)
@@ -76,6 +88,10 @@ namespace _Project.Scripts.Managers
         private void OnDisable()
         {
             BoosterCardUI.OnBoosterUseRequested -= TryUseBooster;
+
+            GameEvents.OnLevelFinishing -= HandleLevelFinishing;
+            GameEvents.OnLevelStarted -= HandleLevelStarted;
+            GameEvents.OnGameRevived -= HandleGameRevived;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using _Project.Scripts.Enums;
 using _Project.Scripts.ItemScripts;
+using _Project.Scripts.LevelDesign.ScriptableObjects;
 using _Project.Scripts.Managers;
 using _Project.Scripts.Static;
 using DG.Tweening;
@@ -66,6 +67,10 @@ namespace _Project.Scripts.Mechanics.Boosters
         private float _currentWindMultiplier = 0f;
         private List<Item> _targets = new List<Item>();
 
+        private bool _isWorking = false;
+        private GameObject _activeWind;
+        private Sequence _activeSequence;
+        private SoundEmitter _heliSoundEmitter = null;
 
         private void Awake()
         {
@@ -113,36 +118,46 @@ namespace _Project.Scripts.Mechanics.Boosters
             }
         }
 
+        private void OnEnable()
+        {
+            GameEvents.OnLevelStarted += HandleLevelStarted;
+            GameEvents.OnGameRevived += HandleGameRevived;
+        }
+
+        private void HandleLevelStarted(LevelDataSo data) => AbortAndRefund();
+        private void HandleGameRevived(FailType type) => AbortAndRefund();
+
         public void PlayWindBoost(Vector3 pos)
         {
+            _isWorking = true;
             GameEvents.TriggerBoosterAnimationStarted(ResourceType.WindBooster);
 
-            GameObject heli = Instantiate(heliPrefab, heliSpawnPos.transform.position, Quaternion.identity);
-            heli.transform.localScale = Vector3.one * heliScale;
+            _activeWind = Instantiate(heliPrefab, heliSpawnPos.transform.position, Quaternion.identity);
+            _activeWind.transform.localScale = Vector3.one * heliScale;
 
-            Sequence seq = DOTween.Sequence().SetLink(heli.gameObject);
+            _activeSequence = DOTween.Sequence().SetLink(_activeWind.gameObject);
 
             //? Helicopter moves to specified position
-            SoundEmitter heliSoundEmitter = null;
-            seq.Append(heli.transform.DOMove(heliHoldPos.transform.position, heliAnimDuration)
+            _activeSequence.Append(_activeWind.transform.DOMove(heliHoldPos.transform.position, heliAnimDuration)
                 .SetEase(Ease.InOutSine)
                 .OnStart(() =>
                 {
-                    heliSoundEmitter = SoundManager.Instance.PlaySoundByType(SoundType.HelicopterEngine,
-                        heli.transform.position, followTarget: heli.transform);
+                    _heliSoundEmitter = SoundManager.Instance.PlaySoundByType(SoundType.HelicopterEngine,
+                        _activeWind.transform.position, followTarget: _activeWind.transform);
                 })
             );
             //? X rotation sets 30f while moving.
-            seq.Join(heli.transform.DORotate(new Vector3(30f, 90f, 0f), heliRotateDuration, RotateMode.Fast)
+            _activeSequence.Join(_activeWind.transform
+                .DORotate(new Vector3(30f, 90f, 0f), heliRotateDuration, RotateMode.Fast)
                 .SetEase(Ease.OutSine)
             );
             //? Just before the movement to hold pos, it rotates back to 0f X rotation.
             float pitchBackStartTime = heliAnimDuration - heliRotateDuration;
-            seq.Insert(pitchBackStartTime,
-                heli.transform.DORotate(new Vector3(0f, 90f, 0f), heliRotateDuration, RotateMode.Fast)
+            _activeSequence.Insert(pitchBackStartTime,
+                _activeWind.transform.DORotate(new Vector3(0f, 90f, 0f), heliRotateDuration, RotateMode.Fast)
                     .SetEase(Ease.InOutSine));
 
-            seq.AppendCallback(() =>
+            _activeSequence.AppendCallback(() =>
             {
                 //? This is the main effects for items, wind, objects flying aroun
                 SoundManager.Instance.PlaySoundByType(SoundType.WindSound, _mainCamera.transform.position);
@@ -171,28 +186,56 @@ namespace _Project.Scripts.Mechanics.Boosters
             });
             //? it's lilke yoyo animation up-down up-down
             //! Remember the formula heliYoyoDuration * loopsCount gives total animation duration
-            seq.Append(heli.transform.DOMoveY(heliMoveYPos, heliYoyoDuration)
+            _activeSequence.Append(_activeWind.transform.DOMoveY(heliMoveYPos, heliYoyoDuration)
                 .SetRelative()
                 .SetLoops(loopsCount, LoopType.Yoyo)
                 .SetEase(Ease.InOutSine)
             );
 
             //? Heli moves out of the screen with rotation.
-            seq.Append(heli.transform.DOMove(heliEndPos.transform.position, heliAnimDuration)
+            _activeSequence.Append(_activeWind.transform.DOMove(heliEndPos.transform.position, heliAnimDuration)
                 .SetEase(Ease.InOutSine)
                 .OnStart(() =>
                 {
-                    heli.transform.DORotate(new Vector3(30f, 90f, 0f), heliRotateDuration,
+                    _activeWind.transform.DORotate(new Vector3(30f, 90f, 0f), heliRotateDuration,
                         RotateMode.FastBeyond360);
                 })
             );
 
-            seq.OnComplete(() =>
+            _activeSequence.OnComplete(() =>
             {
-                heliSoundEmitter?.Stop();
+                _isWorking = false;
+                _heliSoundEmitter?.Stop();
+
+                Destroy(_activeWind.gameObject);
+                _activeWind = null;
                 GameEvents.TriggerBoosterAnimationEnded(ResourceType.WindBooster);
-                Destroy(heli.gameObject);
             });
+        }
+
+        private void AbortAndRefund()
+        {
+            if (_isWorking)
+            {
+                _isWorking = false;
+                _isWindBlowing = false;
+
+                Debug.Log("Wind Booster amount returned because didnt completed");
+
+                EconomyManager.Instance.AddResource(ResourceType.WindBooster, 1);
+
+                _heliSoundEmitter?.Stop();
+                if (_activeSequence != null) _activeSequence.Kill();
+                if (_activeWind != null) Destroy(_activeWind);
+
+                GameEvents.TriggerBoosterAnimationEnded(ResourceType.WindBooster);
+            }
+        }
+
+        private void OnDisable()
+        {
+            GameEvents.OnLevelStarted -= HandleLevelStarted;
+            GameEvents.OnGameRevived -= HandleGameRevived;
         }
     }
 }

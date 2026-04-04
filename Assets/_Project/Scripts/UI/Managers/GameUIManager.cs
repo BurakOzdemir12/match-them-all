@@ -2,6 +2,7 @@
 using _Project.Scripts.Enums;
 using _Project.Scripts.Static;
 using _Project.Scripts.UI.Components;
+using DG.Tweening;
 using UnityEngine;
 
 namespace _Project.Scripts.UI.Managers
@@ -28,6 +29,9 @@ namespace _Project.Scripts.UI.Managers
 
         [Tooltip("paused panel In Game")] [SerializeField]
         private GameObject pauseGamePanel;
+
+        [Tooltip("Canvas group for gameplay UI, used for fading in/out during transitions")] [SerializeField]
+        private CanvasGroup gamePlayCanvasGroup;
 
         [Header("Warning Carousel Controller")] [SerializeField]
         private SecondChancePanelUI noSpotLeftSecondChance;
@@ -60,7 +64,7 @@ namespace _Project.Scripts.UI.Managers
 
         private void HandleGameFailed(FailType failType)
         {
-            gamePlayPanel.SetActive(false);
+            HideGamePlayPanel();
 
             switch (failType)
             {
@@ -77,6 +81,7 @@ namespace _Project.Scripts.UI.Managers
 
         private void HandleLevelCompleted()
         {
+            HideGamePlayPanel();
             levelCompletedPanel.SetActive(true);
         }
 
@@ -93,13 +98,33 @@ namespace _Project.Scripts.UI.Managers
         private void ResetPanels()
         {
             mainMenu.SetActive(false);
-            gamePlayPanel.SetActive(true);
-
             timeIsUpPanel.SetActive(false);
             noSpaceLeftPanel.SetActive(false);
             gameOverPanel.SetActive(false);
             levelCompletedPanel.SetActive(false);
             pauseGamePanel.SetActive(false);
+
+            ShowGamePlayPanel();
+        }
+
+        private void ShowGamePlayPanel()
+        {
+            if (gamePlayCanvasGroup == null) return;
+
+            gamePlayCanvasGroup.DOKill();
+            gamePlayCanvasGroup.DOFade(1f, 0.3f).SetUpdate(true);
+            gamePlayCanvasGroup.interactable = true;
+            gamePlayCanvasGroup.blocksRaycasts = true;
+        }
+
+        private void HideGamePlayPanel()
+        {
+            if (gamePlayCanvasGroup == null) return;
+
+            gamePlayCanvasGroup.DOKill();
+            gamePlayCanvasGroup.DOFade(0f, 0.3f).SetUpdate(true);
+            gamePlayCanvasGroup.interactable = false;
+            gamePlayCanvasGroup.blocksRaycasts = false;
         }
 
         private void OnDisable()

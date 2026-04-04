@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using _Project.Scripts.Enums;
 using _Project.Scripts.ItemScripts;
+using _Project.Scripts.LevelDesign.ScriptableObjects;
 using _Project.Scripts.Managers;
 using _Project.Scripts.Static;
 using _Project.Scripts.Structs;
@@ -39,6 +40,10 @@ namespace _Project.Scripts.Mechanics.Boosters
 
         private Camera _mainCamera;
 
+        private bool _isWorking = false;
+        private GameObject _activeHammer;
+        private Sequence _activeSequence;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -52,25 +57,34 @@ namespace _Project.Scripts.Mechanics.Boosters
             _mainCamera = Camera.main;
         }
 
+        private void OnEnable()
+        {
+            GameEvents.OnLevelStarted += HandleLevelStarted;
+            GameEvents.OnGameRevived += HandleGameRevived;
+        }
+
+        private void HandleLevelStarted(LevelDataSo data) => AbortAndRefund();
+        private void HandleGameRevived(FailType type) => AbortAndRefund();
+
         public void PlayHammerBoost(Vector3 pos)
         {
             List<Item> targets = ItemSpotsManager.Instance.GetRandomIdenticalItemsFromPool(3);
             if (targets == null || targets.Count < 3) return;
 
-
+            _isWorking = true;
             GameEvents.TriggerBoosterAnimationStarted(ResourceType.HammerBooster);
 
-            GameObject hammer = Instantiate(hammerPrefab, pos,
+            _activeHammer = Instantiate(hammerPrefab, pos,
                 Quaternion.identity);
-            
-            hammer.transform.localScale = Vector3.one * hammerScale;
 
-            Sequence seq = DOTween.Sequence().SetLink(hammer.gameObject);
+            _activeHammer.transform.localScale = Vector3.one * hammerScale;
+
+             _activeSequence = DOTween.Sequence().SetLink(_activeHammer.gameObject);
 
             foreach (var target in targets)
             {
                 Vector3 targetPos = target.transform.position;
-                Vector3 directionToTarget = (targetPos - hammer.transform.position).normalized;
+                Vector3 directionToTarget = (targetPos - _activeHammer.transform.position).normalized;
                 directionToTarget.y = 0;
 
                 Quaternion lookRotation = Quaternion.LookRotation(directionToTarget);
@@ -78,26 +92,26 @@ namespace _Project.Scripts.Mechanics.Boosters
 
                 targetEuler.y = -90f;
 
-                seq.AppendCallback(() =>
+                _activeSequence.AppendCallback(() =>
                 {
                     SoundManager.Instance.PlaySoundByType(SoundType.HammerMove, _mainCamera.transform.position);
                 });
 
                 //? Hammer moves to the target pos with specified offset
-                seq.Append(hammer.transform.DOMove(targetPos + hammerMovePosOffset, hammerMoveDuration)
+                _activeSequence.Append(_activeHammer.transform.DOMove(targetPos + hammerMovePosOffset, hammerMoveDuration)
                     .SetEase(Ease.OutQuad));
 
                 //? Hammer rotates to look at the target -> with euler.y = -90, because flat face must look to the object
-                seq.Join(hammer.transform.DORotate(targetEuler, hammerRotateDuration, RotateMode.Fast)
+                _activeSequence.Join(_activeHammer.transform.DORotate(targetEuler, hammerRotateDuration, RotateMode.Fast)
                     .SetEase(Ease.OutQuad));
 
                 //? This is basically hammering action -> set Vector z = -90 its perfectly plays
-                seq.Append(hammer.transform
+                _activeSequence.Append(_activeHammer.transform
                     .DORotate(hammerHitRotationVector, hammerHitDuration, RotateMode.LocalAxisAdd)
                     .SetEase(Ease.InBack));
 
                 //? whenever hit animation complete play sound or decrease goal or something else
-                seq.AppendCallback(() =>
+                _activeSequence.AppendCallback(() =>
                 {
                     GameEvents.TriggerBoosterUseRequested(ResourceType.HammerBooster, target);
 
@@ -105,14 +119,14 @@ namespace _Project.Scripts.Mechanics.Boosters
                         customScale: 0.35f);
 
                     SoundManager.Instance.PlaySoundByType(SoundType.HammerHit, _mainCamera.transform.position);
-                    seq.AppendInterval(0.3f);
+                    _activeSequence.AppendInterval(0.3f);
                 });
 
                 //? This is the hit Target object explosion effect
-                seq.Append(target.transform.DOPunchScale(Vector3.one * targetPunchScale, 0.2f)
+                _activeSequence.Append(target.transform.DOPunchScale(Vector3.one * targetPunchScale, 0.2f)
                     .SetEase(Ease.OutElastic));
 
-                seq.AppendCallback(() =>
+                _activeSequence.AppendCallback(() =>
                 {
                     SoundManager.Instance.PlaySoundByType(SoundType.ItemExplode, _mainCamera.transform.position);
 
@@ -120,10 +134,10 @@ namespace _Project.Scripts.Mechanics.Boosters
                 });
 
                 //? Just before the returning back to the spawn pos move a little bit higher
-                seq.Append(hammer.transform.DOMoveY(targetPos.y + 1f, 0f));
+                _activeSequence.Append(_activeHammer.transform.DOMoveY(targetPos.y + 1f, 0f));
             }
 
-            seq.OnComplete(() =>
+            _activeSequence.OnComplete(() =>
             {
                 //? Animation ends then publish event icon must listen for fade in fade out transactions.
                 GameEvents.TriggerBoosterAnimationEnded(ResourceType.HammerBooster);
@@ -131,11 +145,41 @@ namespace _Project.Scripts.Mechanics.Boosters
                 //? Hammer Return back to the first spawned position.
                 Sequence finishSeq = DOTween.Sequence().SetLink(this.gameObject);
 
-                finishSeq.Join(hammer.transform.DOMove(pos, hammerMoveDuration)
+                finishSeq.Join(_activeHammer.transform.DOMove(pos, hammerMoveDuration)
                     .SetEase(Ease.OutQuad));
 
-                finishSeq.OnComplete(() => { Destroy(hammer); });
+                finishSeq.OnComplete(() =>
+                {
+                    _isWorking = false;
+                    Destroy(_activeHammer);
+                    _activeHammer = null;
+                });
             });
+        }
+
+        //? If player dies or level completed while the animation is still playing,
+        //?it must be stopped and booster amount must be returned to the player.
+        private void AbortAndRefund()
+        {
+            if (_isWorking) 
+            {
+                _isWorking = false; 
+
+                Debug.Log("Hammer Booster didnt completed amount will return back!");
+
+                EconomyManager.Instance.AddResource(ResourceType.HammerBooster, 1);
+
+                if (_activeSequence != null) _activeSequence.Kill();
+                if (_activeHammer != null) Destroy(_activeHammer);
+
+                GameEvents.TriggerBoosterAnimationEnded(ResourceType.HammerBooster);
+            }
+        }
+
+        private void OnDisable()
+        {
+            GameEvents.OnLevelStarted -= HandleLevelStarted;
+            GameEvents.OnGameRevived -= HandleGameRevived;
         }
     }
 }

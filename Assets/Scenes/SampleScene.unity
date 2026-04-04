@@ -7530,6 +7530,7 @@ MonoBehaviour:
   gameOverPanel: {fileID: 1332531889}
   levelCompletedPanel: {fileID: 207369495}
   pauseGamePanel: {fileID: 769980465}
+  gamePlayCanvasGroup: {fileID: 2021856302}
   noSpotLeftSecondChance: {fileID: 2120137401}
   timeIsUpSecondChance: {fileID: 778981687}
 --- !u!1 &809719812
@@ -16530,6 +16531,7 @@ GameObject:
   - component: {fileID: 2021856299}
   - component: {fileID: 2021856301}
   - component: {fileID: 2021856300}
+  - component: {fileID: 2021856302}
   m_Layer: 0
   m_Name: '[GAME]'
   m_TagString: Untagged
@@ -16597,6 +16599,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2021856298}
   m_CullTransparentMesh: 1
+--- !u!225 &2021856302
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2021856298}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &2022628547
 GameObject:
   m_ObjectHideFlags: 0

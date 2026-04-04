@@ -1,5 +1,6 @@
 ﻿using System;
 using _Project.Scripts.Enums;
+using _Project.Scripts.LevelDesign.ScriptableObjects;
 using _Project.Scripts.Managers;
 using _Project.Scripts.Static;
 using DG.Tweening;
@@ -20,6 +21,7 @@ namespace _Project.Scripts.UI.Components
         public static event Action<ResourceType, int, Vector3> OnBoosterUseRequested;
 
         private Camera _mainCamera;
+        private int currentAmount;
 
         private void Awake()
         {
@@ -32,6 +34,10 @@ namespace _Project.Scripts.UI.Components
             EconomyManager.OnResourceAmountChanged += HandleResourceAmountChanged;
             GameEvents.OnBoosterAnimationStarted += HandleBoosterAnimationStarted;
             GameEvents.OnBoosterAnimationEnded += HandleBoosterAnimationEnded;
+            GameEvents.OnLevelFinishing += HandleLevelFinishing;
+            GameEvents.OnGameRevived += HandleLevelRevived;
+            GameEvents.OnLevelStarted += HandleLevelStarted;
+
         }
 
         private void Start()
@@ -39,13 +45,45 @@ namespace _Project.Scripts.UI.Components
             //! This is for test don't forget to delete it.
             EconomyManager.Instance.SetResource(myBoosterType, 3);
 
-            int currentAmount = EconomyManager.Instance.GetResourceAmount(myBoosterType);
+            currentAmount = EconomyManager.Instance.GetResourceAmount(myBoosterType);
             UpdateBoosterAmount(currentAmount);
+
+            if (boosterButton != null) boosterButton.interactable = true;
+        }
+
+        private void HandleLevelStarted(LevelDataSo obj)
+        {
+            if (boosterButton != null) boosterButton.interactable = true;
+            Fade(1f, 0.1f);
+
+            currentAmount = EconomyManager.Instance.GetResourceAmount(myBoosterType);
+            UpdateBoosterAmount(currentAmount);
+        }
+
+        private void HandleLevelRevived(FailType failType)
+        {
+            if (boosterButton != null) boosterButton.interactable = true;
+            Fade(1f, 0.1f);
+
+            currentAmount = EconomyManager.Instance.GetResourceAmount(myBoosterType);
+            UpdateBoosterAmount(currentAmount);
+        }
+
+        private void HandleLevelFinishing()
+        {
+            if (boosterButton != null) boosterButton.interactable = false;
         }
 
         private void HandleBoosterAnimationEnded(ResourceType type)
         {
-            if (boosterButton != null) boosterButton.interactable = true;
+            currentAmount = EconomyManager.Instance.GetResourceAmount(myBoosterType);
+
+            UpdateBoosterAmount(currentAmount);
+
+            if (boosterButton != null && currentAmount > 0)
+            {
+                boosterButton.interactable = true;
+            }
 
             if (type != myBoosterType) return;
             Fade(1, 0.3f);
@@ -61,9 +99,23 @@ namespace _Project.Scripts.UI.Components
 
         private void Fade(float value, float duration)
         {
-            if (boosterIcon != null) boosterIcon.DOFade(value, duration);
-            if (boosterAmountText != null) boosterAmountText.DOFade(value, duration);
-            if (boosterAmountIcon != null) boosterAmountIcon.DOFade(value, duration);
+            if (boosterIcon != null)
+            {
+                boosterIcon.DOKill();
+                boosterIcon.DOFade(value, duration).SetUpdate(true);
+            }
+
+            if (boosterAmountText != null)
+            {
+                boosterAmountText.DOKill();
+                boosterAmountText.DOFade(value, duration).SetUpdate(true);
+            }
+
+            if (boosterAmountIcon != null)
+            {
+                boosterAmountIcon.DOKill();
+                boosterAmountIcon.DOFade(value, duration).SetUpdate(true);
+            }
         }
 
         private void HandleResourceAmountChanged(ResourceType type, int amount)
@@ -93,8 +145,15 @@ namespace _Project.Scripts.UI.Components
             EconomyManager.OnResourceAmountChanged -= HandleResourceAmountChanged;
             GameEvents.OnBoosterAnimationStarted -= HandleBoosterAnimationStarted;
             GameEvents.OnBoosterAnimationEnded -= HandleBoosterAnimationEnded;
+            GameEvents.OnLevelFinishing -= HandleLevelFinishing;
+            GameEvents.OnGameRevived -= HandleLevelRevived;
+            GameEvents.OnLevelStarted -= HandleLevelStarted;
+
 
             this.gameObject.transform.DOKill();
+            if (boosterIcon != null) boosterIcon.DOKill();
+            if (boosterAmountText != null) boosterAmountText.DOKill();
+            if (boosterAmountIcon != null) boosterAmountIcon.DOKill();
         }
     }
 }
