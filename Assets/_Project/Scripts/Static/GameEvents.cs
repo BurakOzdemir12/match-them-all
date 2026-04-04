@@ -16,6 +16,7 @@ namespace _Project.Scripts.Static
 
         public static event Action<FailType> OnReviveRequested;
         public static event Action<FailType> OnGameRevived;
+        public static event Action OnGameOver;
 
         #region Booster Events
 
@@ -58,6 +59,11 @@ namespace _Project.Scripts.Static
         public static void TriggerReviveRequested(FailType failType)
         {
             OnReviveRequested?.Invoke(failType);
+        }
+
+        public static void TriggerGameOver()
+        {
+            OnGameOver?.Invoke();
         }
 
         #region Booster Events

@@ -44,5 +44,8 @@
         //? Heli sounds
         HelicopterEngine,
         WindSound,
+
+        //? Main game over sound
+        GameOver
     }
 }

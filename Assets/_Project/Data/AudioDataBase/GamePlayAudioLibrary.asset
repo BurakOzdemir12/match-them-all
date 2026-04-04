@@ -51,9 +51,21 @@ MonoBehaviour:
     pitch: 1
   - name: Main LevelComplete Sound
     soundType: 8
-    clip: {fileID: 8300000, guid: 2667a0a008b044e218b63df62e2be749, type: 3}
+    clip: {fileID: 8300000, guid: bab919126fe1f4dfdad45a8d5798d4bf, type: 3}
     isFrequent: 1
-    volume: 0.854
+    volume: 1
+    pitch: 1
+  - name: Level Failed Sfx
+    soundType: 7
+    clip: {fileID: 8300000, guid: e882686f3ba174189b2c9411c9e0ed42, type: 3}
+    isFrequent: 1
+    volume: 1
+    pitch: 1
+  - name: Game Over Sfx
+    soundType: 27
+    clip: {fileID: 8300000, guid: a7c42d019d5274496be98b1b12188495, type: 3}
+    isFrequent: 1
+    volume: 1
     pitch: 1
   - name: Time Freeze Sfx
     soundType: 15

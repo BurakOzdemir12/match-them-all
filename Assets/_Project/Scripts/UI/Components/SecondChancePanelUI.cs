@@ -65,6 +65,7 @@ namespace _Project.Scripts.UI.Components
             {
                 this.gameObject.SetActive(false);
                 OnFullyDismissed?.Invoke(_currentFailType);
+                GameEvents.TriggerGameOver();
             }
         }
 

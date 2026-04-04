@@ -52,6 +52,18 @@ namespace _Project.Scripts.Managers
             InputManager.OnItemSelected += HandleItemSelected;
             ItemSpotsManager.ItemCollected += HandleItemCollected;
             TimeManager.OnTimeFreezeStarted += HandleTimeFreezeStarted;
+            GameEvents.OnLevelFailed += HandleLevelFailed;
+            GameEvents.OnGameOver += HandleGameOver;
+        }
+
+        private void HandleGameOver()
+        {
+            PlaySoundByType(SoundType.GameOver, _camera.transform.position);
+        }
+
+        private void HandleLevelFailed(FailType failType)
+        {
+            PlaySoundByType(SoundType.LevelFailed, _camera.transform.position);
         }
 
         private void HandleTimeFreezeStarted(float obj)
@@ -171,6 +183,8 @@ namespace _Project.Scripts.Managers
             InputManager.OnItemSelected -= HandleItemSelected;
             ItemSpotsManager.ItemCollected -= HandleItemCollected;
             TimeManager.OnTimeFreezeStarted -= HandleTimeFreezeStarted;
+            GameEvents.OnLevelFailed -= HandleLevelFailed;
+            GameEvents.OnGameOver -= HandleGameOver;
         }
     }
 }

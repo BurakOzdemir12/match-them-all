@@ -16,6 +16,8 @@ namespace _Project.Scripts.Managers
         //Events
         public static event Action<ItemType, int> OnGoalProgressUpdated;
 
+        private bool _isBusy;
+
         private void OnEnable()
         {
             GameEvents.OnLevelStarted += HandleLevelStarted;
