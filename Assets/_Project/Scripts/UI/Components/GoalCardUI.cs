@@ -53,7 +53,7 @@ namespace _Project.Scripts.UI.Components
             if (icon != null) goalImage.sprite = icon;
         }
 
-        public void UpdateAmount(int currentAmount)
+        public void UpdateAmount(int currentAmount, Action onCardDestroyed = null)
         {
             Sequence seq = DOTween.Sequence().SetLink(this.gameObject);
 
@@ -66,7 +66,7 @@ namespace _Project.Scripts.UI.Components
             );
 
             //? Play Virtual Effect
-           
+
             EffectManager.Instance.PlayEffect(EffectType.UIDecreaseSparks, goalRemainingText.transform.position);
             //? Play Sound Effect     
             SoundManager.Instance.PlaySoundByType(SoundType.GoalDecrease, _camera.transform.position);
@@ -116,7 +116,11 @@ namespace _Project.Scripts.UI.Components
                         SoundManager.Instance.PlaySoundByType(SoundType.GoalCardWhoosh, _camera.transform.position);
                     });
 
-                seq.OnComplete(() => { Destroy(this.gameObject); });
+                seq.OnComplete(() =>
+                {
+                    onCardDestroyed?.Invoke();
+                    Destroy(this.gameObject);
+                });
             }
         }
     }

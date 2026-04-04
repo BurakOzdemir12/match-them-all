@@ -65,20 +65,11 @@ namespace _Project.Scripts.Managers
                 {
                     // activeGoals.Remove(itemType);
                     _remainingGoalTypes--;
-
-                    CheckForLevelWin();
                 }
             }
         }
 
-        private void CheckForLevelWin()
-        {
-            if (_remainingGoalTypes <= 0)
-            {
-                GameEvents.TriggerLevelCompleted();
-            }
-        }
-
+     
         private void HandleLevelStarted(LevelDataSo data)
         {
             InitializeGoals(data);

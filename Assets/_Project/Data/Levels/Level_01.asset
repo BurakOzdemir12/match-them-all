@@ -20,7 +20,7 @@ MonoBehaviour:
     IsGoal: 1
   - ItemType: 2
     Amount: 3
-    IsGoal: 0
+    IsGoal: 1
   - ItemType: 1
     Amount: 3
     IsGoal: 0

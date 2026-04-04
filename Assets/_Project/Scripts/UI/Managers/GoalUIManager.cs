@@ -33,7 +33,17 @@ namespace _Project.Scripts.UI.Managers
         {
             if (spawnedCards.TryGetValue(itemType, out GoalCardUI targetCard))
             {
-                targetCard.UpdateAmount(goalAmount);
+                targetCard.UpdateAmount(goalAmount, () => OnGoalCardDestroyed(itemType));
+            }
+        }
+
+        private void OnGoalCardDestroyed(ItemType itemType)
+        {
+            spawnedCards.Remove(itemType);
+
+            if (spawnedCards.Count == 0)
+            {
+                GameEvents.TriggerLevelCompleted();
             }
         }
 
