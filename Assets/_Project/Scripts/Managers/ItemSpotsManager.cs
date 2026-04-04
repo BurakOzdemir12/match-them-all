@@ -410,8 +410,9 @@ namespace _Project.Scripts.Managers
 
             if (!isMergePending)
             {
-                GameEvents.TriggerLevelFailed(FailType.SpotFull);
-                Debug.Log("Game Over!");
+                GameEvents.TriggerLevelFinishing();
+                isBusy = true;
+                DOVirtual.DelayedCall(0.5f, () => { GameEvents.TriggerLevelFailed(FailType.SpotFull); });
             }
         }
 
@@ -504,7 +505,7 @@ namespace _Project.Scripts.Managers
                 .Where(item => item != null && item.gameObject != null)
                 .ToList();
             if (itemListOnTheBoard.Count == 0) return null;
-            
+
             return itemListOnTheBoard;
         }
 

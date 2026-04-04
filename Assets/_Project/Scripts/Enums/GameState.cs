@@ -6,6 +6,7 @@
         Playing,
         Paused,
         LevelCompleted,
-        LevelFailed
+        LevelFailed,
+        GameOver
     }
 }

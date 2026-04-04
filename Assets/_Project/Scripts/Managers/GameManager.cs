@@ -26,14 +26,21 @@ namespace _Project.Scripts.Managers
             GameEvents.OnGameStarted += HandleGameStarted;
             GameEvents.OnGamePaused += HandleGamePaused;
             GameEvents.OnLevelCompleted += HandleLevelCompleted;
-            GameEvents.OnLevelFailed += HandleGameFailed;
+            GameEvents.OnLevelFailed += HandleLeveleFailed;
             GameEvents.OnReviveRequested += HandleReviveRequested;
             GameOverPanelUI.OnTryAgainClicked += HandleTryAgainClicked;
+            GameEvents.OnGameOver += HandleGameOver;
         }
 
         private void Start()
         {
             GameEvents.TriggerGameStarted();
+        }
+
+        private void HandleGameOver()
+        {
+            currentGameState = GameState.GameOver;
+            Time.timeScale = 0f;
         }
 
         private void HandleTryAgainClicked()
@@ -57,7 +64,7 @@ namespace _Project.Scripts.Managers
             }
         }
 
-        private void HandleGameFailed(FailType failType)
+        private void HandleLeveleFailed(FailType failType)
         {
             currentGameState = GameState.LevelFailed;
             Time.timeScale = 0f;
@@ -86,9 +93,10 @@ namespace _Project.Scripts.Managers
             GameEvents.OnGameStarted -= HandleGameStarted;
             GameEvents.OnGamePaused -= HandleGamePaused;
             GameEvents.OnLevelCompleted -= HandleLevelCompleted;
-            GameEvents.OnLevelFailed -= HandleGameFailed;
+            GameEvents.OnLevelFailed -= HandleLeveleFailed;
             GameEvents.OnReviveRequested -= HandleReviveRequested;
             GameOverPanelUI.OnTryAgainClicked -= HandleTryAgainClicked;
+            GameEvents.OnGameOver -= HandleGameOver;
         }
     }
 }
