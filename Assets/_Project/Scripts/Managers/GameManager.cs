@@ -11,6 +11,7 @@ namespace _Project.Scripts.Managers
         public static GameManager Instance { get; private set; }
         public GameState currentGameState { get; private set; }
 
+        private const string LobbySceneName = "LobbyScene";
 
         private void Awake()
         {
@@ -30,11 +31,17 @@ namespace _Project.Scripts.Managers
             GameEvents.OnReviveRequested += HandleReviveRequested;
             GameOverPanelUI.OnTryAgainClicked += HandleTryAgainClicked;
             GameEvents.OnGameOver += HandleGameOver;
+            GameOverPanelUI.OnLobbyClicked += HandleLobbyClicked;
         }
 
         private void Start()
         {
             GameEvents.TriggerGameStarted();
+        }
+
+        private void HandleLobbyClicked()
+        {
+            GameEvents.TriggerSceneLoadRequested(LobbySceneName);
         }
 
         private void HandleGameOver()
@@ -97,6 +104,7 @@ namespace _Project.Scripts.Managers
             GameEvents.OnReviveRequested -= HandleReviveRequested;
             GameOverPanelUI.OnTryAgainClicked -= HandleTryAgainClicked;
             GameEvents.OnGameOver -= HandleGameOver;
+            GameOverPanelUI.OnLobbyClicked -= HandleLobbyClicked;
         }
     }
 }

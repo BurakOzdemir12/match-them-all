@@ -19,6 +19,9 @@ namespace _Project.Scripts.Static
         public static event Action OnGameOver;
         public static event Action OnLevelFinishing;
 
+        public static event Action<string> OnSceneLoadRequested;
+
+
         #region Booster Events
 
         public static event Action<ResourceType, Item> OnBoosterUsed;
@@ -70,6 +73,11 @@ namespace _Project.Scripts.Static
         public static void TriggerLevelFinishing()
         {
             OnLevelFinishing?.Invoke();
+        }
+
+        public static void TriggerSceneLoadRequested(string sceneName)
+        {
+            OnSceneLoadRequested?.Invoke(sceneName);
         }
 
         #region Booster Events

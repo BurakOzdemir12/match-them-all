@@ -22,7 +22,6 @@ namespace _Project.Scripts.Managers
             }
 
             Instance = this;
-            DontDestroyOnLoad(this.gameObject);
 
             LoadInventory();
         }
