@@ -16526,6 +16526,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4208308470866500008, guid: 498447afeceda934d9d0c0bf0fe41cc0, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656394134156657799, guid: 498447afeceda934d9d0c0bf0fe41cc0, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
