@@ -1,0 +1,37 @@
+﻿using System.Collections.Generic;
+
+namespace _Project.Scripts.Lobby.Data.Save
+{
+    [System.Serializable]
+    public struct PartSaveInfo
+    {
+        public string partType;
+        public string selectedVariationID;
+
+        public PartSaveInfo(string partType, string selectedVariationID)
+        {
+            this.partType = partType;
+            this.selectedVariationID = selectedVariationID;
+        }
+    }
+
+    [System.Serializable]
+    public class HangarSaveData
+    {
+        public string activePlaneID;
+        public string activePlaneName;
+        public int currentBuildIndex = 0;
+        public List<PartSaveInfo> builtParts;
+        public List<string> completedPlaneIDs;
+
+        public HangarSaveData(string activePlaneID, string activePlaneName, int currentBuildIndex,
+            List<PartSaveInfo> builtParts, List<string> completedPlaneIDs)
+        {
+            this.activePlaneID = activePlaneID;
+            this.activePlaneName = activePlaneName;
+            this.currentBuildIndex = currentBuildIndex;
+            this.builtParts = builtParts;
+            this.completedPlaneIDs = completedPlaneIDs;
+        }
+    }
+}
