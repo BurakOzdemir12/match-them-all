@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using _Project.Scripts.UI.Components.LobbyUI;
+﻿using System.Collections.Generic;
+using _Project.Scripts.Lobby.UI.Components;
 using UnityEngine;
 
-namespace _Project.Scripts.UI.Managers.LobbyUI
+namespace _Project.Scripts.Lobby.UI
 {
     public class BottomNavManager : MonoBehaviour
     {

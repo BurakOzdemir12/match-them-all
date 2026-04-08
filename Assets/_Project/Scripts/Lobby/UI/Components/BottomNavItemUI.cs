@@ -1,9 +1,8 @@
-﻿using System;
-using DG.Tweening;
+﻿using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace _Project.Scripts.UI.Components.LobbyUI
+namespace _Project.Scripts.Lobby.UI.Components
 {
     public class BottomNavItemUI : MonoBehaviour
     {
