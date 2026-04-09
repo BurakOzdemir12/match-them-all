@@ -2,6 +2,7 @@
 using _Project.Scripts.Lobby.Enums;
 using _Project.Scripts.Lobby.Structs;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace _Project.Scripts.Lobby.ScriptableObjects.Plane
 {
@@ -14,6 +15,12 @@ namespace _Project.Scripts.Lobby.ScriptableObjects.Plane
 
         [field: Tooltip("How many wrench requires to build this part"), SerializeField]
         public int requiredWrench { get; private set; }
+
+        [field: Tooltip("Short description for what it'll build"), SerializeField]
+        public string descriptionText { get; private set; }
+
+        [field: Tooltip("Plane part icon"), SerializeField]
+        public Sprite partIcon { get; private set; }
 
         [field: Space(10)]
         [field: Header("Variations"), SerializeField]

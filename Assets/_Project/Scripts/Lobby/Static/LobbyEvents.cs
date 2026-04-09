@@ -10,7 +10,7 @@ namespace _Project.Scripts.Lobby.Static
         public static event Action<PlanePartSo, PartSaveInfo> OnPlanePartLoaded;
         public static event Action<PlanePartSo, PlanePartVariation> OnPlanePartBuildStarted;
         public static event Action<PlanePartSo> OnPlanePartBuildTargeted;
-        public static event Action<PlaneBluePrintSo> OnPlanePartBuildCompleted;
+        public static event Action<PlaneBluePrintSo> OnPlaneBuildCompleted;
 
         public static void TriggerPlanePartLoaded(PlanePartSo part, PartSaveInfo saveInfo)
         {
@@ -27,9 +27,9 @@ namespace _Project.Scripts.Lobby.Static
             OnPlanePartBuildTargeted?.Invoke(nextPart);
         }
 
-        public static void TriggerPlaneBuildCompleted(PlaneBluePrintSo planeBluePrintSo)
+        public static void TriggerAllPlaneBuildCompleted(PlaneBluePrintSo planeBluePrintSo)
         {
-            OnPlanePartBuildCompleted?.Invoke(planeBluePrintSo);
+            OnPlaneBuildCompleted?.Invoke(planeBluePrintSo);
         }
     }
 }

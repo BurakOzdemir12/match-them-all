@@ -28,8 +28,14 @@ namespace _Project.Scripts.Managers
 
         private void Start()
         {
+        }
+
+        //!For Testing
+        public void OnSetData()
+        {
             //! For Testing
-            AddResource(ResourceType.Coin, 100);
+            SetResource(ResourceType.Coin, 200);
+            SetResource(ResourceType.Wrench, 20);
         }
 
         private void LoadInventory()
