@@ -2,7 +2,7 @@
 using _Project.Scripts.Lobby.UI.Components;
 using UnityEngine;
 
-namespace _Project.Scripts.Lobby.UI
+namespace _Project.Scripts.Lobby.UI.Managers
 {
     public class BottomNavManager : MonoBehaviour
     {
