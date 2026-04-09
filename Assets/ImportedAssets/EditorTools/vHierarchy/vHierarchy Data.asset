@@ -166,6 +166,9 @@ MonoBehaviour:
         - globalObjectIdString: GlobalObjectId_V1-2-8c65521102a45574abe3cd994725e976-1016092419-0
         - globalObjectIdString: GlobalObjectId_V1-2-8c65521102a45574abe3cd994725e976-1194794989-0
         - globalObjectIdString: GlobalObjectId_V1-2-8c65521102a45574abe3cd994725e976-1406863220-0
+        - globalObjectIdString: GlobalObjectId_V1-2-8c65521102a45574abe3cd994725e976-1366305906-0
+        - globalObjectIdString: GlobalObjectId_V1-2-8c65521102a45574abe3cd994725e976-1809980583-0
+        - globalObjectIdString: GlobalObjectId_V1-2-8c65521102a45574abe3cd994725e976-785269126-0
         values:
         - colorIndex: 7
           iconNameOrGuid: GameManager Icon
@@ -177,6 +180,18 @@ MonoBehaviour:
           isColorRecursive: 0
         - colorIndex: 7
           iconNameOrGuid: Canvas Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 0
+          iconNameOrGuid: Settings Icon
           isIconRecursive: 0
           isColorRecursive: 0
         - colorIndex: 0

@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.ScriptableObjects.Plane.PlaneBluePrintSo
   <planeID>k__BackingField: 0
   <planeName>k__BackingField: Test
-  <partsToBuild>k__BackingField:
+  <partsToBuildInOrder>k__BackingField:
   - {fileID: 11400000, guid: 7b638f1ddc1649942993f37008572e5e, type: 2}
+  - {fileID: 11400000, guid: c5741dabe6ea54344bb0ac79bc399be9, type: 2}

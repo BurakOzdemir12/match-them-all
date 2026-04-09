@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d44475662ac4e638ce0eb218f9b74a4, type: 3}
-  m_Name: TestPlane_BodyPart
+  m_Name: TestPlane_WingLeft
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.ScriptableObjects.Plane.PlanePartSo
-  <planePartType>k__BackingField: 0
-  <requiredWrench>k__BackingField: 30
-  <descriptionText>k__BackingField: This is Body part of plane
-  <partIcon>k__BackingField: {fileID: 21300000, guid: e2f3f050778504543abf6bb67d702506, type: 3}
+  <planePartType>k__BackingField: 1
+  <requiredWrench>k__BackingField: 5
+  <descriptionText>k__BackingField: This is the left wing of the plane
+  <partIcon>k__BackingField: {fileID: 21300000, guid: cb99960ac6f744bdba007abf1dcbac2b, type: 3}
   <variations>k__BackingField:
   - variationName: Blue Body
     variationID: 1
