@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using _Project.Scripts.Lobby.Structs;
 using UnityEngine;
 
 namespace _Project.Scripts.Lobby.ScriptableObjects.Plane
@@ -15,6 +16,11 @@ namespace _Project.Scripts.Lobby.ScriptableObjects.Plane
         [field: Header("Parts to built plane (Top to Bottom)"),
                 Tooltip("Plane will build by sort top to bottom"),
                 SerializeField]
-        public List<PlanePartSo> partsToBuildInOrder { get; private set; } = new List<PlanePartSo>();
+        public List<PlaneBuildStage> buildStages { get; private set; } = new List<PlaneBuildStage>();
+        
+        // [field: Header("Parts to built plane (Top to Bottom)"),
+        //         Tooltip("Plane will build by sort top to bottom"),
+        //         SerializeField]
+        // public List<PlanePartSo> partsToBuildInOrder { get; private set; } = new List<PlanePartSo>();
     }
 }

@@ -3,7 +3,8 @@
     public enum PlanePartType
     {
         Body,
-        Wings,
+        WingLeft,
+        WingRight,
         Engine,
         Tail,
         Propeller,

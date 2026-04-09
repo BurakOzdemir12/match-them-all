@@ -24,6 +24,9 @@ namespace _Project.Scripts.Lobby.ScriptableObjects.Plane
 
         [field: Space(10)]
         [field: Header("Variations"), SerializeField]
-        public List<PlanePartVariation> variations { get; private set; }
+        public List<PlanePartVariation> variations { get; set; }
+
+        [field: Tooltip("Is there a variation for this part?"), SerializeField]
+        public bool hasVariation => variations != null && variations.Count > 0;
     }
 }

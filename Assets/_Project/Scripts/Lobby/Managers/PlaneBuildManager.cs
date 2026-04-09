@@ -19,7 +19,9 @@ namespace _Project.Scripts.Lobby.Managers
 
         private HangarSaveData _saveData;
         private const string SAVE_KEY = "HangarSaveData_01";
+
         private PlaneBluePrintSo _currentPlaneBluePrint;
+        private PlaneBuildStage _currentBuildStage;
 
         private void Awake()
         {
@@ -48,7 +50,7 @@ namespace _Project.Scripts.Lobby.Managers
             else
             {
                 _saveData = new HangarSaveData("", "", 0,
-                    new List<PartSaveInfo>(),
+                    0, new List<PartSaveInfo>(),
                     new List<string>());
 
                 if (allPlaneBluePrints.Count > 0)
@@ -71,29 +73,66 @@ namespace _Project.Scripts.Lobby.Managers
                 => b.planeID == _saveData.activePlaneID);
             if (_currentPlaneBluePrint == null) return;
 
-            for (int i = 0; i < _saveData.currentBuildIndex; i++)
+            foreach (PartSaveInfo savedPart in _saveData.builtParts)
             {
-                PlanePartSo builtPartSo = _currentPlaneBluePrint.partsToBuildInOrder[i];
+                PlanePartSo partSo = FindPartSoByType(savedPart.partType);
+                if (partSo != null)
+                {
+                    LobbyEvents.TriggerPlanePartLoaded(_currentPlaneBluePrint, partSo, savedPart);
+                    Debug.Log(
+                        $"Plane last parts loaded: {partSo.planePartType}- or, name: {partSo.name} " +
+                        $"\n Selection variation: {savedPart.selectedVariationID}");
+                }
 
-                PartSaveInfo saveInfo = _saveData.builtParts.Find(p
-                    => p.partType == builtPartSo.planePartType.ToString());
-
-                LobbyEvents.TriggerPlanePartLoaded(builtPartSo, saveInfo);
-
-                Debug.Log(
-                    $"[Hangar] Last part loaded: {builtPartSo.planePartType} - selection: {saveInfo.selectedVariationID}");
+                // for (int i = 0; i < _saveData.currentBuildIndex; i++)
+                // {
+                //     PlanePartSo builtPartSo = _currentPlaneBluePrint.partsToBuildInOrder[i];
+                //
+                //     PartSaveInfo saveInfo = _saveData.builtParts.Find(p
+                //         => p.partType == builtPartSo.planePartType.ToString());
+                //
+                //     LobbyEvents.TriggerPlanePartLoaded(builtPartSo, saveInfo);
+                //
+                //     Debug.Log(
+                //         $"[Hangar] Last part loaded: {builtPartSo.planePartType} - selection: {saveInfo.selectedVariationID}");
+                // }
             }
 
-            UpdateNextTargetInfo();
+            UpdateAvailablePartsUI();
         }
 
-        private void UpdateNextTargetInfo()
+        private PlanePartSo FindPartSoByType(string partType)
         {
-            if (_saveData.currentBuildIndex < _currentPlaneBluePrint.partsToBuildInOrder.Count)
+            foreach (var stage in _currentPlaneBluePrint.buildStages)
+            foreach (var part in stage.partsInStage)
+                if (part.planePartType.ToString() == partType)
+                    return part;
+            return null;
+        }
+
+        private void UpdateAvailablePartsUI()
+        {
+            if (_saveData.currentBuildStageIndex >= _currentPlaneBluePrint.buildStages.Count) return;
+
+            PlaneBuildStage currentStage = _currentPlaneBluePrint.buildStages[_saveData.currentBuildStageIndex];
+
+            List<PlanePartSo> availablePartsList = new List<PlanePartSo>();
+
+            foreach (var part in currentStage.partsInStage)
             {
-                PlanePartSo nextPart = _currentPlaneBluePrint.partsToBuildInOrder[_saveData.currentBuildIndex];
-                LobbyEvents.TriggerNextPartTargeted(nextPart);
+                if (!_saveData.builtParts.Exists(p => p.partType == part.planePartType.ToString()))
+                {
+                    availablePartsList.Add(part);
+                }
             }
+
+            LobbyEvents.TriggerAvailablePartsUpdated(availablePartsList);
+
+            // if (_saveData.currentBuildIndex < _currentPlaneBluePrint.partsToBuildInOrder.Count)
+            // {
+            //     PlanePartSo nextPart = _currentPlaneBluePrint.partsToBuildInOrder[_saveData.currentBuildIndex];
+            //     LobbyEvents.TriggerAvailablePartsUpdated(nextPart);
+            // }
         }
 
         private void CompletePlane()
@@ -107,39 +146,77 @@ namespace _Project.Scripts.Lobby.Managers
             LobbyEvents.TriggerAllPlaneBuildCompleted(planeBluePrintSo: _currentPlaneBluePrint);
         }
 
-        public void TryBuildPart(PlanePartSo partSo, PlanePartVariation selectedVariation)
+        public void TryBuildPart(PlanePartSo partSo, PlanePartVariation? selectedVariation = null)
         {
-            if (_currentPlaneBluePrint.partsToBuildInOrder[_saveData.currentBuildIndex] != partSo)
-            {
-                return;
-            }
+            // if (_currentPlaneBluePrint.partsToBuildInOrder[_saveData.currentBuildIndex] != partSo)
+            // {
+            //     return;
+            // }
+            if (_saveData.currentBuildStageIndex >= _currentPlaneBluePrint.buildStages.Count) return;
 
             if (EconomyManager.Instance.TrySpendResource(ResourceType.Wrench, partSo.requiredWrench))
             {
+                string variationIDToSave = selectedVariation.HasValue ? selectedVariation.Value.variationID : "NONE";
+
                 PartSaveInfo newPart = new PartSaveInfo(partType: partSo.planePartType.ToString(),
-                    selectedVariationID: selectedVariation.variationID);
+                    selectedVariationID: variationIDToSave);
 
                 _saveData.builtParts.Add(newPart);
-                _saveData.currentBuildIndex++;
+                // _saveData.currentBuildIndex++;
 
                 SaveData();
 
-                LobbyEvents.TriggerPlanePartBuildStarted(partSo, selectedVariation);
-                Debug.Log($"Part Built {partSo.planePartType}");
+                LobbyEvents.TriggerPlanePartBuildStarted(partSo, partSo.hasVariation ? selectedVariation : null);
+                Debug.Log($"Part Built {partSo.planePartType} or name -> {partSo.name}");
 
-                if (_saveData.currentBuildIndex >= _currentPlaneBluePrint.partsToBuildInOrder.Count)
-                {
-                    CompletePlane();
-                }
-                else
-                {
-                    UpdateNextTargetInfo();
-                }
+                CheckStageCompletion();
+
+                // if (_saveData.currentBuildStageIndex >= _currentPlaneBluePrint.buildStages.Count)
+                // {
+                //     CompletePlane();
+                // }
+                // else
+                // {
+                //     UpdateAvailablePartsUI();
+                // }
             }
             else
             {
                 Debug.Log("Not enough resources to build part");
                 //TODO Create How to earn wrench tip -> Play Screen
+            }
+        }
+
+        private void CheckStageCompletion()
+        {
+            if (_saveData.currentBuildStageIndex >= _currentPlaneBluePrint.buildStages.Count) return;
+
+            _currentBuildStage = _currentPlaneBluePrint.buildStages[_saveData.currentBuildStageIndex];
+            bool isStageComplete = true;
+
+            foreach (var part in _currentBuildStage.partsInStage)
+            {
+                if (!_saveData.builtParts.Exists(p => p.partType == part.planePartType.ToString()))
+                {
+                    isStageComplete = false;
+                    break;
+                }
+            }
+
+            if (isStageComplete)
+            {
+                _saveData.currentBuildStageIndex++;
+                SaveData();
+
+                if (_saveData.currentBuildStageIndex >= _currentPlaneBluePrint.buildStages.Count)
+                {
+                    CompletePlane();
+                    LobbyEvents.TriggerAvailablePartsUpdated(new List<PlanePartSo>());
+                }
+                else
+                {
+                    UpdateAvailablePartsUI();
+                }
             }
         }
 

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Project.Scripts.Lobby.Data.Save;
 using _Project.Scripts.Lobby.Enums;
 using _Project.Scripts.Lobby.Managers;
 using _Project.Scripts.Lobby.ScriptableObjects.Plane;
 using _Project.Scripts.Lobby.Static;
 using _Project.Scripts.Lobby.Structs;
 using _Project.Scripts.Lobby.UI.Components;
+using TMPro;
 using UnityEngine;
 
 namespace _Project.Scripts.Lobby.UI.Managers
@@ -17,16 +19,28 @@ namespace _Project.Scripts.Lobby.UI.Managers
 
         [SerializeField] private GameObject buildChoiceCardPrefab;
 
+        [Tooltip("Plane Name -> shown top")] [SerializeField]
+        private TextMeshProUGUI planeName;
+
         private readonly Dictionary<PlanePartSo, PlaneBuildChoiceCardUI> spawnedChoices =
             new Dictionary<PlanePartSo, PlaneBuildChoiceCardUI>();
 
         private void OnEnable()
         {
-            LobbyEvents.OnPlanePartBuildTargeted += HandlePlanePartBuildTargeted;
+            LobbyEvents.OnAvailablePartsUpdated += HandleAvailablePartsUpdated;
             LobbyEvents.OnPlanePartBuildStarted += HandlePlaneBuildStarted;
+            LobbyEvents.OnPlanePartLoaded += HandlePlanePartLoaded;
         }
 
-        private void HandlePlaneBuildStarted(PlanePartSo partSo, PlanePartVariation partVariation)
+        private void HandlePlanePartLoaded(PlaneBluePrintSo planeSo, PlanePartSo partSo, PartSaveInfo saveInfo)
+        {
+            if (planeName != null)
+            {
+                planeName.text = planeSo.planeName;
+            }
+        }
+
+        private void HandlePlaneBuildStarted(PlanePartSo partSo, PlanePartVariation? partVariation = null)
         {
             if (spawnedChoices.TryGetValue(partSo, out PlaneBuildChoiceCardUI card))
             {
@@ -36,27 +50,31 @@ namespace _Project.Scripts.Lobby.UI.Managers
             }
         }
 
-        private void HandlePlanePartBuildTargeted(PlanePartSo partSo)
-        {
-            InitializeBuildChoiceCards(partSo);
-        }
-
-        private void InitializeBuildChoiceCards(PlanePartSo partSo)
+        private void HandleAvailablePartsUpdated(List<PlanePartSo> partSo)
         {
             ClearAllCards();
 
-            PlaneBuildChoiceCardUI newCard =
-                Instantiate(buildChoiceCardPrefab, gridContainer).GetComponent<PlaneBuildChoiceCardUI>();
+            InitializeBuildChoiceCards(partSo);
+        }
 
-            newCard.Setup(partSo);
-            newCard.OnBuildChoiceSelected += HandleBuildChoiceSelected;
 
-            spawnedChoices.Add(partSo, newCard);
+        private void InitializeBuildChoiceCards(List<PlanePartSo> partSoList)
+        {
+            ClearAllCards();
+
+            foreach (var partSo in partSoList)
+            {
+                PlaneBuildChoiceCardUI newCard =
+                    Instantiate(buildChoiceCardPrefab, gridContainer).GetComponent<PlaneBuildChoiceCardUI>();
+                newCard.Setup(partSo);
+                newCard.OnBuildChoiceSelected += HandleBuildChoiceSelected;
+                spawnedChoices.Add(partSo, newCard);
+            }
         }
 
         private void HandleBuildChoiceSelected(PlanePartSo partSo)
         {
-            PlaneBuildManager.Instance.TryBuildPart(partSo, partSo.variations[0]);
+            PlaneBuildManager.Instance.TryBuildPart(partSo, partSo.hasVariation ? partSo.variations[0] : null);
         }
 
         private void ClearAllCards()
@@ -75,8 +93,9 @@ namespace _Project.Scripts.Lobby.UI.Managers
 
         private void OnDisable()
         {
-            LobbyEvents.OnPlanePartBuildTargeted -= HandlePlanePartBuildTargeted;
+            LobbyEvents.OnAvailablePartsUpdated -= HandleAvailablePartsUpdated;
             LobbyEvents.OnPlanePartBuildStarted -= HandlePlaneBuildStarted;
+            LobbyEvents.OnPlanePartLoaded -= HandlePlanePartLoaded;
 
             ClearAllCards();
         }

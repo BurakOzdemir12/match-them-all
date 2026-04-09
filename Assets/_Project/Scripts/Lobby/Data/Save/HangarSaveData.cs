@@ -21,15 +21,18 @@ namespace _Project.Scripts.Lobby.Data.Save
         public string activePlaneID;
         public string activePlaneName;
         public int currentBuildIndex = 0;
+        public int currentBuildStageIndex = 0;
         public List<PartSaveInfo> builtParts;
         public List<string> completedPlaneIDs;
 
         public HangarSaveData(string activePlaneID, string activePlaneName, int currentBuildIndex,
+            int currentBuildStageIndex,
             List<PartSaveInfo> builtParts, List<string> completedPlaneIDs)
         {
             this.activePlaneID = activePlaneID;
             this.activePlaneName = activePlaneName;
             this.currentBuildIndex = currentBuildIndex;
+            this.currentBuildStageIndex = currentBuildStageIndex;
             this.builtParts = builtParts;
             this.completedPlaneIDs = completedPlaneIDs;
         }

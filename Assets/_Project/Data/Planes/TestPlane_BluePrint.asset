@@ -13,7 +13,12 @@ MonoBehaviour:
   m_Name: TestPlane_BluePrint
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.ScriptableObjects.Plane.PlaneBluePrintSo
   <planeID>k__BackingField: 0
-  <planeName>k__BackingField: Test
-  <partsToBuildInOrder>k__BackingField:
-  - {fileID: 11400000, guid: 7b638f1ddc1649942993f37008572e5e, type: 2}
-  - {fileID: 11400000, guid: c5741dabe6ea54344bb0ac79bc399be9, type: 2}
+  <planeName>k__BackingField: Small Boy
+  <buildStages>k__BackingField:
+  - stageName: Main Stage
+    partsInStage:
+    - {fileID: 11400000, guid: 7b638f1ddc1649942993f37008572e5e, type: 2}
+  - stageName: Wings Stage
+    partsInStage:
+    - {fileID: 11400000, guid: c5741dabe6ea54344bb0ac79bc399be9, type: 2}
+    - {fileID: 11400000, guid: 1abc330e2e0dbac44a18ee4a7f09fd0c, type: 2}
