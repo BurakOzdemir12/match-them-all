@@ -7213,7 +7213,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!33 &1360066703943108138
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -7587,7 +7587,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &6670047653920972114
 GameObject:
   m_ObjectHideFlags: 0
@@ -7831,7 +7831,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &8746702622155107125
 GameObject:
   m_ObjectHideFlags: 0
