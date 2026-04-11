@@ -22,6 +22,12 @@ namespace _Project.Scripts.Lobby.ScriptableObjects.Plane
         [field: Tooltip("Plane part icon"), SerializeField]
         public Sprite partIcon { get; private set; }
 
+        [field: Tooltip("Plane prefab-> default part"), SerializeField]
+        public GameObject defaultPartPrefab { get; set; }
+
+        [field: Tooltip("Modification type offers the seperate animations for type of process"), SerializeField]
+        public ModificationType modificationType { get; private set; }
+
         [field: Space(10)]
         [field: Header("Variations"), SerializeField]
         public List<PlanePartVariation> variations { get; set; }
