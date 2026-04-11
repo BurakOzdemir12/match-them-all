@@ -23,6 +23,8 @@ namespace _Project.Scripts.Lobby.Managers
         private PlaneBluePrintSo _currentPlaneBluePrint;
         private PlaneBuildStage _currentBuildStage;
 
+        private readonly List<SavedPartData> _partsToLoad = new List<SavedPartData>();
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -46,6 +48,7 @@ namespace _Project.Scripts.Lobby.Managers
             {
                 string json = PlayerPrefs.GetString(SAVE_KEY);
                 _saveData = JsonUtility.FromJson<HangarSaveData>(json);
+
             }
             else
             {
@@ -73,30 +76,25 @@ namespace _Project.Scripts.Lobby.Managers
                 => b.planeID == _saveData.activePlaneID);
             if (_currentPlaneBluePrint == null) return;
 
+            _partsToLoad.Clear();
+
             foreach (PartSaveInfo savedPart in _saveData.builtParts)
             {
                 PlanePartSo partSo = FindPartSoByType(savedPart.partType);
                 if (partSo != null)
                 {
-                    LobbyEvents.TriggerPlanePartLoaded(_currentPlaneBluePrint, partSo, savedPart);
+                    _partsToLoad.Add(new SavedPartData(partSo, savedPart));
                     Debug.Log(
                         $"Plane last parts loaded: {partSo.planePartType}- or, name: {partSo.name} " +
                         $"\n Selection variation: {savedPart.selectedVariationID}");
                 }
-
-                // for (int i = 0; i < _saveData.currentBuildIndex; i++)
-                // {
-                //     PlanePartSo builtPartSo = _currentPlaneBluePrint.partsToBuildInOrder[i];
-                //
-                //     PartSaveInfo saveInfo = _saveData.builtParts.Find(p
-                //         => p.partType == builtPartSo.planePartType.ToString());
-                //
-                //     LobbyEvents.TriggerPlanePartLoaded(builtPartSo, saveInfo);
-                //
-                //     Debug.Log(
-                //         $"[Hangar] Last part loaded: {builtPartSo.planePartType} - selection: {saveInfo.selectedVariationID}");
-                // }
+                else
+                {
+                    Debug.Log($"Part SO not found for type: {savedPart.partType}");
+                }
             }
+
+            LobbyEvents.TriggerPlanePartLoaded(_currentPlaneBluePrint, _partsToLoad);
 
             UpdateAvailablePartsUI();
         }

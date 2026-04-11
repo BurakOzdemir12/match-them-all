@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using _Project.Scripts.Lobby.ScriptableObjects.Plane;
 
 namespace _Project.Scripts.Lobby.Data.Save
 {
@@ -22,8 +23,8 @@ namespace _Project.Scripts.Lobby.Data.Save
         public string activePlaneName;
         public int currentBuildIndex = 0;
         public int currentBuildStageIndex = 0;
-        public List<PartSaveInfo> builtParts;
-        public List<string> completedPlaneIDs;
+        public List<PartSaveInfo> builtParts = new List<PartSaveInfo>();
+        public List<string> completedPlaneIDs = new List<string>();
 
         public HangarSaveData(string activePlaneID, string activePlaneName, int currentBuildIndex,
             int currentBuildStageIndex,

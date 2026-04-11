@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using _Project.Scripts.Lobby.Data.Save;
+using _Project.Scripts.Lobby.Managers;
 using _Project.Scripts.Lobby.ScriptableObjects.Plane;
 using _Project.Scripts.Lobby.Structs;
 
@@ -8,15 +9,15 @@ namespace _Project.Scripts.Lobby.Static
 {
     public struct LobbyEvents
     {
-        public static event Action<PlaneBluePrintSo, PlanePartSo, PartSaveInfo> OnPlanePartLoaded;
+        public static event Action<PlaneBluePrintSo, List<SavedPartData>> OnPlanePartLoaded;
         public static event Action<PlanePartSo, PlanePartVariation?> OnPlanePartBuildStarted;
         public static event Action<List<PlanePartSo>> OnAvailablePartsUpdated;
         public static event Action<PlaneBluePrintSo> OnPlaneBuildCompleted;
+        public static event Action<PlaneSocketManager> OnPlaneSpawned;
 
-        public static void TriggerPlanePartLoaded(PlaneBluePrintSo planeBluePrintSo, PlanePartSo part,
-            PartSaveInfo saveInfo)
+        public static void TriggerPlanePartLoaded(PlaneBluePrintSo planeBluePrintSo, List<SavedPartData> savedPartData)
         {
-            OnPlanePartLoaded?.Invoke(planeBluePrintSo, part, saveInfo);
+            OnPlanePartLoaded?.Invoke(planeBluePrintSo, savedPartData);
         }
 
         public static void TriggerPlanePartBuildStarted(PlanePartSo partSo,
@@ -33,6 +34,11 @@ namespace _Project.Scripts.Lobby.Static
         public static void TriggerAllPlaneBuildCompleted(PlaneBluePrintSo planeBluePrintSo)
         {
             OnPlaneBuildCompleted?.Invoke(planeBluePrintSo);
+        }
+
+        public static void TriggerPlaneSpawned(PlaneSocketManager socketManager)
+        {
+            OnPlaneSpawned?.Invoke(socketManager);
         }
     }
 }

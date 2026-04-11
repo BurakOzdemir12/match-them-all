@@ -32,7 +32,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
             LobbyEvents.OnPlanePartLoaded += HandlePlanePartLoaded;
         }
 
-        private void HandlePlanePartLoaded(PlaneBluePrintSo planeSo, PlanePartSo partSo, PartSaveInfo saveInfo)
+        private void HandlePlanePartLoaded(PlaneBluePrintSo planeSo, List<SavedPartData> savedPartData)
         {
             if (planeName != null)
             {
