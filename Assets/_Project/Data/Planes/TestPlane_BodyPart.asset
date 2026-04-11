@@ -16,4 +16,6 @@ MonoBehaviour:
   <requiredWrench>k__BackingField: 5
   <descriptionText>k__BackingField: This is Body part of plane
   <partIcon>k__BackingField: {fileID: 21300000, guid: e2f3f050778504543abf6bb67d702506, type: 3}
+  <defaultPartPrefab>k__BackingField: {fileID: 5340230246409243707, guid: e083c8dbb52c3b841b43b74fce5f48a6, type: 3}
+  <modificationType>k__BackingField: 1
   <variations>k__BackingField: []
