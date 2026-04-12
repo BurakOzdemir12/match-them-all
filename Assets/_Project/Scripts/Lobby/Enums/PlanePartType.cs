@@ -8,6 +8,7 @@
         Engine,
         Tail,
         Propeller,
-        Wheels
+        WheelLeft,
+        WheelRight,
     }
 }

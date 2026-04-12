@@ -27,7 +27,7 @@ namespace _Project.Scripts.Lobby.Controllers
 
         private void OnEnable()
         {
-            LobbyEvents.OnPlanePartBuildStarted += HandlePlanePartBuildStarted;
+            LobbyEvents.OnPlanePartBuildAnimStarted += HandlePlanePartBuildAnimStarted;
             LobbyEvents.OnPlaneSpawned += HandlePlaneSpawned;
             LobbyEvents.OnPlanePartLoaded += HandlePlanePartLoaded;
         }
@@ -82,7 +82,7 @@ namespace _Project.Scripts.Lobby.Controllers
                 Quaternion.identity);
         }
 
-        private void HandlePlanePartBuildStarted(PlanePartSo partSo, PlanePartVariation? partVariation)
+        private void HandlePlanePartBuildAnimStarted(PlanePartSo partSo, PlanePartVariation? partVariation)
         {
             switch (partSo.modificationType)
             {
@@ -102,11 +102,29 @@ namespace _Project.Scripts.Lobby.Controllers
         private void ProcessInstall(PlanePartSo partSo, PlanePartVariation? partVariation)
         {
             //TODO Create CineMachine camera and Call Camera Movement from CameraController.
+
+            if (!_currentSocketManager.sockets.TryGetValue(partSo.planePartType, out Transform targetSocketTransform))
+                return;
+
+            var defaultPart = partSo.defaultPartPrefab;
+            Sequence seq = DOTween.Sequence().SetLink(defaultPart);
+
+            GameObject partToInstall = Instantiate(defaultPart,
+                defaultPart.transform.position + new Vector3(-20f, 0, 0),
+                Quaternion.identity);
+
+            seq.AppendInterval(0.5f);
+
+            seq.Append(partToInstall.transform.DOMove(targetSocketTransform.position, partInstallDuration)
+                .SetEase(Ease.InOutBack));
+            seq.Join(partToInstall.transform.DORotate(targetSocketTransform.rotation.eulerAngles, partInstallDuration));
+
+            seq.OnComplete(() => { LobbyEvents.TriggerPlanePartBuildAnimEnded(partSo, partVariation); });
         }
 
         private void OnDisable()
         {
-            LobbyEvents.OnPlanePartBuildStarted -= HandlePlanePartBuildStarted;
+            LobbyEvents.OnPlanePartPurchaseConfirmed -= HandlePlanePartBuildAnimStarted;
             LobbyEvents.OnPlaneSpawned -= HandlePlaneSpawned;
             LobbyEvents.OnPlanePartLoaded -= HandlePlanePartLoaded;
         }
