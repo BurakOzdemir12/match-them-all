@@ -164,7 +164,7 @@ namespace _Project.Scripts.Lobby.Managers
 
                 SaveData();
 
-                LobbyEvents.TriggerPlanePartBuildStarted(partSo, partSo.hasVariation ? selectedVariation : null);
+                LobbyEvents.TriggerPlanePartPurchaseConfirmed(partSo, partSo.hasVariation ? selectedVariation : null);
                 Debug.Log($"Part Built {partSo.planePartType} or name -> {partSo.name}");
 
                 CheckStageCompletion();

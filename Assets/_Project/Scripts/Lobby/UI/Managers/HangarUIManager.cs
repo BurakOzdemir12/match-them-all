@@ -1,4 +1,7 @@
 ﻿using System;
+using _Project.Scripts.Lobby.ScriptableObjects.Plane;
+using _Project.Scripts.Lobby.Static;
+using _Project.Scripts.Lobby.Structs;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -25,6 +28,17 @@ namespace _Project.Scripts.Lobby.UI.Managers
 
         [Header("Dependencies")] [Tooltip("UI overlay manager")] [SerializeField]
         private OverlayUIManager overlayUIManager;
+
+        private void OnEnable()
+        {
+            LobbyEvents.OnPlanePartBuildAnimStarted += HandlePlanePartBuildAnimStarted;
+        }
+
+        private void HandlePlanePartBuildAnimStarted(PlanePartSo partSo, PlanePartVariation? partVariation)
+        {
+            Fade(0f, 0f, setUpdate: true, false);
+            overlayUIManager.HidePanel(buildListCanvas);
+        }
 
         private void Start()
         {
@@ -54,6 +68,11 @@ namespace _Project.Scripts.Lobby.UI.Managers
             buildListPanel.DOFade(value, duration).SetUpdate(setUpdate);
             buildListPanel.interactable = boolValue;
             buildListPanel.blocksRaycasts = boolValue;
+        }
+
+        private void OnDisable()
+        {
+            LobbyEvents.OnPlanePartBuildAnimStarted -= HandlePlanePartBuildAnimStarted;
         }
     }
 }
