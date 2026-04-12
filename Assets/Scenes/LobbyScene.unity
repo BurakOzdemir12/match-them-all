@@ -974,7 +974,7 @@ GameObject:
   - component: {fileID: 205759955}
   - component: {fileID: 205759954}
   m_Layer: 5
-  m_Name: StatField
+  m_Name: WrenchField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5152,13 +5152,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1504800264}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.028595293, y: 0.9576226, z: -0.10227956, w: 0.26773188}
+  m_LocalRotation: {x: 0.024854278, y: 0.9577261, z: -0.0871852, w: 0.2730233}
   m_LocalPosition: {x: -532.55, y: -428.93, z: 14.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1016092420}
-  m_LocalEulerAnglesHint: {x: 10.403, y: 148.177, z: -6.394}
+  m_LocalEulerAnglesHint: {x: 10.403, y: 148.177, z: 0}
 --- !u!114 &1504800268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5539,6 +5539,8 @@ MonoBehaviour:
   gridContainer: {fileID: 1452843145}
   buildChoiceCardPrefab: {fileID: 6779832933209698775, guid: 3835598382cd0d94188b84e593c2e45d, type: 3}
   planeName: {fileID: 2056741755}
+  wrenchText: {fileID: 1587931987}
+  wrenchAnimDuration: 1
 --- !u!1 &1838854034
 GameObject:
   m_ObjectHideFlags: 0
@@ -7213,7 +7215,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!33 &1360066703943108138
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -7262,7 +7264,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1282125630602278150}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -7374,7 +7376,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1091967698531392089}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -7423,7 +7425,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7021746293863322394}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -7581,13 +7583,27 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6095540589533511186}
+  - component: {fileID: 6556096731985901286}
   m_Layer: 0
   m_Name: Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
+--- !u!114 &6556096731985901286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6556096731985901285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f1575aa25341f9bc74ba6ac35fdd75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.Components.PlaneSocket
+  <planePartType>k__BackingField: 6
 --- !u!1 &6670047653920972114
 GameObject:
   m_ObjectHideFlags: 0
@@ -7660,7 +7676,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8746702622155107125}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -7710,7 +7726,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5120868564595901652}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -7759,7 +7775,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1310044616297364525}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -7825,13 +7841,27 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2380404928764179153}
+  - component: {fileID: 8718048594166907665}
   m_Layer: 0
   m_Name: Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
+--- !u!114 &8718048594166907665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8718048594166907664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f1575aa25341f9bc74ba6ac35fdd75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.Components.PlaneSocket
+  <planePartType>k__BackingField: 7
 --- !u!1 &8746702622155107125
 GameObject:
   m_ObjectHideFlags: 0

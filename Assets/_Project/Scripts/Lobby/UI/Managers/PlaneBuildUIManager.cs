@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Project.Scripts.Enums;
 using _Project.Scripts.Lobby.Data.Save;
 using _Project.Scripts.Lobby.Enums;
 using _Project.Scripts.Lobby.Managers;
@@ -7,6 +8,8 @@ using _Project.Scripts.Lobby.ScriptableObjects.Plane;
 using _Project.Scripts.Lobby.Static;
 using _Project.Scripts.Lobby.Structs;
 using _Project.Scripts.Lobby.UI.Components;
+using _Project.Scripts.Managers;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -22,13 +25,20 @@ namespace _Project.Scripts.Lobby.UI.Managers
         [Tooltip("Plane Name -> shown top")] [SerializeField]
         private TextMeshProUGUI planeName;
 
+        [Tooltip("Current wrench amount")] [SerializeField]
+        private TextMeshProUGUI wrenchText;
+
+        [Tooltip("Wrench decrease anim duration")] [SerializeField]
+        private float wrenchAnimDuration;
+
         private readonly Dictionary<PlanePartSo, PlaneBuildChoiceCardUI> spawnedChoices =
             new Dictionary<PlanePartSo, PlaneBuildChoiceCardUI>();
+
 
         private void OnEnable()
         {
             LobbyEvents.OnAvailablePartsUpdated += HandleAvailablePartsUpdated;
-            LobbyEvents.OnPlanePartBuildStarted += HandlePlaneBuildStarted;
+            LobbyEvents.OnPlanePartPurchaseConfirmed += HandlePlanePurchaseConfirmed;
             LobbyEvents.OnPlanePartLoaded += HandlePlanePartLoaded;
         }
 
@@ -38,16 +48,52 @@ namespace _Project.Scripts.Lobby.UI.Managers
             {
                 planeName.text = planeSo.planeName;
             }
+
+            var resourceAmount = EconomyManager.Instance.GetResourceAmount(ResourceType.Wrench);
+            if (wrenchText != null) wrenchText.text = resourceAmount.ToString();
         }
 
-        private void HandlePlaneBuildStarted(PlanePartSo partSo, PlanePartVariation? partVariation = null)
+        private void HandlePlanePurchaseConfirmed(PlanePartSo partSo, PlanePartVariation? partVariation = null)
         {
-            if (spawnedChoices.TryGetValue(partSo, out PlaneBuildChoiceCardUI card))
+            if (!spawnedChoices.TryGetValue(partSo, out PlaneBuildChoiceCardUI card)) return;
+
+            ApplyCardAnimation(card);
+
+
+            ApplyWrenchAnimation(partSo, partVariation, card);
+        }
+
+        private void ApplyCardAnimation(PlaneBuildChoiceCardUI card)
+        {
+            Sequence seq = DOTween.Sequence().SetLink(wrenchText.gameObject);
+
+            seq.Append(
+                card.transform.DOShakePosition(wrenchAnimDuration, new Vector3(10f, 10f, 0), 20, 90)
+            );
+
+            seq.Join(
+                card.transform.DOShakeRotation(wrenchAnimDuration, new Vector3(0, 0, 5f), 15)
+            );
+        }
+
+        private void ApplyWrenchAnimation(PlanePartSo partSo, PlanePartVariation? partVariation,
+            PlaneBuildChoiceCardUI card)
+        {
+            int startWrenchAmount = int.Parse(wrenchText.text);
+            int targetWrenchAmount = EconomyManager.Instance.GetResourceAmount(ResourceType.Wrench);
+
+            DOTween.To(() => startWrenchAmount, x =>
+            {
+                startWrenchAmount = x;
+                wrenchText.text = startWrenchAmount.ToString();
+            }, targetWrenchAmount, wrenchAnimDuration).SetEase(Ease.OutExpo).OnComplete(() =>
             {
                 card.OnBuildChoiceSelected -= HandleBuildChoiceSelected;
                 Destroy(card.gameObject);
                 spawnedChoices.Remove(partSo);
-            }
+
+                LobbyEvents.TriggerPlanePartBuildAnimStarted(partSo, partVariation);
+            });
         }
 
         private void HandleAvailablePartsUpdated(List<PlanePartSo> partSo)
@@ -94,7 +140,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
         private void OnDisable()
         {
             LobbyEvents.OnAvailablePartsUpdated -= HandleAvailablePartsUpdated;
-            LobbyEvents.OnPlanePartBuildStarted -= HandlePlaneBuildStarted;
+            LobbyEvents.OnPlanePartPurchaseConfirmed -= HandlePlanePurchaseConfirmed;
             LobbyEvents.OnPlanePartLoaded -= HandlePlanePartLoaded;
 
             ClearAllCards();
