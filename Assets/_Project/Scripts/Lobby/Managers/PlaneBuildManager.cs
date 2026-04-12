@@ -25,6 +25,8 @@ namespace _Project.Scripts.Lobby.Managers
 
         private readonly List<SavedPartData> _partsToLoad = new List<SavedPartData>();
 
+        private bool _pendingStageUIUpdate;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -34,6 +36,29 @@ namespace _Project.Scripts.Lobby.Managers
             }
 
             Instance = this;
+        }
+
+        private void OnEnable()
+        {
+            LobbyEvents.OnPlanePartBuildAnimStarted += HandlePlanePartBuildAnimStarted;
+        }
+
+        private void HandlePlanePartBuildAnimStarted(PlanePartSo partSo, PlanePartVariation? partVariation)
+        {
+            if (_pendingStageUIUpdate)
+            {
+                _pendingStageUIUpdate = false;
+
+                if (_saveData.currentBuildStageIndex >= _currentPlaneBluePrint.buildStages.Count)
+                {
+                    CompletePlane();
+                    LobbyEvents.TriggerAvailablePartsUpdated(new List<PlanePartSo>());
+                }
+                else
+                {
+                    UpdateAvailablePartsUI();
+                }
+            }
         }
 
         private void Start()
@@ -48,7 +73,6 @@ namespace _Project.Scripts.Lobby.Managers
             {
                 string json = PlayerPrefs.GetString(SAVE_KEY);
                 _saveData = JsonUtility.FromJson<HangarSaveData>(json);
-
             }
             else
             {
@@ -125,12 +149,6 @@ namespace _Project.Scripts.Lobby.Managers
             }
 
             LobbyEvents.TriggerAvailablePartsUpdated(availablePartsList);
-
-            // if (_saveData.currentBuildIndex < _currentPlaneBluePrint.partsToBuildInOrder.Count)
-            // {
-            //     PlanePartSo nextPart = _currentPlaneBluePrint.partsToBuildInOrder[_saveData.currentBuildIndex];
-            //     LobbyEvents.TriggerAvailablePartsUpdated(nextPart);
-            // }
         }
 
         private void CompletePlane()
@@ -168,15 +186,6 @@ namespace _Project.Scripts.Lobby.Managers
                 Debug.Log($"Part Built {partSo.planePartType} or name -> {partSo.name}");
 
                 CheckStageCompletion();
-
-                // if (_saveData.currentBuildStageIndex >= _currentPlaneBluePrint.buildStages.Count)
-                // {
-                //     CompletePlane();
-                // }
-                // else
-                // {
-                //     UpdateAvailablePartsUI();
-                // }
             }
             else
             {
@@ -206,16 +215,13 @@ namespace _Project.Scripts.Lobby.Managers
                 _saveData.currentBuildStageIndex++;
                 SaveData();
 
-                if (_saveData.currentBuildStageIndex >= _currentPlaneBluePrint.buildStages.Count)
-                {
-                    CompletePlane();
-                    LobbyEvents.TriggerAvailablePartsUpdated(new List<PlanePartSo>());
-                }
-                else
-                {
-                    UpdateAvailablePartsUI();
-                }
+                _pendingStageUIUpdate = true;
             }
+        }
+
+        private void OnDisable()
+        {
+            LobbyEvents.OnPlanePartBuildAnimStarted -= HandlePlanePartBuildAnimStarted;
         }
 
         //! For testing

@@ -12,6 +12,7 @@ namespace _Project.Scripts.Lobby.Static
         public static event Action<PlaneBluePrintSo, List<SavedPartData>> OnPlanePartLoaded;
         public static event Action<PlanePartSo, PlanePartVariation?> OnPlanePartPurchaseConfirmed;
         public static event Action<PlanePartSo, PlanePartVariation?> OnPlanePartBuildAnimStarted;
+        public static event Action<PlanePartSo, PlanePartVariation?> OnPlanePartBuildAnimEnded;
         public static event Action<List<PlanePartSo>> OnAvailablePartsUpdated;
         public static event Action<PlaneBluePrintSo> OnPlaneBuildCompleted;
         public static event Action<PlaneSocketManager> OnPlaneSpawned;
@@ -31,6 +32,12 @@ namespace _Project.Scripts.Lobby.Static
             PlanePartVariation? selectedVariation = null)
         {
             OnPlanePartBuildAnimStarted?.Invoke(partSo, selectedVariation);
+        }
+
+        public static void TriggerPlanePartBuildAnimEnded(PlanePartSo partSo,
+            PlanePartVariation? selectedVariation = null)
+        {
+            OnPlanePartBuildAnimEnded?.Invoke(partSo, selectedVariation);
         }
 
         public static void TriggerAvailablePartsUpdated(List<PlanePartSo> availableParts)

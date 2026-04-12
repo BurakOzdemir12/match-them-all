@@ -32,12 +32,21 @@ namespace _Project.Scripts.Lobby.UI.Managers
         private void OnEnable()
         {
             LobbyEvents.OnPlanePartBuildAnimStarted += HandlePlanePartBuildAnimStarted;
+            LobbyEvents.OnPlanePartBuildAnimEnded += HandlePlanePartBuildAnimEnded;
+        }
+
+        private void HandlePlanePartBuildAnimEnded(PlanePartSo partSo, PlanePartVariation? partVariation)
+        {
+            playLevelButon.gameObject.SetActive(true);
+            openBuildPanelButon.gameObject.SetActive(true);
         }
 
         private void HandlePlanePartBuildAnimStarted(PlanePartSo partSo, PlanePartVariation? partVariation)
         {
             Fade(0f, 0f, setUpdate: true, false);
             overlayUIManager.HidePanel(buildListCanvas);
+            playLevelButon.gameObject.SetActive(false);
+            openBuildPanelButon.gameObject.SetActive(false);
         }
 
         private void Start()
@@ -56,7 +65,6 @@ namespace _Project.Scripts.Lobby.UI.Managers
             overlayUIManager.ShowPanel(buildListCanvas);
         }
 
-
         public void OnCloseBuildPanelClicked()
         {
             Fade(0f, 0.15f, setUpdate: true, false);
@@ -73,6 +81,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
         private void OnDisable()
         {
             LobbyEvents.OnPlanePartBuildAnimStarted -= HandlePlanePartBuildAnimStarted;
+            LobbyEvents.OnPlanePartBuildAnimEnded -= HandlePlanePartBuildAnimEnded;
         }
     }
 }
