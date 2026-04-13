@@ -28,6 +28,10 @@ namespace _Project.Scripts.Managers
 
         private void Start()
         {
+            foreach (var item in inventory)
+            {
+                OnResourceAmountChanged?.Invoke(item.Key, item.Value);
+            }
         }
 
         //!For Testing

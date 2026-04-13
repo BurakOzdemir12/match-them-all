@@ -1,4 +1,5 @@
 ﻿using System;
+using _Project.Scripts.Components.DoTween;
 using _Project.Scripts.Enums;
 using _Project.Scripts.Lobby.ScriptableObjects.Plane;
 using _Project.Scripts.Lobby.Static;
@@ -52,13 +53,35 @@ namespace _Project.Scripts.Lobby.UI.Managers
             LobbyEvents.OnPlanePartBuildAnimStarted += HandlePlanePartBuildAnimStarted;
             LobbyEvents.OnPlanePartBuildAnimEnded += HandlePlanePartBuildAnimEnded;
             LobbyEvents.OnPlaneBuildProgressChanged += HandlePlaneBuildProgressChanged;
+            EconomyManager.OnResourceAmountChanged += HandleResourceAmountChanged;
+        }
+
+        private void HandleResourceAmountChanged(ResourceType resourceType, int newAmount)
+        {
+            switch (resourceType)
+            {
+                case ResourceType.Coin:
+                    UpdateResourceStats(coinText, newAmount);
+                    break;
+                case ResourceType.Health:
+                    UpdateResourceStats(healthText, newAmount);
+                    break;
+                case ResourceType.Wrench:
+                    UpdateResourceStats(wrenchText, newAmount);
+                    break;
+            }
         }
 
         private void HandlePlaneBuildProgressChanged(float progress)
         {
-            progressSlider.DOValue(progress, 0.5f).SetEase(Ease.OutQuad);
-            if (progressText != null)
-                progressText.text = $"%{Mathf.RoundToInt(progress)}";
+            if (progressSlider != null)
+                progressSlider.DOValue(progress, 0.5f).SetEase(Ease.OutQuad);
+
+            if (progressText == null) return;
+
+            int startAmount = 0;
+            int.TryParse(progressText.text, out startAmount);
+            progressText.DoCounterInt(startAmount, Mathf.RoundToInt(progress), 0.5f, Ease.OutExpo, "{0}%");
         }
 
         private void HandlePlanePartBuildAnimEnded(PlanePartSo partSo, PlanePartVariation? partVariation)
@@ -79,15 +102,6 @@ namespace _Project.Scripts.Lobby.UI.Managers
         {
             Fade(0f, 0f, setUpdate: true, false);
             overlayUIManager.HidePanel(buildListCanvas);
-
-            var wrenchAmount = EconomyManager.Instance.GetResourceAmount(ResourceType.Wrench);
-            if (wrenchText != null) wrenchText.text = wrenchAmount.ToString();
-
-            var coinAmount = EconomyManager.Instance.GetResourceAmount(ResourceType.Coin);
-            if (coinText != null) coinText.text = coinAmount.ToString();
-          
-            var healthAmount = EconomyManager.Instance.GetResourceAmount(ResourceType.Health);
-            if (healthText != null) healthText.text = healthAmount.ToString();
         }
 
         public void OnPlayLevelClicked()
@@ -113,11 +127,24 @@ namespace _Project.Scripts.Lobby.UI.Managers
             buildListPanel.blocksRaycasts = boolValue;
         }
 
+        private void UpdateResourceStats(TextMeshProUGUI textElement, int value)
+        {
+            if (textElement == null) return;
+
+            textElement.text = value.ToString();
+
+            int startAmount = 0;
+            int.TryParse(textElement.text, out startAmount);
+
+            textElement.DoCounterInt(startAmount, value, 0.5f, Ease.OutExpo);
+        }
+
         private void OnDisable()
         {
             LobbyEvents.OnPlanePartBuildAnimStarted -= HandlePlanePartBuildAnimStarted;
             LobbyEvents.OnPlanePartBuildAnimEnded -= HandlePlanePartBuildAnimEnded;
             LobbyEvents.OnPlaneBuildProgressChanged -= HandlePlaneBuildProgressChanged;
+            EconomyManager.OnResourceAmountChanged -= HandleResourceAmountChanged;
         }
     }
 }

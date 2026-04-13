@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Project.Scripts.Components.DoTween;
 using _Project.Scripts.Enums;
 using _Project.Scripts.Lobby.Data.Save;
 using _Project.Scripts.Lobby.Enums;
@@ -65,8 +66,11 @@ namespace _Project.Scripts.Lobby.UI.Managers
             if (progressSlider != null)
                 progressSlider.DOValue(progress, 0.5f).SetEase(Ease.OutQuad);
 
-            if (progressText != null)
-                progressText.text = $"%{Mathf.RoundToInt(progress)}";
+            if (progressText == null) return;
+
+            int startAmount = 0;
+            int.TryParse(progressText.text, out startAmount);
+            progressText.DoCounterInt(startAmount, Mathf.RoundToInt(progress), 0.5f, Ease.OutExpo, "{0}%");
         }
 
         private void HandlePlanePartLoaded(PlaneBluePrintSo planeSo, List<SavedPartData> savedPartData)
@@ -110,11 +114,8 @@ namespace _Project.Scripts.Lobby.UI.Managers
             int startWrenchAmount = int.Parse(wrenchText.text);
             int targetWrenchAmount = EconomyManager.Instance.GetResourceAmount(ResourceType.Wrench);
 
-            DOTween.To(() => startWrenchAmount, x =>
-            {
-                startWrenchAmount = x;
-                wrenchText.text = startWrenchAmount.ToString();
-            }, targetWrenchAmount, wrenchAnimDuration).SetEase(Ease.OutExpo).OnComplete(() =>
+            wrenchText.DoCounterInt(startWrenchAmount, targetWrenchAmount,
+                wrenchAnimDuration, Ease.OutExpo).OnComplete(() =>
             {
                 card.OnBuildChoiceSelected -= HandleBuildChoiceSelected;
                 Destroy(card.gameObject);
