@@ -680,6 +680,7 @@ MonoBehaviour:
   wrenchRequire: {fileID: 7482097415468898626}
   partIcon: {fileID: 6771203802489834310}
   descriptionText: {fileID: 853357039998685001}
+  buildButton: {fileID: 803235440734873215}
 --- !u!1 &8697043021790974031
 GameObject:
   m_ObjectHideFlags: 0

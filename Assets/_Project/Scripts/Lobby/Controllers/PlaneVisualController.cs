@@ -16,6 +16,15 @@ namespace _Project.Scripts.Lobby.Controllers
         [Header("Install Animation settings")] [Tooltip("Plane Parts install total anim time")] [SerializeField]
         private float partInstallDuration = 2f;
 
+        [Tooltip("Parts will spawn on this position ")] [SerializeField]
+        private Vector3 partSpawnPosition;
+
+        [Tooltip("Ease type for part install")] [SerializeField]
+        private Ease installEase = Ease.InOutSine;
+
+        [Tooltip("Interval before the install animation.")] [SerializeField]
+        private float intervalDuration = 0.5f;
+
         private PlaneSocketManager _currentSocketManager;
 
         private readonly List<PlanePartSo> _savedPartList = new List<PlanePartSo>();
@@ -24,6 +33,7 @@ namespace _Project.Scripts.Lobby.Controllers
         private bool _isDataLoaded = false;
         private PlaneBluePrintSo _cachedBluePrint;
         private List<SavedPartData> _cachedSavedParts;
+
 
         private void OnEnable()
         {
@@ -107,16 +117,16 @@ namespace _Project.Scripts.Lobby.Controllers
                 return;
 
             var defaultPart = partSo.defaultPartPrefab;
-            Sequence seq = DOTween.Sequence().SetLink(defaultPart);
 
-            GameObject partToInstall = Instantiate(defaultPart,
-                defaultPart.transform.position + new Vector3(-20f, 0, 0),
+            GameObject partToInstall = Instantiate(defaultPart, partSpawnPosition,
                 Quaternion.identity);
 
-            seq.AppendInterval(0.5f);
+            Sequence seq = DOTween.Sequence().SetLink(partToInstall);
+
+            seq.AppendInterval(intervalDuration);
 
             seq.Append(partToInstall.transform.DOMove(targetSocketTransform.position, partInstallDuration)
-                .SetEase(Ease.InOutBack));
+                .SetEase(installEase));
             seq.Join(partToInstall.transform.DORotate(targetSocketTransform.rotation.eulerAngles, partInstallDuration));
 
             seq.OnComplete(() => { LobbyEvents.TriggerPlanePartBuildAnimEnded(partSo, partVariation); });
@@ -124,7 +134,7 @@ namespace _Project.Scripts.Lobby.Controllers
 
         private void OnDisable()
         {
-            LobbyEvents.OnPlanePartPurchaseConfirmed -= HandlePlanePartBuildAnimStarted;
+            LobbyEvents.OnPlanePartBuildAnimStarted -= HandlePlanePartBuildAnimStarted;
             LobbyEvents.OnPlaneSpawned -= HandlePlaneSpawned;
             LobbyEvents.OnPlanePartLoaded -= HandlePlanePartLoaded;
         }

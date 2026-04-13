@@ -1,8 +1,11 @@
 ﻿using System;
+using _Project.Scripts.Enums;
 using _Project.Scripts.Lobby.ScriptableObjects.Plane;
 using _Project.Scripts.Lobby.Static;
 using _Project.Scripts.Lobby.Structs;
+using _Project.Scripts.Managers;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -11,17 +14,17 @@ namespace _Project.Scripts.Lobby.UI.Managers
 {
     public class HangarUIManager : MonoBehaviour
     {
-        [Header("UI References")] [Tooltip("Play next level of game button")] [SerializeField]
+        [Header("UI Buttons")] [Tooltip("Play next level of game button")] [SerializeField]
         private Button playLevelButon;
 
         [Tooltip("Opens Build list panel")] [SerializeField]
         private Button openBuildPanelButon;
 
-        [Tooltip("Build List Panel")] [SerializeField]
-        private CanvasGroup buildListPanel;
-
         [Tooltip("Close Build panel button")] [SerializeField]
         private Button closeBuildPanelButton;
+
+        [Header("UI Panels-Canvas")] [Tooltip("Build List Panel")] [SerializeField]
+        private CanvasGroup buildListPanel;
 
         [Tooltip("Build List Canvas component")] [SerializeField]
         private Canvas buildListCanvas;
@@ -29,10 +32,33 @@ namespace _Project.Scripts.Lobby.UI.Managers
         [Header("Dependencies")] [Tooltip("UI overlay manager")] [SerializeField]
         private OverlayUIManager overlayUIManager;
 
+        [Header("Progress Ui references")] [Tooltip("Plane build progress -> Slider")] [SerializeField]
+        private Slider progressSlider;
+
+        [Tooltip("Progress Text")] [SerializeField]
+        private TextMeshProUGUI progressText;
+
+        [Header("Stats/Resources UI references")] [Tooltip("Coin amount text")] [SerializeField]
+        private TextMeshProUGUI coinText;
+
+        [Tooltip("Health amount text")] [SerializeField]
+        private TextMeshProUGUI healthText;
+
+        [Tooltip("Wrench amount text")] [SerializeField]
+        private TextMeshProUGUI wrenchText;
+
         private void OnEnable()
         {
             LobbyEvents.OnPlanePartBuildAnimStarted += HandlePlanePartBuildAnimStarted;
             LobbyEvents.OnPlanePartBuildAnimEnded += HandlePlanePartBuildAnimEnded;
+            LobbyEvents.OnPlaneBuildProgressChanged += HandlePlaneBuildProgressChanged;
+        }
+
+        private void HandlePlaneBuildProgressChanged(float progress)
+        {
+            progressSlider.DOValue(progress, 0.5f).SetEase(Ease.OutQuad);
+            if (progressText != null)
+                progressText.text = $"%{Mathf.RoundToInt(progress)}";
         }
 
         private void HandlePlanePartBuildAnimEnded(PlanePartSo partSo, PlanePartVariation? partVariation)
@@ -53,6 +79,15 @@ namespace _Project.Scripts.Lobby.UI.Managers
         {
             Fade(0f, 0f, setUpdate: true, false);
             overlayUIManager.HidePanel(buildListCanvas);
+
+            var wrenchAmount = EconomyManager.Instance.GetResourceAmount(ResourceType.Wrench);
+            if (wrenchText != null) wrenchText.text = wrenchAmount.ToString();
+
+            var coinAmount = EconomyManager.Instance.GetResourceAmount(ResourceType.Coin);
+            if (coinText != null) coinText.text = coinAmount.ToString();
+          
+            var healthAmount = EconomyManager.Instance.GetResourceAmount(ResourceType.Health);
+            if (healthText != null) healthText.text = healthAmount.ToString();
         }
 
         public void OnPlayLevelClicked()
@@ -82,6 +117,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
         {
             LobbyEvents.OnPlanePartBuildAnimStarted -= HandlePlanePartBuildAnimStarted;
             LobbyEvents.OnPlanePartBuildAnimEnded -= HandlePlanePartBuildAnimEnded;
+            LobbyEvents.OnPlaneBuildProgressChanged -= HandlePlaneBuildProgressChanged;
         }
     }
 }

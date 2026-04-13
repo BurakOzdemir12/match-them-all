@@ -8,6 +8,7 @@
         HammerBooster,
         PlaneBombBooster,
         WindBooster,
-        ReviveSlot
+        ReviveSlot,
+        Health
     }
 }

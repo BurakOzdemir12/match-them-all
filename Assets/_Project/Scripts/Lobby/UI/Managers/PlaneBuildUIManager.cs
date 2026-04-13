@@ -12,15 +12,20 @@ using _Project.Scripts.Managers;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace _Project.Scripts.Lobby.UI.Managers
 {
     public class PlaneBuildUIManager : MonoBehaviour
     {
-        [Header("UI References")] [SerializeField]
+        [Header("UI References")] [Tooltip("Main Container")] [SerializeField]
         private Transform gridContainer;
 
-        [SerializeField] private GameObject buildChoiceCardPrefab;
+        [Tooltip("Container Canvas group")] [SerializeField]
+        private CanvasGroup gridCanvasGroup;
+
+        [Tooltip("Build choice card prefab")] [SerializeField]
+        private GameObject buildChoiceCardPrefab;
 
         [Tooltip("Plane Name -> shown top")] [SerializeField]
         private TextMeshProUGUI planeName;
@@ -31,6 +36,18 @@ namespace _Project.Scripts.Lobby.UI.Managers
         [Tooltip("Wrench decrease anim duration")] [SerializeField]
         private float wrenchAnimDuration;
 
+        [Tooltip("Card Shake position -> Vector")] [SerializeField]
+        private Vector3 shakePosition = new Vector3(10f, 10f, 0);
+
+        [Tooltip("Card Shake rotation -> Vector")] [SerializeField]
+        private Vector3 shakeRotation = new Vector3(0, 0, 5f);
+
+        [Tooltip("Plane build progress -> Slider")] [SerializeField]
+        private Slider progressSlider;
+
+        [Tooltip("Progress Text")] [SerializeField]
+        private TextMeshProUGUI progressText;
+
         private readonly Dictionary<PlanePartSo, PlaneBuildChoiceCardUI> spawnedChoices =
             new Dictionary<PlanePartSo, PlaneBuildChoiceCardUI>();
 
@@ -40,6 +57,16 @@ namespace _Project.Scripts.Lobby.UI.Managers
             LobbyEvents.OnAvailablePartsUpdated += HandleAvailablePartsUpdated;
             LobbyEvents.OnPlanePartPurchaseConfirmed += HandlePlanePurchaseConfirmed;
             LobbyEvents.OnPlanePartLoaded += HandlePlanePartLoaded;
+            LobbyEvents.OnPlaneBuildProgressChanged += HandlePlaneBuildProgressChanged;
+        }
+
+        private void HandlePlaneBuildProgressChanged(float progress)
+        {
+            if (progressSlider != null)
+                progressSlider.DOValue(progress, 0.5f).SetEase(Ease.OutQuad);
+
+            if (progressText != null)
+                progressText.text = $"%{Mathf.RoundToInt(progress)}";
         }
 
         private void HandlePlanePartLoaded(PlaneBluePrintSo planeSo, List<SavedPartData> savedPartData)
@@ -59,20 +86,21 @@ namespace _Project.Scripts.Lobby.UI.Managers
 
             ApplyCardAnimation(card);
 
-
             ApplyWrenchAnimation(partSo, partVariation, card);
         }
 
         private void ApplyCardAnimation(PlaneBuildChoiceCardUI card)
         {
-            Sequence seq = DOTween.Sequence().SetLink(wrenchText.gameObject);
+            gridCanvasGroup.interactable = false;
+
+            Sequence seq = DOTween.Sequence().SetLink(card.gameObject);
 
             seq.Append(
-                card.transform.DOShakePosition(wrenchAnimDuration, new Vector3(10f, 10f, 0), 20, 90)
+                card.transform.DOShakePosition(wrenchAnimDuration, shakePosition, 20, 90)
             );
 
             seq.Join(
-                card.transform.DOShakeRotation(wrenchAnimDuration, new Vector3(0, 0, 5f), 15)
+                card.transform.DOShakeRotation(wrenchAnimDuration, shakeRotation, 15)
             );
         }
 
@@ -91,6 +119,8 @@ namespace _Project.Scripts.Lobby.UI.Managers
                 card.OnBuildChoiceSelected -= HandleBuildChoiceSelected;
                 Destroy(card.gameObject);
                 spawnedChoices.Remove(partSo);
+
+                gridCanvasGroup.interactable = true;
 
                 LobbyEvents.TriggerPlanePartBuildAnimStarted(partSo, partVariation);
             });
@@ -142,6 +172,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
             LobbyEvents.OnAvailablePartsUpdated -= HandleAvailablePartsUpdated;
             LobbyEvents.OnPlanePartPurchaseConfirmed -= HandlePlanePurchaseConfirmed;
             LobbyEvents.OnPlanePartLoaded -= HandlePlanePartLoaded;
+            LobbyEvents.OnPlaneBuildProgressChanged -= HandlePlaneBuildProgressChanged;
 
             ClearAllCards();
         }

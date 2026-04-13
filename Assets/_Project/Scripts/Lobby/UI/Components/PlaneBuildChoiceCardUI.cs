@@ -17,6 +17,9 @@ namespace _Project.Scripts.Lobby.UI.Components
         [Tooltip("Description text for build")] [SerializeField]
         private TextMeshProUGUI descriptionText;
 
+        [Tooltip("Button for purchase")] [SerializeField]
+        private Button buildButton;
+
         private PlanePartSo _currentPartSo;
 
         public event Action<PlanePartSo> OnBuildChoiceSelected;

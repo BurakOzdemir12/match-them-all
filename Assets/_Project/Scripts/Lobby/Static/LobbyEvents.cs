@@ -16,6 +16,8 @@ namespace _Project.Scripts.Lobby.Static
         public static event Action<List<PlanePartSo>> OnAvailablePartsUpdated;
         public static event Action<PlaneBluePrintSo> OnPlaneBuildCompleted;
         public static event Action<PlaneSocketManager> OnPlaneSpawned;
+        public static event Action<float> OnPlaneBuildProgressChanged;
+
 
         public static void TriggerPlanePartLoaded(PlaneBluePrintSo planeBluePrintSo, List<SavedPartData> savedPartData)
         {
@@ -53,6 +55,11 @@ namespace _Project.Scripts.Lobby.Static
         public static void TriggerPlaneSpawned(PlaneSocketManager socketManager)
         {
             OnPlaneSpawned?.Invoke(socketManager);
+        }
+
+        public static void TriggerPlaneBuildProgressChanged(float currentProgress)
+        {
+            OnPlaneBuildProgressChanged?.Invoke(currentProgress);
         }
     }
 }

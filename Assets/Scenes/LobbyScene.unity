@@ -1083,7 +1083,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 804ef9e49a5d4ee4afe4d2a1088e57ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.Controllers.PlaneVisualController
-  partInstallDuration: 2
+  partInstallDuration: 1
+  partSpawnPosition: {x: -20, y: 0, z: 0}
+  installEase: 3
+  intervalDuration: 0.5
 --- !u!1 &267942830
 GameObject:
   m_ObjectHideFlags: 0
@@ -2294,10 +2297,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.UI.Managers.HangarUIManager
   playLevelButon: {fileID: 655654282}
   openBuildPanelButon: {fileID: 73754680}
-  buildListPanel: {fileID: 716722182}
   closeBuildPanelButton: {fileID: 1290786340}
+  buildListPanel: {fileID: 716722182}
   buildListCanvas: {fileID: 716722183}
   overlayUIManager: {fileID: 1479298568}
+  progressSlider: {fileID: 1891624384}
+  progressText: {fileID: 1439023955}
+  coinText: {fileID: 1316369031}
+  healthText: {fileID: 132353201}
+  wrenchText: {fileID: 576069421}
 --- !u!1 &816534870
 GameObject:
   m_ObjectHideFlags: 0
@@ -3733,7 +3741,7 @@ GameObject:
   - component: {fileID: 1283554366}
   - component: {fileID: 1283554365}
   m_Layer: 5
-  m_Name: "Repair_\u0131con"
+  m_Name: "Build_\u0131con"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4477,7 +4485,7 @@ GameObject:
   - component: {fileID: 1434131796}
   - component: {fileID: 1434131797}
   m_Layer: 5
-  m_Name: RepairPercent_Slider
+  m_Name: BuildPercent_Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4553,7 +4561,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 100
   m_WholeNumbers: 0
-  m_Value: 38.1
+  m_Value: 100
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -4706,6 +4714,7 @@ GameObject:
   - component: {fileID: 1452843147}
   - component: {fileID: 1452843146}
   - component: {fileID: 1452843148}
+  - component: {fileID: 1452843149}
   m_Layer: 5
   m_Name: BuildChoice_GridContainer_Vertical
   m_TagString: Untagged
@@ -4745,7 +4754,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4796,6 +4805,18 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!225 &1452843149
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1452843144}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1463652970
 GameObject:
   m_ObjectHideFlags: 0
@@ -5537,10 +5558,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.UI.Managers.PlaneBuildUIManager
   gridContainer: {fileID: 1452843145}
+  gridCanvasGroup: {fileID: 1452843149}
   buildChoiceCardPrefab: {fileID: 6779832933209698775, guid: 3835598382cd0d94188b84e593c2e45d, type: 3}
   planeName: {fileID: 2056741755}
   wrenchText: {fileID: 1587931987}
   wrenchAnimDuration: 1
+  shakePosition: {x: 10, y: 10, z: 0}
+  shakeRotation: {x: 0, y: 0, z: 5}
+  progressSlider: {fileID: 1434131797}
+  progressText: {fileID: 2139716587}
 --- !u!1 &1838854034
 GameObject:
   m_ObjectHideFlags: 0
@@ -5780,7 +5806,7 @@ GameObject:
   - component: {fileID: 1891624383}
   - component: {fileID: 1891624384}
   m_Layer: 5
-  m_Name: RepairPercent_Slider
+  m_Name: BuildPercent_Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

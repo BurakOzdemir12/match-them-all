@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using _Project.Scripts.Enums;
 using _Project.Scripts.Lobby.Data.Save;
 using _Project.Scripts.Lobby.ScriptableObjects.Plane;
@@ -64,7 +65,7 @@ namespace _Project.Scripts.Lobby.Managers
         private void Start()
         {
             LoadSaveData();
-            InitializeHangar();
+            InitializePlane();
         }
 
         private void LoadSaveData()
@@ -87,14 +88,8 @@ namespace _Project.Scripts.Lobby.Managers
             }
         }
 
-        private void SaveData()
-        {
-            string json = JsonUtility.ToJson(_saveData);
-            PlayerPrefs.SetString(SAVE_KEY, json);
-            PlayerPrefs.Save();
-        }
 
-        private void InitializeHangar()
+        private void InitializePlane()
         {
             _currentPlaneBluePrint = allPlaneBluePrints.Find(b
                 => b.planeID == _saveData.activePlaneID);
@@ -119,6 +114,8 @@ namespace _Project.Scripts.Lobby.Managers
             }
 
             LobbyEvents.TriggerPlanePartLoaded(_currentPlaneBluePrint, _partsToLoad);
+
+            CalculateBuildProgress();
 
             UpdateAvailablePartsUI();
         }
@@ -151,23 +148,8 @@ namespace _Project.Scripts.Lobby.Managers
             LobbyEvents.TriggerAvailablePartsUpdated(availablePartsList);
         }
 
-        private void CompletePlane()
-        {
-            _saveData.completedPlaneIDs.Add(_saveData.activePlaneID);
-            SaveData();
-
-            // TODO: Celebration effects
-            Debug.Log("Congratz plane build is completed");
-
-            LobbyEvents.TriggerAllPlaneBuildCompleted(planeBluePrintSo: _currentPlaneBluePrint);
-        }
-
         public void TryBuildPart(PlanePartSo partSo, PlanePartVariation? selectedVariation = null)
         {
-            // if (_currentPlaneBluePrint.partsToBuildInOrder[_saveData.currentBuildIndex] != partSo)
-            // {
-            //     return;
-            // }
             if (_saveData.currentBuildStageIndex >= _currentPlaneBluePrint.buildStages.Count) return;
 
             if (EconomyManager.Instance.TrySpendResource(ResourceType.Wrench, partSo.requiredWrench))
@@ -181,6 +163,8 @@ namespace _Project.Scripts.Lobby.Managers
                 // _saveData.currentBuildIndex++;
 
                 SaveData();
+
+                CalculateBuildProgress();
 
                 LobbyEvents.TriggerPlanePartPurchaseConfirmed(partSo, partSo.hasVariation ? selectedVariation : null);
                 Debug.Log($"Part Built {partSo.planePartType} or name -> {partSo.name}");
@@ -218,6 +202,37 @@ namespace _Project.Scripts.Lobby.Managers
                 _pendingStageUIUpdate = true;
             }
         }
+
+        private void CalculateBuildProgress()
+        {
+            var totalBuildCount =
+                _currentPlaneBluePrint.buildStages
+                    .Sum(stage => stage.partsInStage
+                        .Count(part => part != null));
+            float currentBuiltCount = _saveData.builtParts.Count;
+            float progressPercentage = (currentBuiltCount / totalBuildCount) * 100f;
+
+            LobbyEvents.TriggerPlaneBuildProgressChanged(progressPercentage);
+        }
+
+        private void SaveData()
+        {
+            string json = JsonUtility.ToJson(_saveData);
+            PlayerPrefs.SetString(SAVE_KEY, json);
+            PlayerPrefs.Save();
+        }
+
+        private void CompletePlane()
+        {
+            _saveData.completedPlaneIDs.Add(_saveData.activePlaneID);
+            SaveData();
+
+            // TODO: Celebration effects
+            Debug.Log("Congratz plane build is completed");
+
+            LobbyEvents.TriggerAllPlaneBuildCompleted(planeBluePrintSo: _currentPlaneBluePrint);
+        }
+
 
         private void OnDisable()
         {
