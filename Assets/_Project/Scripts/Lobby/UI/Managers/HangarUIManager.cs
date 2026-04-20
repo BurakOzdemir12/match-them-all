@@ -48,6 +48,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
         [Tooltip("Wrench amount text")] [SerializeField]
         private TextMeshProUGUI wrenchText;
 
+
         private void OnEnable()
         {
             LobbyEvents.OnPlanePartBuildAnimStarted += HandlePlanePartBuildAnimStarted;
@@ -92,7 +93,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
 
         private void HandlePlanePartBuildAnimStarted(PlanePartSo partSo, PlanePartVariation? partVariation)
         {
-            Fade(0f, 0f, setUpdate: true, false);
+            Fade(buildListPanel, 0f, 0f, setUpdate: true, false);
             overlayUIManager.HidePanel(buildListCanvas);
             playLevelButon.gameObject.SetActive(false);
             openBuildPanelButon.gameObject.SetActive(false);
@@ -100,7 +101,8 @@ namespace _Project.Scripts.Lobby.UI.Managers
 
         private void Start()
         {
-            Fade(0f, 0f, setUpdate: true, false);
+            Fade(buildListPanel, 0f, 0f, setUpdate: true, false);
+
             overlayUIManager.HidePanel(buildListCanvas);
         }
 
@@ -110,21 +112,22 @@ namespace _Project.Scripts.Lobby.UI.Managers
 
         public void OnOpenBuildPanelClicked()
         {
-            Fade(1f, 0.15f, setUpdate: true, true);
+            Fade(buildListPanel, 1f, 0.15f, setUpdate: true, true);
             overlayUIManager.ShowPanel(buildListCanvas);
         }
 
         public void OnCloseBuildPanelClicked()
         {
-            Fade(0f, 0.15f, setUpdate: true, false);
+            Fade(buildListPanel, 0f, 0.15f, setUpdate: true, false);
             overlayUIManager.HidePanel(buildListCanvas);
         }
 
-        private void Fade(float value, float duration, bool setUpdate, bool boolValue)
+      
+        private void Fade(CanvasGroup group, float value, float duration, bool setUpdate, bool boolValue)
         {
-            buildListPanel.DOFade(value, duration).SetUpdate(setUpdate);
-            buildListPanel.interactable = boolValue;
-            buildListPanel.blocksRaycasts = boolValue;
+            group.DOFade(value, duration).SetUpdate(setUpdate);
+            group.interactable = boolValue;
+            group.blocksRaycasts = boolValue;
         }
 
         private void UpdateResourceStats(TextMeshProUGUI textElement, int value)
