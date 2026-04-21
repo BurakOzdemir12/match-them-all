@@ -1,4 +1,6 @@
 ﻿using System;
+using _Project.Scripts.Enums;
+using _Project.Scripts.Lobby.Static;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,9 +18,24 @@ namespace _Project.Scripts.Lobby.UI.Managers
         [Header("Dependencies")] [Tooltip("UI overlay manager")] [SerializeField]
         private OverlayUIManager overlayUIManager;
 
+        [Tooltip("Scrollbar to check if there is more content to show in the shop")] [SerializeField]
+        private Scrollbar coinShopScrollbar;
 
-        [SerializeField] private Scrollbar coinShopScrollbar;
-        [SerializeField] private Transform thereIsMoreMessage;
+        [Tooltip("There is more message for given info to user")] [SerializeField]
+        private Transform thereIsMoreMessage;
+
+        private void OnEnable()
+        {
+            LobbyEvents.OnResourceNotEnough += HandleResourceNotEnough;
+        }
+
+        private void HandleResourceNotEnough(ResourceType type)
+        {
+            if (type == ResourceType.Coin)
+            {
+                OnOpenShopPanelClicked();
+            }
+        }
 
         private void Start()
         {
@@ -54,6 +71,11 @@ namespace _Project.Scripts.Lobby.UI.Managers
             group.DOFade(value, duration).SetUpdate(setUpdate);
             group.interactable = boolValue;
             group.blocksRaycasts = boolValue;
+        }
+
+        private void OnDisable()
+        {
+            LobbyEvents.OnResourceNotEnough -= HandleResourceNotEnough;
         }
     }
 }

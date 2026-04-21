@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Project.Scripts.Enums;
 using _Project.Scripts.Lobby.Data.Save;
 using _Project.Scripts.Lobby.Managers;
 using _Project.Scripts.Lobby.ScriptableObjects.Plane;
@@ -18,6 +19,8 @@ namespace _Project.Scripts.Lobby.Static
         public static event Action<PlaneSocketManager> OnPlaneSpawned;
         public static event Action<float> OnPlaneBuildProgressChanged;
 
+        //UI flow
+        public static event Action<ResourceType> OnResourceNotEnough;
 
         public static void TriggerPlanePartLoaded(PlaneBluePrintSo planeBluePrintSo, List<SavedPartData> savedPartData)
         {
@@ -60,6 +63,11 @@ namespace _Project.Scripts.Lobby.Static
         public static void TriggerPlaneBuildProgressChanged(float currentProgress)
         {
             OnPlaneBuildProgressChanged?.Invoke(currentProgress);
+        }
+
+        public static void TriggerResourceNotEnough(ResourceType resourceType)
+        {
+            OnResourceNotEnough?.Invoke(resourceType);
         }
     }
 }
