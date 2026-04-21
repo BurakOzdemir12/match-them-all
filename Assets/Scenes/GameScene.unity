@@ -276,7 +276,20 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 10609294}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 207369499}
+        m_TargetAssemblyTypeName: _Project.Scripts.UI.Components.LevelCompletePanelUI,
+          Assembly-CSharp
+        m_MethodName: OnContinueButtonClicked
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &10609294
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16484,6 +16497,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ---CORE_MANAGERS---
       objectReference: {fileID: 0}
+    - target: {fileID: 685584161126844277, guid: 498447afeceda934d9d0c0bf0fe41cc0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1687498994138827358, guid: 498447afeceda934d9d0c0bf0fe41cc0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -16526,11 +16543,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4208308470866500008, guid: 498447afeceda934d9d0c0bf0fe41cc0, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8656394134156657799, guid: 498447afeceda934d9d0c0bf0fe41cc0, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

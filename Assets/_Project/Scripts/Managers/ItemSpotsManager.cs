@@ -78,7 +78,6 @@ namespace _Project.Scripts.Managers
         public static event Action<ItemType> OnItemReturnedToBoard;
 
         private LevelDataSo _levelData;
-        private Camera _mainCamera;
 
         private void Awake()
         {
@@ -90,8 +89,6 @@ namespace _Project.Scripts.Managers
 
             Instance = this;
 
-            _mainCamera = Camera.main;
-
             InitSpots();
         }
 
@@ -99,15 +96,20 @@ namespace _Project.Scripts.Managers
         {
             InputManager.OnItemClicked += HandleItemClicked;
             GameEvents.OnGameRevived += HandleGameRevived;
-            GameEvents.OnLevelStarted += HandleLevelStarted;
+            GameEvents.OnLevelPrepareStarted += HandleLevelPrepareStarted;
         }
 
-        private void HandleLevelStarted(LevelDataSo levelData)
+        private void HandleLevelPrepareStarted(LevelDataSo levelData)
         {
+            ClearItemsInBar();
             ClearAllSpots();
-            activeItemsOnPool.Clear();
+            ClearActiveItems();
+            ClearMergeData();
+
             isBusy = false;
             _levelData = levelData;
+
+            GameEvents.TriggerLevelStarted(levelData);
         }
 
         private void HandleGameRevived(FailType type)
@@ -152,7 +154,7 @@ namespace _Project.Scripts.Managers
                     itemSeq.AppendCallback(() =>
                     {
                         SoundManager.Instance.PlaySoundByType(SoundType.ItemReturnToBoard,
-                            _mainCamera.transform.position);
+                            Camera.main.transform.position);
                     });
                     itemSeq.Append(item.transform.DOJump(randomDropPos, returnJumpPower, numJumps, returnDuration)
                         .SetEase(Ease.Linear));
@@ -188,6 +190,25 @@ namespace _Project.Scripts.Managers
 
         private void ClearAllSpots()
         {
+            //!Item spots clean
+
+            foreach (var spot in availableSpots)
+            {
+                spot.Clear();
+            }
+        }
+
+        private void ClearMergeData()
+        {
+            //! Merge data cleanup
+
+            itemMergeDataDictionary.Clear();
+        }
+
+        private void ClearItemsInBar()
+        {
+            //!items in bar cleanup
+
             foreach (var item in itemsInBar)
             {
                 if (item != null && item.gameObject != null)
@@ -200,12 +221,20 @@ namespace _Project.Scripts.Managers
             }
 
             itemsInBar.Clear();
-            itemMergeDataDictionary.Clear();
+        }
 
-            foreach (var spot in availableSpots)
+        private void ClearActiveItems()
+        {
+            //!Active items on pool cleaan
+            foreach (var activeItem in activeItemsOnPool)
             {
-                spot.Clear();
+                activeItem.transform.DOKill();
+                DOTween.Kill(activeItem.gameObject);
+
+                // Destroy(activeItem.gameObject);
             }
+
+            activeItemsOnPool.Clear();
         }
 
 
@@ -513,7 +542,7 @@ namespace _Project.Scripts.Managers
         {
             InputManager.OnItemClicked -= HandleItemClicked;
             GameEvents.OnGameRevived -= HandleGameRevived;
-            GameEvents.OnLevelStarted -= HandleLevelStarted;
+            GameEvents.OnLevelPrepareStarted -= HandleLevelPrepareStarted;
         }
     }
 }

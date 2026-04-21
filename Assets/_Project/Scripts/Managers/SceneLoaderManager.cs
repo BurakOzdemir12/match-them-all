@@ -36,7 +36,7 @@ namespace _Project.Scripts.Managers
             }
 
             Instance = this;
-            DontDestroyOnLoad(this.transform.root.gameObject);
+            DontDestroyOnLoad(this.transform.gameObject);
         }
 
         private void OnEnable()
@@ -78,7 +78,7 @@ namespace _Project.Scripts.Managers
                 if (loadingBar != null) loadingBar.value = progress;
                 if (loadingPercentageText != null) loadingPercentageText.text = $"%{Mathf.RoundToInt(progress * 100)}";
                 loadingFillImage.color = Color.Lerp(Color.gray, Color.green, progress);
-                
+
                 if (progress >= 0.9f)
                 {
                     yield return new WaitForSecondsRealtime(0.5f);

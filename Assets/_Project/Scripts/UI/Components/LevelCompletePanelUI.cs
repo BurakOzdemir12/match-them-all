@@ -68,6 +68,8 @@ namespace _Project.Scripts.UI.Components
 
         private Camera _mainCamera;
 
+        public static event Action OnContinueClicked;
+
         private void Awake()
         {
             _mainCamera = Camera.main;
@@ -248,7 +250,7 @@ namespace _Project.Scripts.UI.Components
 
         public void OnContinueButtonClicked()
         {
-            // SceneManager.LoadScene("LobbyScene");
+            OnContinueClicked?.Invoke();
         }
     }
 }

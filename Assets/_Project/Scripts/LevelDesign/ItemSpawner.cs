@@ -8,6 +8,7 @@ using _Project.Scripts.LevelDesign.ScriptableObjects;
 using _Project.Scripts.Managers;
 using _Project.Scripts.Static;
 using _Project.Scripts.Structs.Level;
+using DG.Tweening;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -45,19 +46,9 @@ namespace _Project.Scripts.LevelDesign
 
         private void HandleLevelStarted(LevelDataSo data)
         {
-            ClearBoard();
-
             SpawnAllItemsInstantly(data);
             // if (spawnCoroutine != null) StopCoroutine(spawnCoroutine);
             // spawnCoroutine = StartCoroutine(SpawnItemRoutine(data));
-        }
-
-        private void ClearBoard()
-        {
-            foreach (Transform child in itemsParent)
-            {
-                Destroy(child.gameObject);
-            }
         }
 
         // ReSharper disable Unity.PerformanceAnalysis

@@ -5,6 +5,7 @@ using _Project.Scripts.Lobby.ScriptableObjects.Plane;
 using _Project.Scripts.Lobby.Static;
 using _Project.Scripts.Lobby.Structs;
 using _Project.Scripts.Managers;
+using _Project.Scripts.Static;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -23,6 +24,9 @@ namespace _Project.Scripts.Lobby.UI.Managers
 
         [Tooltip("Close Build panel button")] [SerializeField]
         private Button closeBuildPanelButton;
+
+        [Tooltip("Play game button")] [SerializeField]
+        private Button playNextLevelButton;
 
         [Header("UI Panels-Canvas")] [Tooltip("Build List Panel")] [SerializeField]
         private CanvasGroup buildListPanel;
@@ -48,6 +52,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
         [Tooltip("Wrench amount text")] [SerializeField]
         private TextMeshProUGUI wrenchText;
 
+        public static event Action OnPlayLevelButtonClicked;
 
         private void OnEnable()
         {
@@ -106,10 +111,6 @@ namespace _Project.Scripts.Lobby.UI.Managers
             overlayUIManager.HidePanel(buildListCanvas);
         }
 
-        public void OnPlayLevelClicked()
-        {
-        }
-
         public void OnOpenBuildPanelClicked()
         {
             Fade(buildListPanel, 1f, 0.15f, setUpdate: true, true);
@@ -122,7 +123,11 @@ namespace _Project.Scripts.Lobby.UI.Managers
             overlayUIManager.HidePanel(buildListCanvas);
         }
 
-      
+        public void OnPlayNextLevelClicked()
+        {
+            OnPlayLevelButtonClicked?.Invoke();
+        }
+
         private void Fade(CanvasGroup group, float value, float duration, bool setUpdate, bool boolValue)
         {
             group.DOFade(value, duration).SetUpdate(setUpdate);

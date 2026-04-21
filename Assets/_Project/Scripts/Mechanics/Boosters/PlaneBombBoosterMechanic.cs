@@ -90,6 +90,8 @@ namespace _Project.Scripts.Mechanics.Boosters
 
             Sequence seq = DOTween.Sequence().SetLink(plane.gameObject);
 
+            plane.transform.DOKill();
+
             if (planePrefab != null && planeFlyStartPos != null && planeFlyEndPos != null)
             {
                 //? Rotate Plane

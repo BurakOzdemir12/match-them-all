@@ -1,5 +1,6 @@
 ﻿using System;
 using _Project.Scripts.Enums;
+using _Project.Scripts.Lobby.UI.Managers;
 using _Project.Scripts.Static;
 using _Project.Scripts.UI.Components;
 using UnityEngine;
@@ -32,11 +33,7 @@ namespace _Project.Scripts.Managers
             GameOverPanelUI.OnTryAgainClicked += HandleTryAgainClicked;
             GameEvents.OnGameOver += HandleGameOver;
             GameOverPanelUI.OnLobbyClicked += HandleLobbyClicked;
-        }
-
-        private void Start()
-        {
-            GameEvents.TriggerGameStarted();
+            LevelCompletePanelUI.OnContinueClicked += HandleLobbyClicked;
         }
 
         private void HandleLobbyClicked()
@@ -95,6 +92,11 @@ namespace _Project.Scripts.Managers
             Time.timeScale = 1f;
         }
 
+        private void Start()
+        {
+            GameEvents.TriggerGameStarted();
+        }
+
         private void OnDisable()
         {
             GameEvents.OnGameStarted -= HandleGameStarted;
@@ -105,6 +107,7 @@ namespace _Project.Scripts.Managers
             GameOverPanelUI.OnTryAgainClicked -= HandleTryAgainClicked;
             GameEvents.OnGameOver -= HandleGameOver;
             GameOverPanelUI.OnLobbyClicked -= HandleLobbyClicked;
+            LevelCompletePanelUI.OnContinueClicked -= HandleLobbyClicked;
         }
     }
 }

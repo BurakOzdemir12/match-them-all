@@ -36,11 +36,9 @@ namespace _Project.Scripts.Managers
 
         private IObjectPool<SoundEmitter> soundEmitterPool;
 
-        private Camera _camera;
 
         private void Awake()
         {
-            _camera = Camera.main;
             if (Instance != null && Instance != this) Destroy(this.gameObject);
             Instance = this;
 
@@ -58,27 +56,27 @@ namespace _Project.Scripts.Managers
 
         private void HandleGameOver()
         {
-            PlaySoundByType(SoundType.GameOver, _camera.transform.position);
+            PlaySoundByType(SoundType.GameOver, Camera.main.transform.position);
         }
 
         private void HandleLevelFailed(FailType failType)
         {
-            PlaySoundByType(SoundType.LevelFailed, _camera.transform.position);
+            PlaySoundByType(SoundType.LevelFailed, Camera.main.transform.position);
         }
 
         private void HandleTimeFreezeStarted(float obj)
         {
-            PlaySoundByType(SoundType.TimeFreezeBooster, _camera.transform.position);
+            PlaySoundByType(SoundType.TimeFreezeBooster, Camera.main.transform.position);
         }
 
         private void HandleItemCollected(ItemType type)
         {
-            PlaySoundByType(SoundType.ItemCollected, _camera.transform.position);
+            PlaySoundByType(SoundType.ItemCollected, Camera.main.transform.position);
         }
 
         private void HandleItemSelected(IInteractable interactable)
         {
-            PlaySoundByType(SoundType.ItemSelected, _camera.transform.position);
+            PlaySoundByType(SoundType.ItemSelected, Camera.main.transform.position);
         }
 
         private void InitializePool()

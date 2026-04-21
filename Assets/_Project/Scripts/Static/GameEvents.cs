@@ -8,6 +8,7 @@ namespace _Project.Scripts.Static
 {
     public static class GameEvents
     {
+        public static event Action<LevelDataSo> OnLevelPrepareStarted;
         public static event Action<LevelDataSo> OnLevelStarted;
         public static event Action OnLevelCompleted;
         public static event Action<FailType> OnLevelFailed;
@@ -29,6 +30,11 @@ namespace _Project.Scripts.Static
         public static event Action<ResourceType> OnBoosterAnimationEnded;
 
         #endregion
+
+        public static void TriggerLevelPrepare(LevelDataSo levelData)
+        {
+            OnLevelPrepareStarted?.Invoke(levelData);
+        }
 
         public static void TriggerLevelStarted(LevelDataSo levelData)
         {

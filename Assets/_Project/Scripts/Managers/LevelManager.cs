@@ -43,7 +43,7 @@ namespace _Project.Scripts.Managers
             int indexToLoad = _currentLevelIndex % levelList.Count;
 
             LevelDataSo levelToLoad = levelList[indexToLoad];
-            GameEvents.TriggerLevelStarted(levelToLoad);
+            GameEvents.TriggerLevelPrepare(levelToLoad);
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
