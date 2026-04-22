@@ -49,14 +49,28 @@ namespace _Project.Scripts.Lobby.UI.Managers
         [Tooltip("Progress Text")] [SerializeField]
         private TextMeshProUGUI progressText;
 
+        [Space(10)]
+        [Header("Plane build variation select Panel")]
+        [Tooltip("Build variation card prefab")]
+        [SerializeField]
+        private GameObject variationCardPrefab;
+
+        [Tooltip("Variations Container")] [SerializeField]
+        private Transform variationsContainer;
+
         private readonly Dictionary<PlanePartSo, PlaneBuildChoiceCardUI> spawnedChoices =
             new Dictionary<PlanePartSo, PlaneBuildChoiceCardUI>();
+
+
+        private List<PlaneBuildVariationCardUI> spawnedVariationCards = new List<PlaneBuildVariationCardUI>();
+
+        public static event Action OnPlaneBuildVariationSelectProcess;
 
 
         private void OnEnable()
         {
             LobbyEvents.OnAvailablePartsUpdated += HandleAvailablePartsUpdated;
-            LobbyEvents.OnPlanePartPurchaseConfirmed += HandlePlanePurchaseConfirmed;
+            LobbyEvents.OnPlanePartBuildRequestConfirmed += HandlePlaneBuildRequestConfirmed;
             LobbyEvents.OnPlanePartLoaded += HandlePlanePartLoaded;
             LobbyEvents.OnPlaneBuildProgressChanged += HandlePlaneBuildProgressChanged;
         }
@@ -84,7 +98,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
             if (wrenchText != null) wrenchText.text = resourceAmount.ToString();
         }
 
-        private void HandlePlanePurchaseConfirmed(PlanePartSo partSo, PlanePartVariation? partVariation = null)
+        private void HandlePlaneBuildRequestConfirmed(PlanePartSo partSo, PlanePartVariation? partVariation = null)
         {
             if (!spawnedChoices.TryGetValue(partSo, out PlaneBuildChoiceCardUI card)) return;
 
@@ -134,7 +148,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
             InitializeBuildChoiceCards(partSo);
         }
 
-
+        //? Spawns Main build choice cards
         private void InitializeBuildChoiceCards(List<PlanePartSo> partSoList)
         {
             ClearAllCards();
@@ -151,7 +165,50 @@ namespace _Project.Scripts.Lobby.UI.Managers
 
         private void HandleBuildChoiceSelected(PlanePartSo partSo)
         {
-            PlaneBuildManager.Instance.TryBuildPart(partSo, partSo.hasVariation ? partSo.variations[0] : null);
+            if (EconomyManager.Instance.TrySpendResource(ResourceType.Wrench, partSo.requiredWrench))
+            {
+                //? If it has variations for part first open variation select panel, if not directly build part
+                if (partSo.hasVariation)
+                {
+                    InitializeVariationsCard(partSo);
+
+                    OnPlaneBuildVariationSelectProcess?.Invoke();
+                }
+                else
+                {
+                    PlaneBuildManager.Instance.TryBuildPart(partSo, null);
+                }
+            }
+            else
+            {
+                Debug.Log("Not enough resources to build part");
+                //TODO Create How to earn wrench tip -> Play Screen
+            }
+        }
+
+        //? Spawns selected plane part's variation cards
+        private void InitializeVariationsCard(PlanePartSo partSo)
+        {
+            ClearAllVariationCards();
+
+            partSo.variations.ForEach(variation =>
+            {
+                // Debug.Log("Adding variation: " + variation.variationName);
+
+                PlaneBuildVariationCardUI newCard =
+                    Instantiate(variationCardPrefab, variationsContainer)
+                        .GetComponent<PlaneBuildVariationCardUI>();
+                newCard.SetUp(partSo, variation);
+                newCard.OnBuildVariationSelected += HandleBuildVariationSelected;
+                spawnedVariationCards.Add(newCard);
+            });
+        }
+
+        private void HandleBuildVariationSelected(PlanePartSo partSo, PlanePartVariation variation)
+        {
+            PlaneBuildManager.Instance.TryBuildPart(partSo, variation);
+
+            // LobbyEvents.TriggerPlanePartBuildAnimStarted(partSo, variation);
         }
 
         private void ClearAllCards()
@@ -168,14 +225,30 @@ namespace _Project.Scripts.Lobby.UI.Managers
             spawnedChoices.Clear();
         }
 
+        private void ClearAllVariationCards()
+        {
+            foreach (var card in spawnedVariationCards)
+            {
+                if (card != null)
+                {
+                    card.OnBuildVariationSelected -= HandleBuildVariationSelected;
+                    Destroy(card.gameObject);
+                }
+            }
+
+            spawnedVariationCards.Clear();
+        }
+
+
         private void OnDisable()
         {
             LobbyEvents.OnAvailablePartsUpdated -= HandleAvailablePartsUpdated;
-            LobbyEvents.OnPlanePartPurchaseConfirmed -= HandlePlanePurchaseConfirmed;
+            LobbyEvents.OnPlanePartBuildRequestConfirmed -= HandlePlaneBuildRequestConfirmed;
             LobbyEvents.OnPlanePartLoaded -= HandlePlanePartLoaded;
             LobbyEvents.OnPlaneBuildProgressChanged -= HandlePlaneBuildProgressChanged;
 
             ClearAllCards();
+            ClearAllVariationCards();
         }
     }
 }

@@ -9,16 +9,16 @@ namespace _Project.Scripts.Lobby.Structs
     {
         public string variationName;
         public string variationID;
-        public Sprite uiIcon;
+        public Sprite sprite;
         public GameObject partPrefab;
         public Material paintMaterial;
 
-        public PlanePartVariation(string variationID, string variationName, Sprite uiIcon, GameObject partPrefab,
+        public PlanePartVariation(string variationID, string variationName, Sprite sprite, GameObject partPrefab,
             Material paintMaterial)
         {
             this.variationID = variationID;
             this.variationName = variationName;
-            this.uiIcon = uiIcon;
+            this.sprite = sprite;
             this.partPrefab = partPrefab;
             this.paintMaterial = paintMaterial;
         }

@@ -52,6 +52,9 @@ namespace _Project.Scripts.Lobby.UI.Managers
         [Tooltip("Wrench amount text")] [SerializeField]
         private TextMeshProUGUI wrenchText;
 
+        [Header("Plane build variation select Panel")] [Tooltip("Variation Panel")] [SerializeField]
+        private CanvasGroup buildVariationPanel;
+
         public static event Action OnPlayLevelButtonClicked;
 
         private void OnEnable()
@@ -60,6 +63,18 @@ namespace _Project.Scripts.Lobby.UI.Managers
             LobbyEvents.OnPlanePartBuildAnimEnded += HandlePlanePartBuildAnimEnded;
             LobbyEvents.OnPlaneBuildProgressChanged += HandlePlaneBuildProgressChanged;
             EconomyManager.OnResourceAmountChanged += HandleResourceAmountChanged;
+            PlaneBuildUIManager.OnPlaneBuildVariationSelectProcess += HandlePlaneBuildVariationSelectProcess;
+        }
+
+        private void HandlePlaneBuildVariationSelectProcess()
+        {
+            playLevelButon.gameObject.SetActive(false);
+            openBuildPanelButon.gameObject.SetActive(false);
+
+            Fade(buildListPanel, 0f, 0f, setUpdate: true, false);
+            overlayUIManager.HidePanel(buildListCanvas);
+
+            Fade(buildVariationPanel, 1f, 0f, setUpdate: true, true);
         }
 
         private void HandleResourceAmountChanged(ResourceType resourceType, int newAmount)
@@ -99,6 +114,8 @@ namespace _Project.Scripts.Lobby.UI.Managers
         private void HandlePlanePartBuildAnimStarted(PlanePartSo partSo, PlanePartVariation? partVariation)
         {
             Fade(buildListPanel, 0f, 0f, setUpdate: true, false);
+            Fade(buildVariationPanel, 0f, 0f, setUpdate: true, false);
+
             overlayUIManager.HidePanel(buildListCanvas);
             playLevelButon.gameObject.SetActive(false);
             openBuildPanelButon.gameObject.SetActive(false);
@@ -107,6 +124,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
         private void Start()
         {
             Fade(buildListPanel, 0f, 0f, setUpdate: true, false);
+            Fade(buildVariationPanel, 0f, 0f, setUpdate: true, false);
 
             overlayUIManager.HidePanel(buildListCanvas);
         }
@@ -153,6 +171,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
             LobbyEvents.OnPlanePartBuildAnimEnded -= HandlePlanePartBuildAnimEnded;
             LobbyEvents.OnPlaneBuildProgressChanged -= HandlePlaneBuildProgressChanged;
             EconomyManager.OnResourceAmountChanged -= HandleResourceAmountChanged;
+            PlaneBuildUIManager.OnPlaneBuildVariationSelectProcess -= HandlePlaneBuildVariationSelectProcess;
         }
     }
 }
