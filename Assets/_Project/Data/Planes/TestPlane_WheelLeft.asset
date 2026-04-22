@@ -18,4 +18,14 @@ MonoBehaviour:
   <partIcon>k__BackingField: {fileID: 21300000, guid: cb99960ac6f744bdba007abf1dcbac2b, type: 3}
   <defaultPartPrefab>k__BackingField: {fileID: 795620750203740263, guid: 7ed4be853e20de645bc055e57e2a09b0, type: 3}
   <modificationType>k__BackingField: 1
-  <variations>k__BackingField: []
+  <variations>k__BackingField:
+  - variationName: Big Wheel
+    variationID: 0
+    sprite: {fileID: 694085449, guid: adb14f56d3d1049d9a1499fc7d468095, type: 3}
+    partPrefab: {fileID: 2112140759901131732, guid: 631dbefd9ceac1c458814fdb3de64666, type: 3}
+    paintMaterial: {fileID: 6012087270956184818, guid: 3434c0b847ea9854cbf6ca7ed69f8a4c, type: 3}
+  - variationName: Bigger Wheel
+    variationID: 1
+    sprite: {fileID: 96192104, guid: adb14f56d3d1049d9a1499fc7d468095, type: 3}
+    partPrefab: {fileID: 2438543412896938934, guid: e6fa20086b9dde140af89968291316e4, type: 3}
+    paintMaterial: {fileID: 2100000, guid: e86c6ee57cd4c400ea5852025bc7b7c3, type: 2}

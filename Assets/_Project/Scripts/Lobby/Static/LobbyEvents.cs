@@ -11,7 +11,7 @@ namespace _Project.Scripts.Lobby.Static
     public struct LobbyEvents
     {
         public static event Action<PlaneBluePrintSo, List<SavedPartData>> OnPlanePartLoaded;
-        public static event Action<PlanePartSo, PlanePartVariation?> OnPlanePartPurchaseConfirmed;
+        public static event Action<PlanePartSo, PlanePartVariation?> OnPlanePartBuildRequestConfirmed;
         public static event Action<PlanePartSo, PlanePartVariation?> OnPlanePartBuildAnimStarted;
         public static event Action<PlanePartSo, PlanePartVariation?> OnPlanePartBuildAnimEnded;
         public static event Action<List<PlanePartSo>> OnAvailablePartsUpdated;
@@ -27,10 +27,10 @@ namespace _Project.Scripts.Lobby.Static
             OnPlanePartLoaded?.Invoke(planeBluePrintSo, savedPartData);
         }
 
-        public static void TriggerPlanePartPurchaseConfirmed(PlanePartSo partSo,
+        public static void TriggerPlanePartBuildRequestConfirmed(PlanePartSo partSo,
             PlanePartVariation? selectedVariation = null)
         {
-            OnPlanePartPurchaseConfirmed?.Invoke(partSo, selectedVariation);
+            OnPlanePartBuildRequestConfirmed?.Invoke(partSo, selectedVariation);
         }
 
         public static void TriggerPlanePartBuildAnimStarted(PlanePartSo partSo,

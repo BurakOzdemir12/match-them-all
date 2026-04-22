@@ -152,30 +152,23 @@ namespace _Project.Scripts.Lobby.Managers
         {
             if (_saveData.currentBuildStageIndex >= _currentPlaneBluePrint.buildStages.Count) return;
 
-            if (EconomyManager.Instance.TrySpendResource(ResourceType.Wrench, partSo.requiredWrench))
-            {
-                string variationIDToSave = selectedVariation.HasValue ? selectedVariation.Value.variationID : "NONE";
+            string variationIDToSave = selectedVariation.HasValue ? selectedVariation.Value.variationID : "NONE";
 
-                PartSaveInfo newPart = new PartSaveInfo(partType: partSo.planePartType.ToString(),
-                    selectedVariationID: variationIDToSave);
+            PartSaveInfo newPart = new PartSaveInfo(partType: partSo.planePartType.ToString(),
+                selectedVariationID: variationIDToSave);
 
-                _saveData.builtParts.Add(newPart);
-                // _saveData.currentBuildIndex++;
+            _saveData.builtParts.Add(newPart);
+            // _saveData.currentBuildIndex++;
 
-                SaveData();
+            SaveData();
 
-                CalculateBuildProgress();
+            CalculateBuildProgress();
 
-                LobbyEvents.TriggerPlanePartPurchaseConfirmed(partSo, partSo.hasVariation ? selectedVariation : null);
-                Debug.Log($"Part Built {partSo.planePartType} or name -> {partSo.name}");
+            LobbyEvents.TriggerPlanePartBuildRequestConfirmed(partSo, partSo.hasVariation ? selectedVariation : null);
+            Debug.Log(
+                $"Part Built {partSo.planePartType} or name -> {partSo.name}-- {selectedVariation?.variationName}");
 
-                CheckStageCompletion();
-            }
-            else
-            {
-                Debug.Log("Not enough resources to build part");
-                //TODO Create How to earn wrench tip -> Play Screen
-            }
+            CheckStageCompletion();
         }
 
         private void CheckStageCompletion()
