@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using _Project.Scripts.Lobby.ScriptableObjects.Plane;
+using _Project.Scripts.Lobby.Structs;
 
 namespace _Project.Scripts.Lobby.Data.Save
 {

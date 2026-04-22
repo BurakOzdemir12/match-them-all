@@ -27,7 +27,7 @@ namespace _Project.Scripts.Lobby.Controllers
 
         private PlaneSocketManager _currentSocketManager;
 
-        private readonly List<PlanePartSo> _savedPartList = new List<PlanePartSo>();
+        private readonly List<SavedPartData> _savedPartList = new List<SavedPartData>();
 
         private bool _isPlaneSpawned = false;
         private bool _isDataLoaded = false;
@@ -69,26 +69,27 @@ namespace _Project.Scripts.Lobby.Controllers
         private void InitializePlaneVisuals(PlaneBluePrintSo bluePrintSo, List<SavedPartData> savedPartData)
         {
             _savedPartList.Clear();
-
             foreach (var part in savedPartData)
             {
-                _savedPartList.Add(part.partSo);
+                _savedPartList.Add(part);
             }
 
             foreach (var savedPart in _savedPartList)
             {
-                if (!_currentSocketManager.sockets.TryGetValue(savedPart.planePartType,
+                if (!_currentSocketManager.sockets.TryGetValue(savedPart.partSo.planePartType,
                         out Transform targetPart))
                     continue;
                 SpawnPart(targetPart, savedPart);
             }
         }
 
-        private void SpawnPart(Transform targetPart, PlanePartSo partSo)
+        private void SpawnPart(Transform targetPart, SavedPartData savedData)
         {
-            GameObject defaultPart = partSo.defaultPartPrefab;
+            var partId = savedData.saveInfo.selectedVariationID;
 
-            GameObject partToInstall = Instantiate(defaultPart, targetPart.position,
+            GameObject part = savedData.partSo.GetPrefabToSpawn(partId);
+
+            GameObject partToInstall = Instantiate(part, targetPart.position,
                 Quaternion.identity);
         }
 
@@ -116,9 +117,9 @@ namespace _Project.Scripts.Lobby.Controllers
             if (!_currentSocketManager.sockets.TryGetValue(partSo.planePartType, out Transform targetSocketTransform))
                 return;
 
-            var defaultPart = partSo.defaultPartPrefab;
+            GameObject finalPart = partVariation != null ? partVariation.Value.partPrefab : partSo.defaultPartPrefab;
 
-            GameObject partToInstall = Instantiate(defaultPart, partSpawnPosition,
+            GameObject partToInstall = Instantiate(finalPart, partSpawnPosition,
                 Quaternion.identity);
 
             Sequence seq = DOTween.Sequence().SetLink(partToInstall);

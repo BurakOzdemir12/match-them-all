@@ -38,7 +38,7 @@ namespace _Project.Scripts.Managers
         public void OnSetData()
         {
             //! For Testing
-            SetResource(ResourceType.Coin, 149);
+            SetResource(ResourceType.Coin, 600);
             SetResource(ResourceType.Wrench, 20);
             SetResource(ResourceType.Health, 4);
         }

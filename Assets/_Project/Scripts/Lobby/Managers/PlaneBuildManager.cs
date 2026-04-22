@@ -105,7 +105,7 @@ namespace _Project.Scripts.Lobby.Managers
                     _partsToLoad.Add(new SavedPartData(partSo, savedPart));
                     Debug.Log(
                         $"Plane last parts loaded: {partSo.planePartType}- or, name: {partSo.name} " +
-                        $"\n Selection variation: {savedPart.selectedVariationID}");
+                        $"\n Selection variation id: {savedPart.selectedVariationID}");
                 }
                 else
                 {

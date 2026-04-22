@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using _Project.Scripts.Lobby.Enums;
 using _Project.Scripts.Lobby.Structs;
 using UnityEngine;
@@ -34,5 +35,22 @@ namespace _Project.Scripts.Lobby.ScriptableObjects.Plane
 
         [field: Tooltip("Is there a variation for this part?"), SerializeField]
         public bool hasVariation => variations != null && variations.Count > 0;
+
+        public GameObject GetPrefabToSpawn(string savedVariationID)
+        {
+            if (!hasVariation || string.IsNullOrEmpty(savedVariationID) || savedVariationID == "NONE")
+            {
+                return defaultPartPrefab;
+            }
+
+            PlanePartVariation matchedVariation = variations.FirstOrDefault(v => v.variationID == savedVariationID);
+
+            if (matchedVariation.variationID != null)
+            {
+                return matchedVariation.partPrefab;
+            }
+
+            return defaultPartPrefab;
+        }
     }
 }
