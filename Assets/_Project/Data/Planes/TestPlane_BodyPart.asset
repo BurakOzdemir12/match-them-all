@@ -18,4 +18,5 @@ MonoBehaviour:
   <partIcon>k__BackingField: {fileID: 21300000, guid: e2f3f050778504543abf6bb67d702506, type: 3}
   <defaultPartPrefab>k__BackingField: {fileID: 5340230246409243707, guid: e083c8dbb52c3b841b43b74fce5f48a6, type: 3}
   <modificationType>k__BackingField: 1
+  <defaultTexture>k__BackingField: {fileID: 2800000, guid: d6a55c0bc3ae14cb2a5c2575eac02846, type: 3}
   <variations>k__BackingField: []

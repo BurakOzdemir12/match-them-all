@@ -25,6 +25,16 @@ namespace _Project.Scripts.Lobby.Controllers
         [Tooltip("Interval before the install animation.")] [SerializeField]
         private float intervalDuration = 0.5f;
 
+        [Header("Plane Paint Settings")] [Tooltip("Plane Renderer")] [SerializeField]
+        private Renderer planeRenderer;
+
+        [Tooltip("Total time for paint animation.")] [SerializeField]
+        private float paintDuration;
+
+        private readonly int _mainPaintID = Shader.PropertyToID("_MainTexture");
+        private readonly int _newTextureID = Shader.PropertyToID("_NewTexture");
+        private readonly int _paintSpeedId = Shader.PropertyToID("_PaintSpeed");
+
         private PlaneSocketManager _currentSocketManager;
 
         private readonly List<SavedPartData> _savedPartList = new List<SavedPartData>();
@@ -79,9 +89,11 @@ namespace _Project.Scripts.Lobby.Controllers
                 if (!_currentSocketManager.sockets.TryGetValue(savedPart.partSo.planePartType,
                         out Transform targetPart))
                     continue;
+
                 SpawnPart(targetPart, savedPart);
             }
         }
+
 
         private void SpawnPart(Transform targetPart, SavedPartData savedData)
         {
@@ -108,6 +120,24 @@ namespace _Project.Scripts.Lobby.Controllers
 
         private void ProcessPaint(PlanePartSo partSo, PlanePartVariation? partVariation)
         {
+            //TODO Create Shader values and control paint flow 
+
+            if (!_currentSocketManager.sockets.TryGetValue(partSo.planePartType, out Transform targetSocketTransform))
+                return;
+
+            Material mat = planeRenderer.material;
+
+            Texture2D finalTexture = partVariation != null
+                ? partVariation.Value.texture
+                : partSo.defaultTexture;
+
+            mat.SetTexture(_newTextureID, finalTexture);
+
+            mat.SetFloat(_paintSpeedId, -10f);
+
+            mat.DOFloat(10f, _paintSpeedId, paintDuration)
+                .SetEase(Ease.InOutSine)
+                .OnComplete(() => { mat.SetTexture(_mainPaintID, finalTexture); });
         }
 
         private void ProcessInstall(PlanePartSo partSo, PlanePartVariation? partVariation)

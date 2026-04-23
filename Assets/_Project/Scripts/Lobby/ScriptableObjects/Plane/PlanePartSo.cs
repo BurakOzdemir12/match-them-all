@@ -29,6 +29,9 @@ namespace _Project.Scripts.Lobby.ScriptableObjects.Plane
         [field: Tooltip("Modification type offers the seperate animations for type of process"), SerializeField]
         public ModificationType modificationType { get; private set; }
 
+        [field: Tooltip("Plane default Texture for this part"), SerializeField]
+        public Texture2D defaultTexture { get; private set; }
+
         [field: Space(10)]
         [field: Header("Variations"), SerializeField]
         public List<PlanePartVariation> variations { get; set; }

@@ -18,6 +18,9 @@ MonoBehaviour:
   - stageName: Main Stage
     partsInStage:
     - {fileID: 11400000, guid: 7b638f1ddc1649942993f37008572e5e, type: 2}
+  - stageName: Paint Body Stage
+    partsInStage:
+    - {fileID: 11400000, guid: c2934fb06b1fb744c81cda0b26da48c8, type: 2}
   - stageName: Wheel Stage
     partsInStage:
     - {fileID: 11400000, guid: c5741dabe6ea54344bb0ac79bc399be9, type: 2}

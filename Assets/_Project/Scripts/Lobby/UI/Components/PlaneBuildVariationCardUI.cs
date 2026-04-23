@@ -18,6 +18,8 @@ namespace _Project.Scripts.Lobby.UI.Components
         [Tooltip("Button for purchase")] [SerializeField]
         private Button buildButton;
 
+        [Tooltip("Background Color")] [SerializeField]
+        private Image backgroundColor;
 
         public event Action<PlanePartSo, PlanePartVariation> OnBuildVariationSelected;
 
@@ -29,6 +31,8 @@ namespace _Project.Scripts.Lobby.UI.Components
             _currentPartSo = partSo;
             _currentPartVariation = variation;
             variationIcon.sprite = variation.sprite;
+            backgroundColor.color = variation.backgroundColor;
+            variationName.text = variation.variationName;
         }
 
         public void OnCardButtonClicked()
