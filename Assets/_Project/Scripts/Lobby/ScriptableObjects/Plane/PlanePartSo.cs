@@ -34,7 +34,7 @@ namespace _Project.Scripts.Lobby.ScriptableObjects.Plane
         [field: ShowIf(nameof(modificationType), ModificationType.Paint)]
         [field: Tooltip("Plane default Texture for this part"), SerializeField]
         public Texture2D defaultPaintTexture { get; private set; }
-
+        
         [field: Space(10)]
         [field: Header("Variations"), SerializeField]
         public List<PlanePartVariation> variations { get; set; }

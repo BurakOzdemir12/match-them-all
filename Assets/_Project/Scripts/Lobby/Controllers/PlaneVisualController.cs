@@ -19,20 +19,17 @@ namespace _Project.Scripts.Lobby.Controllers
         [Tooltip("Parts will spawn on this position ")] [SerializeField]
         private Vector3 partSpawnPosition;
 
+        [Tooltip("Skeleton spawn offset ")] [SerializeField]
+        private Vector3 skeletonSpawnOffset;
+
         [Tooltip("Ease type for part install")] [SerializeField]
         private Ease installEase = Ease.InOutSine;
 
         [Tooltip("Interval before the install animation.")] [SerializeField]
         private float intervalDuration = 0.5f;
 
-        [Header("Plane Paint Settings")] [Tooltip("Plane Renderer")] [SerializeField]
-        private Renderer planeRenderer;
-
-        [Tooltip("Total time for paint animation.")] [SerializeField]
+        [Header("Plane Paint Settings")] [Tooltip("Total time for paint animation.")] [SerializeField]
         private float paintDuration;
-
-        // [Tooltip("The Shader Graph Material with Sweep effect")] [SerializeField]
-        // private Material paintEffectMaterialTemplate;
 
         private readonly int _baseMapID = Shader.PropertyToID("_BaseMap");
         private readonly int _mainPaintID = Shader.PropertyToID("_MainTexture");
@@ -63,7 +60,17 @@ namespace _Project.Scripts.Lobby.Controllers
             _cachedBluePrint = bluePrintSo;
             _cachedSavedParts = savedPartData;
             _isDataLoaded = true;
-            TryInitializeVisuals();
+
+            //? if its new plane first spawn skeleton (sockets) then Init visuals of plane
+            if (_currentSocketManager == null && bluePrintSo.planeSkeletonPrefab != null)
+            {
+                Instantiate(bluePrintSo.planeSkeletonPrefab, Vector3.zero + skeletonSpawnOffset, Quaternion.identity);
+                Debug.Log("Plane skeleton spawned for plane: " + bluePrintSo.planeName);
+            }
+            else
+            {
+                TryInitializeVisuals();
+            }
         }
 
         private void HandlePlaneSpawned(PlaneSocketManager socketManager)
@@ -84,22 +91,53 @@ namespace _Project.Scripts.Lobby.Controllers
 
         private void InitializePlaneVisuals(PlaneBluePrintSo bluePrintSo, List<SavedPartData> savedPartData)
         {
-            _savedPartList.Clear();
-            foreach (var part in savedPartData)
+            foreach (var savedPart in savedPartData)
             {
-                _savedPartList.Add(part);
+                if (savedPart.partSo.modificationType == ModificationType.Install)
+                {
+                    if (_currentSocketManager.sockets.TryGetValue(savedPart.partSo.planePartType,
+                            out Transform targetPart))
+                    {
+                        SpawnPart(targetPart, savedPart);
+                    }
+                }
             }
 
-            foreach (var savedPart in _savedPartList)
+            foreach (var savedPart in savedPartData)
             {
-                if (!_currentSocketManager.sockets.TryGetValue(savedPart.partSo.planePartType,
-                        out Transform targetPart))
-                    continue;
-
-                SpawnPart(targetPart, savedPart);
+                if (savedPart.partSo.modificationType == ModificationType.Paint)
+                {
+                    if (_currentSocketManager.sockets.TryGetValue(savedPart.partSo.planePartType,
+                            out Transform targetPart))
+                    {
+                        ApplySavedPaint(targetPart, savedPart);
+                    }
+                }
             }
         }
 
+        private void ApplySavedPaint(Transform targetSocket, SavedPartData savedData)
+        {
+            Renderer targetRenderer = targetSocket.GetComponentInChildren<Renderer>();
+            if (targetRenderer == null) return;
+
+            var partId = savedData.saveInfo.selectedVariationID;
+            Texture2D textureToApply = savedData.partSo.defaultPaintTexture;
+
+            if (savedData.partSo.hasVariation && partId != "NONE")
+            {
+                var matchedVariation = savedData.partSo.variations.FirstOrDefault(v => v.variationID == partId);
+                if (matchedVariation.variationID != null)
+                {
+                    textureToApply = matchedVariation.paintTexture;
+                }
+            }
+
+            if (textureToApply != null)
+            {
+                targetRenderer.sharedMaterial.SetTexture(_baseMapID, textureToApply);
+            }
+        }
 
         private void SpawnPart(Transform targetPart, SavedPartData savedData)
         {
@@ -107,8 +145,11 @@ namespace _Project.Scripts.Lobby.Controllers
 
             GameObject part = savedData.partSo.GetPrefabToSpawn(partId);
 
+            if (part == null) return;
+
             GameObject partToInstall = Instantiate(part, targetPart.position,
                 Quaternion.identity);
+            partToInstall.transform.SetParent(targetPart);
         }
 
         private void HandlePlanePartBuildAnimStarted(PlanePartSo partSo, PlanePartVariation? partVariation)
@@ -129,7 +170,10 @@ namespace _Project.Scripts.Lobby.Controllers
             if (!_currentSocketManager.sockets.TryGetValue(partSo.planePartType, out Transform targetSocketTransform))
                 return;
 
-            Material originalMaterial = planeRenderer.sharedMaterial;
+            Renderer targetRenderer = targetSocketTransform.GetComponentInChildren<Renderer>();
+            if (targetRenderer == null) return;
+
+            Material originalMaterial = targetRenderer.sharedMaterial;
 
             Texture currentTexture = originalMaterial.GetTexture(_baseMapID);
 
@@ -145,7 +189,7 @@ namespace _Project.Scripts.Lobby.Controllers
                 effectMat.SetTexture(_newTextureID, newTexture);
                 effectMat.SetFloat(_paintSpeedId, -10f);
 
-                planeRenderer.material = effectMat;
+                targetRenderer.material = effectMat;
 
                 effectMat.DOFloat(10f, _paintSpeedId, paintDuration)
                     .SetEase(Ease.InOutSine)
@@ -153,7 +197,7 @@ namespace _Project.Scripts.Lobby.Controllers
                     {
                         originalMaterial.SetTexture(_baseMapID, newTexture);
 
-                        planeRenderer.material = originalMaterial;
+                        targetRenderer.material = originalMaterial;
 
                         Destroy(effectMat);
 
@@ -182,7 +226,11 @@ namespace _Project.Scripts.Lobby.Controllers
                 .SetEase(installEase));
             seq.Join(partToInstall.transform.DORotate(targetSocketTransform.rotation.eulerAngles, partInstallDuration));
 
-            seq.OnComplete(() => { LobbyEvents.TriggerPlanePartBuildAnimEnded(partSo, partVariation); });
+            seq.OnComplete(() =>
+            {
+                partToInstall.transform.SetParent(targetSocketTransform);
+                LobbyEvents.TriggerPlanePartBuildAnimEnded(partSo, partVariation);
+            });
         }
 
         private void OnDisable()
@@ -190,6 +238,7 @@ namespace _Project.Scripts.Lobby.Controllers
             LobbyEvents.OnPlanePartBuildAnimStarted -= HandlePlanePartBuildAnimStarted;
             LobbyEvents.OnPlaneSpawned -= HandlePlaneSpawned;
             LobbyEvents.OnPlanePartLoaded -= HandlePlanePartLoaded;
+            LobbyEvents.OnPlaneBuildCompleted -= HandlePlaneBuildCompleted;
         }
     }
 }

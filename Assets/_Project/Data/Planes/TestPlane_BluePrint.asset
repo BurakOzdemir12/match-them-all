@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.ScriptableObjects.Plane.PlaneBluePrintSo
   <planeID>k__BackingField: 0
   <planeName>k__BackingField: Small Boy
+  planeSkeletonPrefab: {fileID: 5548540349571839556, guid: 5a324ab19effd714d8eabaf39f8db7e5, type: 3}
   <buildStages>k__BackingField:
   - stageName: Main Stage
     partsInStage:

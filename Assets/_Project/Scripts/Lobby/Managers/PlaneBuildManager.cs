@@ -126,7 +126,7 @@ namespace _Project.Scripts.Lobby.Managers
             {
                 foreach (var part in stage.partsInStage)
                 {
-                    string currentPartKey = $"{part.planePartType.ToString()}_ {part.modificationType.ToString()}";
+                    string currentPartKey = $"{part.planePartType.ToString()}_{part.modificationType.ToString()}";
 
                     if (currentPartKey == uniqueKey)
                         return part;

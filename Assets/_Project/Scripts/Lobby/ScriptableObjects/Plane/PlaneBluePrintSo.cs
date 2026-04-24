@@ -13,14 +13,14 @@ namespace _Project.Scripts.Lobby.ScriptableObjects.Plane
         [field: Header("Plane blue print"), Tooltip("Plane Name"), SerializeField]
         public string planeName { get; private set; }
 
+        [field: Space(10), Header("Skeleton of the plane"),
+                Tooltip("This is the what sockets for show exactly plane parts spawn that position"),
+                SerializeField]
+        public GameObject planeSkeletonPrefab;
+
         [field: Header("Parts to built plane (Top to Bottom)"),
                 Tooltip("Plane will build by sort top to bottom"),
                 SerializeField]
         public List<PlaneBuildStage> buildStages { get; private set; } = new List<PlaneBuildStage>();
-        
-        // [field: Header("Parts to built plane (Top to Bottom)"),
-        //         Tooltip("Plane will build by sort top to bottom"),
-        //         SerializeField]
-        // public List<PlanePartSo> partsToBuildInOrder { get; private set; } = new List<PlanePartSo>();
     }
 }
