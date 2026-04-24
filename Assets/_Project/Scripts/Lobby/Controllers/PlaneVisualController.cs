@@ -31,16 +31,22 @@ namespace _Project.Scripts.Lobby.Controllers
         [Tooltip("Total time for paint animation.")] [SerializeField]
         private float paintDuration;
 
+        // [Tooltip("The Shader Graph Material with Sweep effect")] [SerializeField]
+        // private Material paintEffectMaterialTemplate;
+
+        private readonly int _baseMapID = Shader.PropertyToID("_BaseMap");
         private readonly int _mainPaintID = Shader.PropertyToID("_MainTexture");
         private readonly int _newTextureID = Shader.PropertyToID("_NewTexture");
         private readonly int _paintSpeedId = Shader.PropertyToID("_PaintSpeed");
+        //--
 
-        private PlaneSocketManager _currentSocketManager;
 
         private readonly List<SavedPartData> _savedPartList = new List<SavedPartData>();
 
         private bool _isPlaneSpawned = false;
         private bool _isDataLoaded = false;
+
+        private PlaneSocketManager _currentSocketManager;
         private PlaneBluePrintSo _cachedBluePrint;
         private List<SavedPartData> _cachedSavedParts;
 
@@ -120,24 +126,40 @@ namespace _Project.Scripts.Lobby.Controllers
 
         private void ProcessPaint(PlanePartSo partSo, PlanePartVariation? partVariation)
         {
-            //TODO Create Shader values and control paint flow 
-
             if (!_currentSocketManager.sockets.TryGetValue(partSo.planePartType, out Transform targetSocketTransform))
                 return;
 
-            Material mat = planeRenderer.material;
+            Material originalMaterial = planeRenderer.sharedMaterial;
 
-            Texture2D finalTexture = partVariation != null
-                ? partVariation.Value.texture
-                : partSo.defaultTexture;
+            Texture currentTexture = originalMaterial.GetTexture(_baseMapID);
 
-            mat.SetTexture(_newTextureID, finalTexture);
+            if (currentTexture == null) currentTexture = Texture2D.whiteTexture;
 
-            mat.SetFloat(_paintSpeedId, -10f);
+            Texture2D newTexture =
+                partVariation != null ? partVariation.Value.paintTexture : partSo.defaultPaintTexture;
 
-            mat.DOFloat(10f, _paintSpeedId, paintDuration)
-                .SetEase(Ease.InOutSine)
-                .OnComplete(() => { mat.SetTexture(_mainPaintID, finalTexture); });
+            if (partVariation != null)
+            {
+                Material effectMat = new Material(partVariation.Value.paintMaterial); //paintEffectMaterialTemplate
+                effectMat.SetTexture(_mainPaintID, currentTexture);
+                effectMat.SetTexture(_newTextureID, newTexture);
+                effectMat.SetFloat(_paintSpeedId, -10f);
+
+                planeRenderer.material = effectMat;
+
+                effectMat.DOFloat(10f, _paintSpeedId, paintDuration)
+                    .SetEase(Ease.InOutSine)
+                    .OnComplete(() =>
+                    {
+                        originalMaterial.SetTexture(_baseMapID, newTexture);
+
+                        planeRenderer.material = originalMaterial;
+
+                        Destroy(effectMat);
+
+                        LobbyEvents.TriggerPlanePartBuildAnimEnded(partSo, partVariation);
+                    });
+            }
         }
 
         private void ProcessInstall(PlanePartSo partSo, PlanePartVariation? partVariation)
