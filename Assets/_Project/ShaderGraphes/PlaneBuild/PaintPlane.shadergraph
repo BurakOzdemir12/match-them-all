@@ -11,6 +11,9 @@
         },
         {
             "m_Id": "aa3482b59b7549b1a37f64ce8e5861ad"
+        },
+        {
+            "m_Id": "f31f91bc105e4cc2839d2fefd62e260b"
         }
     ],
     "m_Keywords": [],
@@ -1081,6 +1084,9 @@
     "m_Name": "",
     "m_ChildObjectList": [
         {
+            "m_Id": "f31f91bc105e4cc2839d2fefd62e260b"
+        },
+        {
             "m_Id": "77c5fae558b2485d9ee834892d5b0a88"
         },
         {
@@ -2031,6 +2037,42 @@
     },
     "m_Labels": [],
     "m_Space": 0
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Texture2DShaderProperty",
+    "m_ObjectId": "f31f91bc105e4cc2839d2fefd62e260b",
+    "m_Guid": {
+        "m_GuidSerialized": "8f52fe66-6f53-44d4-9687-6546a9937b5e"
+    },
+    "promotedFromAssetID": "",
+    "promotedFromCategoryName": "",
+    "promotedOrdering": -1,
+    "m_Name": "BaseMap",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "BaseMap",
+    "m_DefaultReferenceName": "_BaseMap",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_PerRendererData": false,
+    "m_customAttributes": [],
+    "m_Value": {
+        "m_SerializedTexture": "",
+        "m_Guid": ""
+    },
+    "isMainTexture": false,
+    "useTilingAndOffset": false,
+    "useTexelSize": true,
+    "m_Modifiable": true,
+    "m_DefaultType": 0
 }
 
 {

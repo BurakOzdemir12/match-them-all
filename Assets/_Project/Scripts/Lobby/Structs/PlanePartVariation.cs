@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using _Project.Scripts.Lobby.Enums;
+using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
@@ -13,10 +14,10 @@ namespace _Project.Scripts.Lobby.Structs
         public GameObject partPrefab;
         public Material paintMaterial;
         public Color backgroundColor;
-        public Texture2D texture;
+        public Texture2D paintTexture;
 
         public PlanePartVariation(string variationID, string variationName, Sprite sprite, GameObject partPrefab,
-            Material paintMaterial, Color backgroundColor, Texture2D texture)
+            Material paintMaterial, Color backgroundColor, Texture2D paintTexture)
         {
             this.variationID = variationID;
             this.variationName = variationName;
@@ -24,7 +25,7 @@ namespace _Project.Scripts.Lobby.Structs
             this.partPrefab = partPrefab;
             this.paintMaterial = paintMaterial;
             this.backgroundColor = backgroundColor;
-            this.texture = texture;
+            this.paintTexture = paintTexture;
         }
     }
 }

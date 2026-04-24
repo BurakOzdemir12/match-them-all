@@ -29,7 +29,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
         private Button playNextLevelButton;
 
         [Header("UI Panels-Canvas")] [Tooltip("Build List Panel")] [SerializeField]
-        private CanvasGroup buildListPanel;
+        private CanvasGroup buildListPanelCanvasGroup;
 
         [Tooltip("Build List Canvas component")] [SerializeField]
         private Canvas buildListCanvas;
@@ -71,7 +71,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
             playLevelButon.gameObject.SetActive(false);
             openBuildPanelButon.gameObject.SetActive(false);
 
-            Fade(buildListPanel, 0f, 0f, setUpdate: true, false);
+            Fade(buildListPanelCanvasGroup, 0f, 0f, setUpdate: true, false);
             overlayUIManager.HidePanel(buildListCanvas);
 
             Fade(buildVariationPanel, 1f, 0f, setUpdate: true, true);
@@ -113,7 +113,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
 
         private void HandlePlanePartBuildAnimStarted(PlanePartSo partSo, PlanePartVariation? partVariation)
         {
-            Fade(buildListPanel, 0f, 0f, setUpdate: true, false);
+            Fade(buildListPanelCanvasGroup, 0f, 0f, setUpdate: true, false);
             Fade(buildVariationPanel, 0f, 0f, setUpdate: true, false);
 
             overlayUIManager.HidePanel(buildListCanvas);
@@ -123,7 +123,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
 
         private void Start()
         {
-            Fade(buildListPanel, 0f, 0f, setUpdate: true, false);
+            Fade(buildListPanelCanvasGroup, 0f, 0f, setUpdate: true, false);
             Fade(buildVariationPanel, 0f, 0f, setUpdate: true, false);
 
             overlayUIManager.HidePanel(buildListCanvas);
@@ -131,13 +131,18 @@ namespace _Project.Scripts.Lobby.UI.Managers
 
         public void OnOpenBuildPanelClicked()
         {
-            Fade(buildListPanel, 1f, 0.15f, setUpdate: true, true);
+            if (!buildListCanvas.gameObject.activeSelf)
+            {
+                buildListCanvas.gameObject.SetActive(true);
+            }
+
+            Fade(buildListPanelCanvasGroup, 1f, 0.15f, setUpdate: true, true);
             overlayUIManager.ShowPanel(buildListCanvas);
         }
 
         public void OnCloseBuildPanelClicked()
         {
-            Fade(buildListPanel, 0f, 0.15f, setUpdate: true, false);
+            Fade(buildListPanelCanvasGroup, 0f, 0.15f, setUpdate: true, false);
             overlayUIManager.HidePanel(buildListCanvas);
         }
 

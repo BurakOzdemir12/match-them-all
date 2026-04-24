@@ -99,7 +99,7 @@ namespace _Project.Scripts.Lobby.Managers
 
             foreach (PartSaveInfo savedPart in _saveData.builtParts)
             {
-                PlanePartSo partSo = FindPartSoByType(savedPart.partType);
+                PlanePartSo partSo = FindPartSoByUniqueKey(savedPart.GetUniqueKey());
                 if (partSo != null)
                 {
                     _partsToLoad.Add(new SavedPartData(partSo, savedPart));
@@ -120,12 +120,19 @@ namespace _Project.Scripts.Lobby.Managers
             UpdateAvailablePartsUI();
         }
 
-        private PlanePartSo FindPartSoByType(string partType)
+        private PlanePartSo FindPartSoByUniqueKey(string uniqueKey)
         {
             foreach (var stage in _currentPlaneBluePrint.buildStages)
-            foreach (var part in stage.partsInStage)
-                if (part.planePartType.ToString() == partType)
-                    return part;
+            {
+                foreach (var part in stage.partsInStage)
+                {
+                    string currentPartKey = $"{part.planePartType.ToString()}_ {part.modificationType.ToString()}";
+
+                    if (currentPartKey == uniqueKey)
+                        return part;
+                }
+            }
+
             return null;
         }
 
@@ -162,7 +169,6 @@ namespace _Project.Scripts.Lobby.Managers
                 modificationType: partSo.modificationType.ToString());
 
             _saveData.builtParts.Add(newPart);
-            // _saveData.currentBuildIndex++;
 
             SaveData();
 
@@ -224,10 +230,25 @@ namespace _Project.Scripts.Lobby.Managers
         private void CompletePlane()
         {
             _saveData.completedPlaneIDs.Add(_saveData.activePlaneID);
+
+            int currentPlaneIndex = allPlaneBluePrints.FindIndex(b => b.planeID == _saveData.activePlaneID);
+
+            if (currentPlaneIndex >= 0 && currentPlaneIndex + 1 < allPlaneBluePrints.Count)
+            {
+                _saveData.activePlaneID = allPlaneBluePrints[currentPlaneIndex + 1].planeID;
+
+                _saveData.currentBuildStageIndex = 0;
+                _saveData.builtParts.Clear();
+
+                // TODO: Celebration work flow, effects refresh etc.
+            }
+            else
+            {
+                Debug.Log("You Finished All plane in game Congratz!");
+            }
+
             SaveData();
 
-            // TODO: Celebration effects
-            Debug.Log("Congratz plane build is completed");
 
             LobbyEvents.TriggerAllPlaneBuildCompleted(planeBluePrintSo: _currentPlaneBluePrint);
         }

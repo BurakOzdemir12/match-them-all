@@ -2,6 +2,7 @@
 using System.Linq;
 using _Project.Scripts.Lobby.Enums;
 using _Project.Scripts.Lobby.Structs;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,14 +24,16 @@ namespace _Project.Scripts.Lobby.ScriptableObjects.Plane
         [field: Tooltip("Plane part icon"), SerializeField]
         public Sprite partIcon { get; private set; }
 
+        [field: ShowIf(nameof(modificationType), ModificationType.Install)]
         [field: Tooltip("Plane prefab-> default part"), SerializeField]
         public GameObject defaultPartPrefab { get; set; }
 
         [field: Tooltip("Modification type offers the seperate animations for type of process"), SerializeField]
         public ModificationType modificationType { get; private set; }
 
+        [field: ShowIf(nameof(modificationType), ModificationType.Paint)]
         [field: Tooltip("Plane default Texture for this part"), SerializeField]
-        public Texture2D defaultTexture { get; private set; }
+        public Texture2D defaultPaintTexture { get; private set; }
 
         [field: Space(10)]
         [field: Header("Variations"), SerializeField]

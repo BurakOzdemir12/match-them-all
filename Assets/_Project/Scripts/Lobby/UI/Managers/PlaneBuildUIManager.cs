@@ -25,6 +25,9 @@ namespace _Project.Scripts.Lobby.UI.Managers
         [Tooltip("Container Canvas group")] [SerializeField]
         private CanvasGroup gridCanvasGroup;
 
+        [Tooltip("Build UI Panel")] [SerializeField]
+        private RectTransform buildPanel;
+
         [Tooltip("Build choice card prefab")] [SerializeField]
         private GameObject buildChoiceCardPrefab;
 
@@ -58,9 +61,12 @@ namespace _Project.Scripts.Lobby.UI.Managers
         [Tooltip("Variations Container")] [SerializeField]
         private Transform variationsContainer;
 
+        [Header("Build Congratz Panel")] [Tooltip("Build Completed panel")] [SerializeField]
+        private Transform buildCompletedPanel;
+
+        //---
         private readonly Dictionary<PlanePartSo, PlaneBuildChoiceCardUI> spawnedChoices =
             new Dictionary<PlanePartSo, PlaneBuildChoiceCardUI>();
-
 
         private List<PlaneBuildVariationCardUI> spawnedVariationCards = new List<PlaneBuildVariationCardUI>();
 
@@ -73,6 +79,25 @@ namespace _Project.Scripts.Lobby.UI.Managers
             LobbyEvents.OnPlanePartBuildRequestConfirmed += HandlePlaneBuildRequestConfirmed;
             LobbyEvents.OnPlanePartLoaded += HandlePlanePartLoaded;
             LobbyEvents.OnPlaneBuildProgressChanged += HandlePlaneBuildProgressChanged;
+            LobbyEvents.OnPlaneBuildCompleted += HandlePlaneBuildCompleted;
+        }
+
+        private void HandlePlaneBuildCompleted(PlaneBluePrintSo bluePrintSo)
+        {
+            if (progressSlider != null)
+                progressSlider.DOValue(0f, 0.5f).SetEase(Ease.OutQuad);
+
+            if (progressText == null) return;
+
+            int startAmount = 100;
+
+            int.TryParse(progressText.text, out startAmount);
+
+            progressText.DoCounterInt(startAmount, Mathf.RoundToInt(0f), 0.5f, Ease.OutExpo, "{0}%");
+
+            buildPanel.gameObject.SetActive(false);
+
+            buildCompletedPanel.gameObject.SetActive(true);
         }
 
         private void HandlePlaneBuildProgressChanged(float progress)
@@ -246,6 +271,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
             LobbyEvents.OnPlanePartBuildRequestConfirmed -= HandlePlaneBuildRequestConfirmed;
             LobbyEvents.OnPlanePartLoaded -= HandlePlanePartLoaded;
             LobbyEvents.OnPlaneBuildProgressChanged -= HandlePlaneBuildProgressChanged;
+            LobbyEvents.OnPlaneBuildCompleted -= HandlePlaneBuildCompleted;
 
             ClearAllCards();
             ClearAllVariationCards();
