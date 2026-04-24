@@ -3025,8 +3025,9 @@ MonoBehaviour:
   partSpawnPosition: {x: -20, y: 0, z: 0}
   installEase: 3
   intervalDuration: 0.5
-  planeRenderer: {fileID: 980325903417020416}
+  planeRenderer: {fileID: 1951847728412557673, guid: e083c8dbb52c3b841b43b74fce5f48a6, type: 3}
   paintDuration: 2
+  paintEffectMaterialTemplate: {fileID: 2100000, guid: bc90b2cdd5f449745be1023e3d952960, type: 2}
 --- !u!1 &238846591
 GameObject:
   m_ObjectHideFlags: 0

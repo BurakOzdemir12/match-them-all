@@ -9,11 +9,18 @@ namespace _Project.Scripts.Lobby.Data.Save
     {
         public string partType;
         public string selectedVariationID;
+        public string modificationType;
 
-        public PartSaveInfo(string partType, string selectedVariationID)
+        public PartSaveInfo(string partType, string selectedVariationID, string modificationType)
         {
             this.partType = partType;
             this.selectedVariationID = selectedVariationID;
+            this.modificationType = modificationType;
+        }
+
+        public string GetUniqueKey()
+        {
+            return $"{partType}_{modificationType}"; //"Body_Install"
         }
     }
 

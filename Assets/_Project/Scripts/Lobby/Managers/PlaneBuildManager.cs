@@ -139,7 +139,9 @@ namespace _Project.Scripts.Lobby.Managers
 
             foreach (var part in currentStage.partsInStage)
             {
-                if (!_saveData.builtParts.Exists(p => p.partType == part.planePartType.ToString()))
+                string targetKey = $"{part.planePartType.ToString()}_{part.modificationType.ToString()}";
+
+                if (!_saveData.builtParts.Exists(p => p.GetUniqueKey() == targetKey))
                 {
                     availablePartsList.Add(part);
                 }
@@ -154,8 +156,10 @@ namespace _Project.Scripts.Lobby.Managers
 
             string variationIDToSave = selectedVariation.HasValue ? selectedVariation.Value.variationID : "NONE";
 
-            PartSaveInfo newPart = new PartSaveInfo(partType: partSo.planePartType.ToString(),
-                selectedVariationID: variationIDToSave);
+            PartSaveInfo newPart = new PartSaveInfo(
+                partType: partSo.planePartType.ToString(),
+                selectedVariationID: variationIDToSave,
+                modificationType: partSo.modificationType.ToString());
 
             _saveData.builtParts.Add(newPart);
             // _saveData.currentBuildIndex++;
@@ -180,7 +184,9 @@ namespace _Project.Scripts.Lobby.Managers
 
             foreach (var part in _currentBuildStage.partsInStage)
             {
-                if (!_saveData.builtParts.Exists(p => p.partType == part.planePartType.ToString()))
+                string targetKey = $"{part.planePartType.ToString()}_{part.modificationType.ToString()}";
+
+                if (!_saveData.builtParts.Exists(p => p.GetUniqueKey() == targetKey))
                 {
                     isStageComplete = false;
                     break;
