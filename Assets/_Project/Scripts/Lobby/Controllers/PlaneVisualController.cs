@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using _Project.Scripts.CameraScripts;
 using _Project.Scripts.Lobby.Enums;
 using _Project.Scripts.Lobby.Managers;
 using _Project.Scripts.Lobby.ScriptableObjects.Plane;
@@ -31,12 +32,12 @@ namespace _Project.Scripts.Lobby.Controllers
         [Header("Plane Paint Settings")] [Tooltip("Total time for paint animation.")] [SerializeField]
         private float paintDuration;
 
+        //--
         private readonly int _baseMapID = Shader.PropertyToID("_BaseMap");
+
         private readonly int _mainPaintID = Shader.PropertyToID("_MainTexture");
         private readonly int _newTextureID = Shader.PropertyToID("_NewTexture");
         private readonly int _paintSpeedId = Shader.PropertyToID("_PaintSpeed");
-        //--
-
 
         private readonly List<SavedPartData> _savedPartList = new List<SavedPartData>();
 
@@ -47,12 +48,43 @@ namespace _Project.Scripts.Lobby.Controllers
         private PlaneBluePrintSo _cachedBluePrint;
         private List<SavedPartData> _cachedSavedParts;
 
+        private Sequence _animSequence;
+        private bool _isWaitingForCelebration = false;
 
         private void OnEnable()
         {
             LobbyEvents.OnPlanePartBuildAnimStarted += HandlePlanePartBuildAnimStarted;
             LobbyEvents.OnPlaneSpawned += HandlePlaneSpawned;
             LobbyEvents.OnPlanePartLoaded += HandlePlanePartLoaded;
+            LobbyEvents.OnPlaneBuildCompleted += HandlePlaneBuildCompleted;
+        }
+
+        private void HandlePlaneBuildCompleted(PlaneBluePrintSo bluePrintSo)
+        {
+            //? Get rid of old plane information
+            _isWaitingForCelebration = true;
+        }
+
+        private void StartPlaneCompleteCelebration(PlaneBluePrintSo bluePrintSo)
+        {
+            LobbyCameraController.Instance.SwitchCameraTarget();
+
+            _currentSocketManager.PlayTakeoffAnimation(ClearTheDataAndScene);
+        }
+
+        private void ClearTheDataAndScene()
+        {
+            if (_currentSocketManager != null)
+            {
+                Destroy(_currentSocketManager.gameObject);
+            }
+
+            //?Clear memory
+            _cachedBluePrint = null;
+            _cachedSavedParts = null;
+            _isDataLoaded = false;
+            _isPlaneSpawned = false;
+            _currentSocketManager = null;
         }
 
         private void HandlePlanePartLoaded(PlaneBluePrintSo bluePrintSo, List<SavedPartData> savedPartData)
@@ -64,7 +96,10 @@ namespace _Project.Scripts.Lobby.Controllers
             //? if its new plane first spawn skeleton (sockets) then Init visuals of plane
             if (_currentSocketManager == null && bluePrintSo.planeSkeletonPrefab != null)
             {
-                Instantiate(bluePrintSo.planeSkeletonPrefab, Vector3.zero + skeletonSpawnOffset, Quaternion.identity);
+                GameObject skeleton = Instantiate(bluePrintSo.planeSkeletonPrefab, Vector3.zero + skeletonSpawnOffset,
+                    Quaternion.identity);
+                LobbyCameraController.Instance.SwitchCameraTarget(skeleton.transform);
+                
                 Debug.Log("Plane skeleton spawned for plane: " + bluePrintSo.planeName);
             }
             else
@@ -182,27 +217,40 @@ namespace _Project.Scripts.Lobby.Controllers
             Texture2D newTexture =
                 partVariation != null ? partVariation.Value.paintTexture : partSo.defaultPaintTexture;
 
+
             if (partVariation != null)
             {
                 Material effectMat = new Material(partVariation.Value.paintMaterial); //paintEffectMaterialTemplate
+
+                _animSequence?.Kill();
+
+                _animSequence = DOTween.Sequence();
+
                 effectMat.SetTexture(_mainPaintID, currentTexture);
                 effectMat.SetTexture(_newTextureID, newTexture);
                 effectMat.SetFloat(_paintSpeedId, -10f);
 
                 targetRenderer.material = effectMat;
 
-                effectMat.DOFloat(10f, _paintSpeedId, paintDuration)
-                    .SetEase(Ease.InOutSine)
-                    .OnComplete(() =>
+                _animSequence.Append(
+                    effectMat.DOFloat(10f, _paintSpeedId, paintDuration)
+                        .SetEase(Ease.InOutSine)
+                ).OnComplete(() =>
+                {
+                    originalMaterial.SetTexture(_baseMapID, newTexture);
+
+                    targetRenderer.material = originalMaterial;
+
+                    Destroy(effectMat);
+
+                    if (_isWaitingForCelebration)
                     {
-                        originalMaterial.SetTexture(_baseMapID, newTexture);
+                        _isWaitingForCelebration = false;
+                        StartPlaneCompleteCelebration(_cachedBluePrint);
+                    }
 
-                        targetRenderer.material = originalMaterial;
-
-                        Destroy(effectMat);
-
-                        LobbyEvents.TriggerPlanePartBuildAnimEnded(partSo, partVariation);
-                    });
+                    LobbyEvents.TriggerPlanePartBuildAnimEnded(partSo, partVariation);
+                });
             }
         }
 
@@ -218,18 +266,26 @@ namespace _Project.Scripts.Lobby.Controllers
             GameObject partToInstall = Instantiate(finalPart, partSpawnPosition,
                 Quaternion.identity);
 
-            Sequence seq = DOTween.Sequence().SetLink(partToInstall);
+            _animSequence?.Kill();
 
-            seq.AppendInterval(intervalDuration);
+            _animSequence = DOTween.Sequence().SetLink(partToInstall);
+            _animSequence.AppendInterval(intervalDuration);
 
-            seq.Append(partToInstall.transform.DOMove(targetSocketTransform.position, partInstallDuration)
+            _animSequence.Append(partToInstall.transform.DOMove(targetSocketTransform.position, partInstallDuration)
                 .SetEase(installEase));
-            seq.Join(partToInstall.transform.DORotate(targetSocketTransform.rotation.eulerAngles, partInstallDuration));
+            _animSequence.Join(partToInstall.transform.DORotate(targetSocketTransform.rotation.eulerAngles,
+                partInstallDuration));
 
-            seq.OnComplete(() =>
+            _animSequence.OnComplete(() =>
             {
                 partToInstall.transform.SetParent(targetSocketTransform);
                 LobbyEvents.TriggerPlanePartBuildAnimEnded(partSo, partVariation);
+
+                if (_isWaitingForCelebration)
+                {
+                    _isWaitingForCelebration = false;
+                    StartPlaneCompleteCelebration(_cachedBluePrint);
+                }
             });
         }
 

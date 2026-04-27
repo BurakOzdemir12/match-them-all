@@ -230,7 +230,7 @@ GameObject:
   - component: {fileID: 167592679695689050}
   - component: {fileID: 3637125988320980557}
   m_Layer: 0
-  m_Name: Test_Plane
+  m_Name: Test_PlaneSkeleton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -266,6 +266,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7946638f9da241168b2849f601fd789a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.Managers.PlaneSocketManager
+  takeoffPoint: {x: 0, y: 0, z: 212}
+  flyEndPos: {x: 0, y: 250, z: 876}
+  moveAnimDuration: 3
+  flyUpAnimDuration: 3
 --- !u!1 &5647636326176605108
 GameObject:
   m_ObjectHideFlags: 0
