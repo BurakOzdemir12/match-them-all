@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using _Project.Scripts.Lobby.Managers;
+using _Project.Scripts.Lobby.Static;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -30,14 +31,35 @@ namespace _Project.Scripts.CameraScripts
             Instance = this;
 
             if (cm == null)
-                GetComponent<CinemachineCamera>();
+                cm = GetComponent<CinemachineCamera>();
 
             if (orbitalFollow == null)
                 orbitalFollow = GetComponent<CinemachineOrbitalFollow>();
         }
 
+        private void OnEnable()
+        {
+            LobbyEvents.OnPlaneSpawned += HandlePlaneSpawned;
+        }
+
+        private void OnDisable()
+        {
+            LobbyEvents.OnPlaneSpawned -= HandlePlaneSpawned;
+        }
+
+        private void HandlePlaneSpawned(PlaneSocketManager socketManager)
+        {
+            if (cm != null && socketManager != null)
+            {
+                // Assign tracking target to the newly spawned plane
+                cm.Target.TrackingTarget = socketManager.transform;
+            }
+        }
+
         private void LateUpdate()
         {
+            if (LobbyInputManager.Instance == null) return;
+            
             float zoomValue = LobbyInputManager.Instance.zoomDelta;
 
             if (Mathf.Abs(zoomValue) > 0.01f)
