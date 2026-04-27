@@ -20,6 +20,9 @@ namespace _Project.Scripts.CameraScripts
 
         [SerializeField] private float lookSpeed;
 
+        [Header("Stable Camera positions")] [Tooltip("Plane Takeoff watch camera position.")] [SerializeField]
+        private Transform stableCameraPosition;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -59,7 +62,7 @@ namespace _Project.Scripts.CameraScripts
         private void LateUpdate()
         {
             if (LobbyInputManager.Instance == null) return;
-            
+
             float zoomValue = LobbyInputManager.Instance.zoomDelta;
 
             if (Mathf.Abs(zoomValue) > 0.01f)
@@ -80,6 +83,11 @@ namespace _Project.Scripts.CameraScripts
                 orbitalFollow.VerticalAxis.Value = Mathf.Clamp(targetVertical, orbitalFollow.VerticalAxis.Range.x,
                     orbitalFollow.VerticalAxis.Range.y);
             }
+        }
+
+        public void SwitchCameraTarget(Transform target = null)
+        {
+            cm.Target.TrackingTarget = stableCameraPosition;
         }
     }
 }
