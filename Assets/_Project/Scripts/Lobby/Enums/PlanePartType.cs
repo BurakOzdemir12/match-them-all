@@ -10,5 +10,7 @@
         Propeller,
         WheelLeft,
         WheelRight,
+        WheelGuardRight,
+        WheelGuardLeft,
     }
 }

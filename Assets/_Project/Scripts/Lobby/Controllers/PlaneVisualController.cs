@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using _Project.Scripts.CameraScripts;
+using _Project.Scripts.Lobby.Components;
 using _Project.Scripts.Lobby.Enums;
 using _Project.Scripts.Lobby.Managers;
 using _Project.Scripts.Lobby.ScriptableObjects.Plane;
@@ -99,7 +100,7 @@ namespace _Project.Scripts.Lobby.Controllers
                 GameObject skeleton = Instantiate(bluePrintSo.planeSkeletonPrefab, Vector3.zero + skeletonSpawnOffset,
                     Quaternion.identity);
                 LobbyCameraController.Instance.SwitchCameraTarget(skeleton.transform);
-                
+
                 Debug.Log("Plane skeleton spawned for plane: " + bluePrintSo.planeName);
             }
             else
@@ -131,9 +132,10 @@ namespace _Project.Scripts.Lobby.Controllers
                 if (savedPart.partSo.modificationType == ModificationType.Install)
                 {
                     if (_currentSocketManager.sockets.TryGetValue(savedPart.partSo.planePartType,
-                            out Transform targetPart))
+                            out PlaneSocket targetSocket))
                     {
-                        SpawnPart(targetPart, savedPart);
+                        if (targetSocket != null)
+                            SpawnPart(targetSocket, savedPart);
                     }
                 }
             }
@@ -143,15 +145,15 @@ namespace _Project.Scripts.Lobby.Controllers
                 if (savedPart.partSo.modificationType == ModificationType.Paint)
                 {
                     if (_currentSocketManager.sockets.TryGetValue(savedPart.partSo.planePartType,
-                            out Transform targetPart))
+                            out PlaneSocket targetSocket))
                     {
-                        ApplySavedPaint(targetPart, savedPart);
+                        ApplySavedPaint(targetSocket, savedPart);
                     }
                 }
             }
         }
 
-        private void ApplySavedPaint(Transform targetSocket, SavedPartData savedData)
+        private void ApplySavedPaint(PlaneSocket targetSocket, SavedPartData savedData)
         {
             Renderer targetRenderer = targetSocket.GetComponentInChildren<Renderer>();
             if (targetRenderer == null) return;
@@ -174,7 +176,7 @@ namespace _Project.Scripts.Lobby.Controllers
             }
         }
 
-        private void SpawnPart(Transform targetPart, SavedPartData savedData)
+        private void SpawnPart(PlaneSocket targetSocket, SavedPartData savedData)
         {
             var partId = savedData.saveInfo.selectedVariationID;
 
@@ -182,9 +184,13 @@ namespace _Project.Scripts.Lobby.Controllers
 
             if (part == null) return;
 
-            GameObject partToInstall = Instantiate(part, targetPart.position,
+            //? Plane skeleton xray disable.
+            targetSocket.ToggleMeshRenderer(false);
+
+            GameObject partToInstall = Instantiate(part, targetSocket.transform.position,
                 Quaternion.identity);
-            partToInstall.transform.SetParent(targetPart);
+
+            partToInstall.transform.SetParent(targetSocket.transform);
         }
 
         private void HandlePlanePartBuildAnimStarted(PlanePartSo partSo, PlanePartVariation? partVariation)
@@ -202,10 +208,10 @@ namespace _Project.Scripts.Lobby.Controllers
 
         private void ProcessPaint(PlanePartSo partSo, PlanePartVariation? partVariation)
         {
-            if (!_currentSocketManager.sockets.TryGetValue(partSo.planePartType, out Transform targetSocketTransform))
+            if (!_currentSocketManager.sockets.TryGetValue(partSo.planePartType, out PlaneSocket targetSocket))
                 return;
 
-            Renderer targetRenderer = targetSocketTransform.GetComponentInChildren<Renderer>();
+            Renderer targetRenderer = targetSocket.GetComponentInChildren<Renderer>();
             if (targetRenderer == null) return;
 
             Material originalMaterial = targetRenderer.sharedMaterial;
@@ -228,12 +234,12 @@ namespace _Project.Scripts.Lobby.Controllers
 
                 effectMat.SetTexture(_mainPaintID, currentTexture);
                 effectMat.SetTexture(_newTextureID, newTexture);
-                effectMat.SetFloat(_paintSpeedId, -10f);
+                effectMat.SetFloat(_paintSpeedId, -2f);
 
                 targetRenderer.material = effectMat;
 
                 _animSequence.Append(
-                    effectMat.DOFloat(10f, _paintSpeedId, paintDuration)
+                    effectMat.DOFloat(1.5f, _paintSpeedId, paintDuration)
                         .SetEase(Ease.InOutSine)
                 ).OnComplete(() =>
                 {
@@ -258,7 +264,7 @@ namespace _Project.Scripts.Lobby.Controllers
         {
             //TODO Create CineMachine camera and Call Camera Movement from CameraController.
 
-            if (!_currentSocketManager.sockets.TryGetValue(partSo.planePartType, out Transform targetSocketTransform))
+            if (!_currentSocketManager.sockets.TryGetValue(partSo.planePartType, out PlaneSocket targetSocket))
                 return;
 
             GameObject finalPart = partVariation != null ? partVariation.Value.partPrefab : partSo.defaultPartPrefab;
@@ -271,14 +277,14 @@ namespace _Project.Scripts.Lobby.Controllers
             _animSequence = DOTween.Sequence().SetLink(partToInstall);
             _animSequence.AppendInterval(intervalDuration);
 
-            _animSequence.Append(partToInstall.transform.DOMove(targetSocketTransform.position, partInstallDuration)
+            _animSequence.Append(partToInstall.transform.DOMove(targetSocket.transform.position, partInstallDuration)
                 .SetEase(installEase));
-            _animSequence.Join(partToInstall.transform.DORotate(targetSocketTransform.rotation.eulerAngles,
+            _animSequence.Join(partToInstall.transform.DORotate(targetSocket.transform.rotation.eulerAngles,
                 partInstallDuration));
 
             _animSequence.OnComplete(() =>
             {
-                partToInstall.transform.SetParent(targetSocketTransform);
+                partToInstall.transform.SetParent(targetSocket.transform);
                 LobbyEvents.TriggerPlanePartBuildAnimEnded(partSo, partVariation);
 
                 if (_isWaitingForCelebration)

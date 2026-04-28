@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using _Project.Scripts.Enums;
 using _Project.Scripts.Lobby.Components;
 using _Project.Scripts.Lobby.Enums;
+using _Project.Scripts.Lobby.ScriptableObjects.Plane;
 using _Project.Scripts.Lobby.Static;
+using _Project.Scripts.Lobby.Structs;
 using _Project.Scripts.Managers;
 using DG.Tweening;
 using UnityEngine;
@@ -33,21 +35,34 @@ namespace _Project.Scripts.Lobby.Managers
         [Tooltip("Rotation duration")] [SerializeField]
         private float rotationDuration = 0.35f;
 
-        public readonly Dictionary<PlanePartType, Transform> sockets = new Dictionary<PlanePartType, Transform>();
+        public readonly Dictionary<PlanePartType, PlaneSocket> sockets = new Dictionary<PlanePartType, PlaneSocket>();
 
         private void Awake()
         {
             PlaneSocket[] socketComponents = GetComponentsInChildren<PlaneSocket>();
             foreach (PlaneSocket socket in socketComponents)
             {
-                if (!sockets.ContainsKey(socket.planePartType))
-                {
-                    sockets.Add(socket.planePartType, socket.transform);
-                }
-                else
+                if (!sockets.TryAdd(socket.planePartType, socket))
                 {
                     Debug.LogWarning($"Duplicate socket found: {socket.planePartType}");
                 }
+            }
+        }
+
+        private void OnEnable()
+        {
+            LobbyEvents.OnPlanePartBuildAnimEnded += HandlePlanePartBuildAnimEnded;
+        }
+
+        private void HandlePlanePartBuildAnimEnded(PlanePartSo partSo, PlanePartVariation? partVariation)
+        {
+            sockets.TryGetValue(partSo.planePartType, out PlaneSocket socket);
+
+            if (socket == null) return;
+
+            if (partSo.planePartType == socket.planePartType)
+            {
+                socket.ToggleMeshRenderer(false);
             }
         }
 
@@ -90,6 +105,11 @@ namespace _Project.Scripts.Lobby.Managers
                 planeEmitter?.Stop();
                 onAnimationFinished?.Invoke();
             });
+        }
+
+        private void OnDisable()
+        {
+            LobbyEvents.OnPlanePartBuildAnimEnded -= HandlePlanePartBuildAnimEnded;
         }
     }
 }
