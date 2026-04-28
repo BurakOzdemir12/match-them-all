@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using _Project.Scripts.Structs;
@@ -32,11 +32,12 @@ namespace _Project.Scripts.Managers
             _audioSource.clip = data.Clip;
             _audioSource.volume = data.Volume;
             _audioSource.pitch = data.Pitch;
+            _audioSource.loop = data.IsLooping;
 
-            _audioSource.spatialBlend = 1f;
+            _audioSource.spatialBlend = 1f; 
             _audioSource.minDistance = 1f;
-            _audioSource.maxDistance = 25f;
-            _audioSource.rolloffMode = AudioRolloffMode.Logarithmic;
+            _audioSource.maxDistance = 300f;
+            _audioSource.rolloffMode = AudioRolloffMode.Linear;
         }
 
         public void Play()

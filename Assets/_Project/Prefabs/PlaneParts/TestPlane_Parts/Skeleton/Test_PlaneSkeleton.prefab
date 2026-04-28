@@ -266,10 +266,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7946638f9da241168b2849f601fd789a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.Managers.PlaneSocketManager
-  takeoffPoint: {x: 0, y: 0, z: 212}
+  takeoffPoint: {x: 0, y: 0, z: 300}
   flyEndPos: {x: 0, y: 250, z: 876}
-  moveAnimDuration: 3
-  flyUpAnimDuration: 3
+  moveAnimDuration: 4
+  groundPos: {x: 0, y: 2.25, z: 0}
+  dockAnimDuration: 2
+  speedMultiplier: 0.8
+  rotationDuration: 0.35
 --- !u!1 &5647636326176605108
 GameObject:
   m_ObjectHideFlags: 0

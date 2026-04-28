@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using _Project.Scripts.Audio.ScriptableObects;
 using _Project.Scripts.Enums;
@@ -157,7 +157,7 @@ namespace _Project.Scripts.Managers
             return emitter;
         }
 
-        public SoundEmitter PlaySoundByType(SoundType soundType, Vector3 pos, Transform followTarget = null)
+        public SoundEmitter PlaySoundByType(SoundType soundType, Vector3 pos, Transform followTarget = null, bool isLooping = false)
         {
             SoundEntry entry = audioLibrary.GetSound(soundType);
 
@@ -169,7 +169,8 @@ namespace _Project.Scripts.Managers
                 volume: entry.volume,
                 pitch: entry.pitch,
                 isFrequent: true,
-                followTarget: followTarget
+                followTarget: followTarget,
+                isLooping: isLooping
             );
 
             return PlaySound(soundData);

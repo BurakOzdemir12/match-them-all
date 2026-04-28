@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using _Project.Scripts.Enums;
 using _Project.Scripts.Lobby.Components;
 using _Project.Scripts.Lobby.Enums;
 using _Project.Scripts.Lobby.Static;
+using _Project.Scripts.Managers;
 using DG.Tweening;
 using UnityEngine;
 
@@ -10,16 +12,28 @@ namespace _Project.Scripts.Lobby.Managers
 {
     public class PlaneSocketManager : MonoBehaviour
     {
-        [Header("Animation Settings")] 
-        [Tooltip("Takeoff point")] [SerializeField]
+        [Header("Animation Settings")] [Tooltip("Takeoff point")] [SerializeField]
         private Vector3 takeoffPoint;
 
         [Tooltip("plane Fly end position")] [SerializeField]
         private Vector3 flyEndPos;
 
+        [Tooltip("speed-> Move Anim duration")] [SerializeField]
+        private float moveAnimDuration;
+
+        [Tooltip("plane will dock this position")] [SerializeField]
+        private Vector3 groundPos;
+
+        [Tooltip("Plane dock anim duration")] [SerializeField]
+        private float dockAnimDuration;
+
+        [Tooltip("Speed multiplier for the flying animation")] [SerializeField]
+        private float speedMultiplier = 0.8f;
+
+        [Tooltip("Rotation duration")] [SerializeField]
+        private float rotationDuration = 0.35f;
+
         public readonly Dictionary<PlanePartType, Transform> sockets = new Dictionary<PlanePartType, Transform>();
-        [SerializeField] private float moveAnimDuration;
-        [SerializeField] private float flyUpAnimDuration;
 
         private void Awake()
         {
@@ -46,23 +60,36 @@ namespace _Project.Scripts.Lobby.Managers
         {
             Sequence seq = DOTween.Sequence();
 
+            //? plane docking 
+            seq.Append(transform.DOMove(groundPos, dockAnimDuration));
+
+            SoundEmitter planeEmitter = null;
+
+            //? Play sound precisely when the plane starts moving to the runway
+            seq.AppendCallback(() =>
+            {
+                planeEmitter = SoundManager.Instance.PlaySoundByType(SoundType.PlaneEngine, transform.position,
+                    followTarget: transform, isLooping: true);
+            });
+
             //? plane moves to runway
             Tween move = seq.Append(transform.DOMove(takeoffPoint, moveAnimDuration).SetEase(Ease.Linear));
 
             //? Take of starts on exactly time.
-            float takeoffTime = move.Duration() * 0.7f;
-            seq.Insert(takeoffTime,
-                transform.DOMoveY(transform.position.y + 10f, flyUpAnimDuration)
-                    .SetEase(Ease.InOutSine)
-                    .OnStart(() =>
-                        //? Take ofrotation for airplane noise 
-                        transform.DORotate(new Vector3(-20f, 0f, 0f), 0.2f, RotateMode.Fast)
-                    ));
+            float takeoffAbsoluteTime = dockAnimDuration + (moveAnimDuration * 0.7f);
+            seq.Insert(takeoffAbsoluteTime,
+                transform.DORotate(new Vector3(-20f, 0f, 0f), rotationDuration, RotateMode.Fast).SetEase(Ease.OutSine)
+            );
 
             //? While plane is flying, it also moves forward to fly end position.
-            seq.Join(transform.DOMove(flyEndPos, moveAnimDuration * 2f).SetEase(Ease.InQuad));
+            seq.Insert(takeoffAbsoluteTime,
+                transform.DOMove(flyEndPos, moveAnimDuration * speedMultiplier).SetEase(Ease.InSine));
 
-            seq.OnComplete(() => onAnimationFinished?.Invoke());
+            seq.OnComplete(() =>
+            {
+                planeEmitter?.Stop();
+                onAnimationFinished?.Invoke();
+            });
         }
     }
 }

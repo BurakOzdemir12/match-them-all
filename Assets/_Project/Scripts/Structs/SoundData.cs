@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace _Project.Scripts.Structs
 {
@@ -10,9 +10,10 @@ namespace _Project.Scripts.Structs
         public float Pitch;
         public bool IsFrequent;
         public Transform FollowTarget;
+        public bool IsLooping;
 
         public SoundData(AudioClip clip, Vector3 position, float volume = 1f, float pitch = 1f,
-            bool isFrequent = true, Transform followTarget = null)
+            bool isFrequent = true, Transform followTarget = null, bool isLooping = false)
         {
             Clip = clip;
             Position = position;
@@ -20,6 +21,7 @@ namespace _Project.Scripts.Structs
             Pitch = pitch;
             IsFrequent = isFrequent;
             FollowTarget = followTarget;
+            IsLooping = isLooping;
         }
     }
 }
