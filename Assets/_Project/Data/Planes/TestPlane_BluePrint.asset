@@ -22,6 +22,10 @@ MonoBehaviour:
   - stageName: Paint Body Stage
     partsInStage:
     - {fileID: 11400000, guid: c2934fb06b1fb744c81cda0b26da48c8, type: 2}
+  - stageName: Wheel Guard Stage
+    partsInStage:
+    - {fileID: 11400000, guid: a534821299ed56e4f8cb0a772f0e24a6, type: 2}
+    - {fileID: 11400000, guid: 03ee84ee72b4b0d48ba645e0866d11f4, type: 2}
   - stageName: Wheel Stage
     partsInStage:
     - {fileID: 11400000, guid: c5741dabe6ea54344bb0ac79bc399be9, type: 2}

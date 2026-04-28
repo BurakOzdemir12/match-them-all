@@ -5112,7 +5112,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
   m_RenderingLayerMask: 1
   m_Lightmapping: 2
   m_LightShadowCasterMode: 0
@@ -6405,7 +6405,7 @@ GameObject:
   - component: {fileID: 824709952}
   - component: {fileID: 824709951}
   m_Layer: 0
-  m_Name: Spot Light_Ground
+  m_Name: Spot Light_Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6488,7 +6488,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
   m_RenderingLayerMask: 1
   m_Lightmapping: 2
   m_LightShadowCasterMode: 0
@@ -11249,7 +11249,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.Managers.HangarManager
   allPlaneBluePrints:
-  - {fileID: 11400000, guid: 0b8c083eae69a1a489f3ab0fc2bd3b3d, type: 2}
+  - {fileID: 11400000, guid: 69be9706993a84442a2f3dd1bf6746ee, type: 2}
 --- !u!1 &1406863220
 GameObject:
   m_ObjectHideFlags: 0
@@ -16484,7 +16484,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
   m_RenderingLayerMask: 1
   m_Lightmapping: 2
   m_LightShadowCasterMode: 0
@@ -16906,7 +16906,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
   m_RenderingLayerMask: 1
   m_Lightmapping: 2
   m_LightShadowCasterMode: 0

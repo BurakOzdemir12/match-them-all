@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d44475662ac4e638ce0eb218f9b74a4, type: 3}
-  m_Name: TestPlane_WheelLeft
+  m_Name: TestPlane_WheelGuard_Left
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.ScriptableObjects.Plane.PlanePartSo
-  <planePartType>k__BackingField: 6
+  <planePartType>k__BackingField: 9
   <requiredWrench>k__BackingField: 5
   <descriptionText>k__BackingField: This is the left wing of the plane
   <partIcon>k__BackingField: {fileID: 21300000, guid: cb99960ac6f744bdba007abf1dcbac2b, type: 3}
-  <defaultPartPrefab>k__BackingField: {fileID: 6140448046116026373, guid: ef5a23121c8dc8a4d919aa240095f5e2, type: 3}
+  <defaultPartPrefab>k__BackingField: {fileID: 2174961785219875900, guid: 448d0009989195e419285ac887848146, type: 3}
   <modificationType>k__BackingField: 1
   <defaultPaintTexture>k__BackingField: {fileID: 0}
   <variations>k__BackingField:

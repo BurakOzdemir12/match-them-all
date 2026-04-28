@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1429597383853093335}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wheels
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,7 +45,8 @@ GameObject:
   - component: {fileID: 4372842843786140004}
   - component: {fileID: 4605649081694020722}
   - component: {fileID: 7330374778202254511}
-  m_Layer: 0
+  - component: {fileID: 2322601891956574102}
+  m_Layer: 8
   m_Name: LeftTire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -82,7 +83,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2318999038651402383}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -125,6 +126,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2322601891956574102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2318999038651402383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f1575aa25341f9bc74ba6ac35fdd75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.Components.PlaneSocket
+  <planePartType>k__BackingField: 6
 --- !u!1 &4185953910431599623
 GameObject:
   m_ObjectHideFlags: 0
@@ -134,8 +148,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3303405709790869912}
-  - component: {fileID: 2915317814074586598}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -159,19 +172,6 @@ Transform:
   - {fileID: 4372842843786140004}
   m_Father: {fileID: 1429597383853093335}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2915317814074586598
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4185953910431599623}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6f1575aa25341f9bc74ba6ac35fdd75, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.Components.PlaneSocket
-  <planePartType>k__BackingField: 6
 --- !u!1 &4490364212461687737
 GameObject:
   m_ObjectHideFlags: 0
@@ -181,8 +181,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7180191712151371166}
-  - component: {fileID: 6685224239669303868}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -206,19 +205,6 @@ Transform:
   - {fileID: 3910226023128176405}
   m_Father: {fileID: 1429597383853093335}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6685224239669303868
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4490364212461687737}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6f1575aa25341f9bc74ba6ac35fdd75, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.Components.PlaneSocket
-  <planePartType>k__BackingField: 7
 --- !u!1 &5548540349571839556
 GameObject:
   m_ObjectHideFlags: 0
@@ -229,7 +215,7 @@ GameObject:
   m_Component:
   - component: {fileID: 167592679695689050}
   - component: {fileID: 3637125988320980557}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Test_PlaneSkeleton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -284,7 +270,7 @@ GameObject:
   - component: {fileID: 6247083994856648771}
   - component: {fileID: 3936861386342021905}
   - component: {fileID: 5216319834601783655}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BackTire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -374,7 +360,8 @@ GameObject:
   - component: {fileID: 3910226023128176405}
   - component: {fileID: 9130989619429751548}
   - component: {fileID: 6937688815807008666}
-  m_Layer: 0
+  - component: {fileID: 7728291828651177400}
+  m_Layer: 8
   m_Name: RightTire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -411,7 +398,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6691727206571559944}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -454,6 +441,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &7728291828651177400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6691727206571559944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f1575aa25341f9bc74ba6ac35fdd75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.Components.PlaneSocket
+  <planePartType>k__BackingField: 7
 --- !u!1 &8122793456279327652
 GameObject:
   m_ObjectHideFlags: 0
@@ -466,7 +466,7 @@ GameObject:
   - component: {fileID: 3244572996637185860}
   - component: {fileID: 5924194122443811376}
   - component: {fileID: 4424125024774852314}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -503,7 +503,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8122793456279327652}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -570,7 +570,8 @@ GameObject:
   - component: {fileID: 8819089742312955466}
   - component: {fileID: 5011855588688009444}
   - component: {fileID: 8849969860903162157}
-  m_Layer: 0
+  - component: {fileID: 5086605541222513505}
+  m_Layer: 8
   m_Name: LeftGuard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -607,7 +608,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8508113987421084660}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -649,6 +650,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5086605541222513505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8508113987421084660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f1575aa25341f9bc74ba6ac35fdd75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.Components.PlaneSocket
+  <planePartType>k__BackingField: 9
 --- !u!1 &8824000431508629808
 GameObject:
   m_ObjectHideFlags: 0
@@ -660,7 +674,8 @@ GameObject:
   - component: {fileID: 121864121732744695}
   - component: {fileID: 3834116349997847998}
   - component: {fileID: 1982562423051294207}
-  m_Layer: 0
+  - component: {fileID: 8623158111191311907}
+  m_Layer: 8
   m_Name: Propeller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -697,7 +712,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8824000431508629808}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -739,6 +754,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8623158111191311907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8824000431508629808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f1575aa25341f9bc74ba6ac35fdd75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.Components.PlaneSocket
+  <planePartType>k__BackingField: 5
 --- !u!1 &8893652575081597851
 GameObject:
   m_ObjectHideFlags: 0
@@ -750,7 +778,8 @@ GameObject:
   - component: {fileID: 1465291324275718718}
   - component: {fileID: 3771321686102482645}
   - component: {fileID: 2533168199430843102}
-  m_Layer: 0
+  - component: {fileID: 3444473687999781140}
+  m_Layer: 8
   m_Name: RightGuard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -787,7 +816,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8893652575081597851}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -829,3 +858,16 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &3444473687999781140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8893652575081597851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f1575aa25341f9bc74ba6ac35fdd75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.Components.PlaneSocket
+  <planePartType>k__BackingField: 8
