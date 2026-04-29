@@ -52,6 +52,9 @@ namespace _Project.Scripts.Lobby.UI.Managers
         [Tooltip("Progress Text")] [SerializeField]
         private TextMeshProUGUI progressText;
 
+        [Space(5)] [Tooltip("Build Confirm button")] [SerializeField]
+        private Button confirmButton;
+
         [Space(10)]
         [Header("Plane build variation select Panel")]
         [Tooltip("Build variation card prefab")]
@@ -71,7 +74,11 @@ namespace _Project.Scripts.Lobby.UI.Managers
         private List<PlaneBuildVariationCardUI> spawnedVariationCards = new List<PlaneBuildVariationCardUI>();
 
         public static event Action OnPlaneBuildVariationSelectProcess;
+        public static event Action<PlanePartSo, PlanePartVariation> OnPlaneBuildPreviewRequested;
 
+        private PlanePartSo _selectedPartSo;
+        private PlanePartVariation _selectedVariation;
+        private PlaneBuildVariationCardUI _lastSelectedVariationCard;
 
         private void OnEnable()
         {
@@ -214,6 +221,8 @@ namespace _Project.Scripts.Lobby.UI.Managers
         //? Spawns selected plane part's variation cards
         private void InitializeVariationsCard(PlanePartSo partSo)
         {
+            confirmButton.interactable = false;
+
             ClearAllVariationCards();
 
             partSo.variations.ForEach(variation =>
@@ -224,16 +233,27 @@ namespace _Project.Scripts.Lobby.UI.Managers
                     Instantiate(variationCardPrefab, variationsContainer)
                         .GetComponent<PlaneBuildVariationCardUI>();
                 newCard.SetUp(partSo, variation);
-                newCard.OnBuildVariationSelected += HandleBuildVariationSelected;
+                newCard.OnPlaneBuildVariationSelected += HandleBuildVariationSelected;
                 spawnedVariationCards.Add(newCard);
             });
         }
 
-        private void HandleBuildVariationSelected(PlanePartSo partSo, PlanePartVariation variation)
+        private void HandleBuildVariationSelected(PlaneBuildVariationCardUI card, PlanePartSo partSo,
+            PlanePartVariation variation)
         {
-            PlaneBuildManager.Instance.TryBuildPart(partSo, variation);
+            _selectedPartSo = partSo;
+            _selectedVariation = variation;
 
-            // LobbyEvents.TriggerPlanePartBuildAnimStarted(partSo, variation);
+            if (_lastSelectedVariationCard != null)
+            {
+                _lastSelectedVariationCard.RevertSelectedButton();
+            }
+            
+            _lastSelectedVariationCard = card;
+
+            confirmButton.interactable = true;
+
+            OnPlaneBuildPreviewRequested?.Invoke(_selectedPartSo, _selectedVariation);
         }
 
         private void ClearAllCards()
@@ -256,14 +276,20 @@ namespace _Project.Scripts.Lobby.UI.Managers
             {
                 if (card != null)
                 {
-                    card.OnBuildVariationSelected -= HandleBuildVariationSelected;
+                    card.OnPlaneBuildVariationSelected -= HandleBuildVariationSelected;
                     Destroy(card.gameObject);
                 }
             }
 
             spawnedVariationCards.Clear();
+            
+            _lastSelectedVariationCard = null;
         }
 
+        public void OnConfirmButtonClicked()
+        {
+            PlaneBuildManager.Instance.TryBuildPart(_selectedPartSo, _selectedVariation);
+        }
 
         private void OnDisable()
         {

@@ -21,7 +21,16 @@ namespace _Project.Scripts.Lobby.UI.Components
         [Tooltip("Background Color")] [SerializeField]
         private Image backgroundColor;
 
-        public event Action<PlanePartSo, PlanePartVariation> OnBuildVariationSelected;
+        [Tooltip("Variation card Outline object")] [SerializeField]
+        private Image variationCardOutline;
+
+        [Tooltip("selected outline color")] [SerializeField]
+        private Color selectedOutlineColor;
+
+        [Tooltip("Default outline Color")] [SerializeField]
+        private Color defaultOutlineColor;
+
+        public event Action<PlaneBuildVariationCardUI, PlanePartSo, PlanePartVariation> OnPlaneBuildVariationSelected;
 
         private PlanePartSo _currentPartSo;
         private PlanePartVariation _currentPartVariation;
@@ -33,11 +42,19 @@ namespace _Project.Scripts.Lobby.UI.Components
             variationIcon.sprite = variation.sprite;
             backgroundColor.color = variation.backgroundColor;
             variationName.text = variation.variationName;
+            variationCardOutline.color = defaultOutlineColor;
         }
 
         public void OnCardButtonClicked()
         {
-            OnBuildVariationSelected?.Invoke(_currentPartSo, _currentPartVariation);
+            variationCardOutline.color = selectedOutlineColor;
+
+            OnPlaneBuildVariationSelected?.Invoke(this, _currentPartSo, _currentPartVariation);
+        }
+
+        public void RevertSelectedButton()
+        {
+            variationCardOutline.color = defaultOutlineColor;
         }
     }
 }

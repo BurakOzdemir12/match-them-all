@@ -16,19 +16,7 @@ namespace _Project.Scripts.Lobby.UI.Managers
 {
     public class HangarUIManager : MonoBehaviour
     {
-        [Header("UI Buttons")] [Tooltip("Play next level of game button")] [SerializeField]
-        private Button playLevelButon;
-
-        [Tooltip("Opens Build list panel")] [SerializeField]
-        private Button openBuildPanelButon;
-
-        [Tooltip("Close Build panel button")] [SerializeField]
-        private Button closeBuildPanelButton;
-
-        [Tooltip("Play game button")] [SerializeField]
-        private Button playNextLevelButton;
-
-        [Header("UI Panels-Canvas")] [Tooltip("Build List Panel")] [SerializeField]
+        [Header("UI Buttons")] [Header("UI Panels-Canvas")] [Tooltip("Build List Panel")] [SerializeField]
         private CanvasGroup buildListPanelCanvasGroup;
 
         [Tooltip("Build List Canvas component")] [SerializeField]
@@ -55,6 +43,9 @@ namespace _Project.Scripts.Lobby.UI.Managers
         [Header("Plane build variation select Panel")] [Tooltip("Variation Panel")] [SerializeField]
         private CanvasGroup buildVariationPanel;
 
+        [Header("Parent Panels")] [Tooltip("Main Panel")] [SerializeField]
+        private CanvasGroup mainPanelCanvasGroup;
+
         public static event Action OnPlayLevelButtonClicked;
 
         private void OnEnable()
@@ -68,12 +59,10 @@ namespace _Project.Scripts.Lobby.UI.Managers
 
         private void HandlePlaneBuildVariationSelectProcess()
         {
-            playLevelButon.gameObject.SetActive(false);
-            openBuildPanelButon.gameObject.SetActive(false);
-
-            Fade(buildListPanelCanvasGroup, 0f, 0f, setUpdate: true, false);
             overlayUIManager.HidePanel(buildListCanvas);
 
+            Fade(mainPanelCanvasGroup, 0f, 0f, true, false);
+            Fade(buildListPanelCanvasGroup, 0f, 0f, setUpdate: true, false);
             Fade(buildVariationPanel, 1f, 0f, setUpdate: true, true);
         }
 
@@ -107,18 +96,16 @@ namespace _Project.Scripts.Lobby.UI.Managers
 
         private void HandlePlanePartBuildAnimEnded(PlanePartSo partSo, PlanePartVariation? partVariation)
         {
-            playLevelButon.gameObject.SetActive(true);
-            openBuildPanelButon.gameObject.SetActive(true);
+            Fade(mainPanelCanvasGroup, 1f, 0f, true, true);
         }
 
         private void HandlePlanePartBuildAnimStarted(PlanePartSo partSo, PlanePartVariation? partVariation)
         {
+            overlayUIManager.HidePanel(buildListCanvas);
+
             Fade(buildListPanelCanvasGroup, 0f, 0f, setUpdate: true, false);
             Fade(buildVariationPanel, 0f, 0f, setUpdate: true, false);
-
-            overlayUIManager.HidePanel(buildListCanvas);
-            playLevelButon.gameObject.SetActive(false);
-            openBuildPanelButon.gameObject.SetActive(false);
+            Fade(mainPanelCanvasGroup, 0f, 0f, true, false);
         }
 
         private void Start()

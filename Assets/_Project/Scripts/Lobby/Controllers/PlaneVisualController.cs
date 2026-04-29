@@ -8,6 +8,7 @@ using _Project.Scripts.Lobby.Managers;
 using _Project.Scripts.Lobby.ScriptableObjects.Plane;
 using _Project.Scripts.Lobby.Static;
 using _Project.Scripts.Lobby.Structs;
+using _Project.Scripts.Lobby.UI.Managers;
 using DG.Tweening;
 using UnityEngine;
 
@@ -35,7 +36,6 @@ namespace _Project.Scripts.Lobby.Controllers
 
         //--
         private readonly int _baseMapID = Shader.PropertyToID("_BaseMap");
-
         private readonly int _mainPaintID = Shader.PropertyToID("_MainTexture");
         private readonly int _newTextureID = Shader.PropertyToID("_NewTexture");
         private readonly int _paintSpeedId = Shader.PropertyToID("_PaintSpeed");
@@ -52,12 +52,67 @@ namespace _Project.Scripts.Lobby.Controllers
         private Sequence _animSequence;
         private bool _isWaitingForCelebration = false;
 
+        //Preview settings
+        private GameObject _currentPreviewPart;
+        private Texture2D _originalTextureBeforePreview;
+
         private void OnEnable()
         {
             LobbyEvents.OnPlanePartBuildAnimStarted += HandlePlanePartBuildAnimStarted;
             LobbyEvents.OnPlaneSpawned += HandlePlaneSpawned;
             LobbyEvents.OnPlanePartLoaded += HandlePlanePartLoaded;
             LobbyEvents.OnPlaneBuildCompleted += HandlePlaneBuildCompleted;
+            PlaneBuildUIManager.OnPlaneBuildPreviewRequested += HandlePlaneBuildPreviewRequested;
+        }
+        
+        private void HandlePlaneBuildPreviewRequested(PlanePartSo partSo, PlanePartVariation partVariation)
+        {
+            switch (partSo.modificationType)
+            {
+                case ModificationType.Install:
+                    PreviewInstall(partSo, partVariation);
+                    break;
+                case ModificationType.Paint:
+                    PreviewPaint(partSo, partVariation);
+                    break;
+            }
+        }
+
+        private void PreviewPaint(PlanePartSo partSo, PlanePartVariation partVariation)
+        {
+            if (!_currentSocketManager.sockets.TryGetValue(partSo.planePartType, out PlaneSocket targetSocket)) return;
+
+            Renderer targetRenderer = targetSocket.GetComponentInChildren<Renderer>();
+            if (targetRenderer == null) return;
+
+            if (_originalTextureBeforePreview == null)
+            {
+                Texture currentTexture = targetRenderer.sharedMaterial.GetTexture(_baseMapID);
+                _originalTextureBeforePreview =
+                    currentTexture != null ? (Texture2D)currentTexture : Texture2D.whiteTexture;
+            }
+
+            Texture2D newTexture = partVariation.paintTexture != null
+                ? partVariation.paintTexture
+                : partSo.defaultPaintTexture;
+            targetRenderer.sharedMaterial.SetTexture(_baseMapID, newTexture);
+        }
+
+        private void PreviewInstall(PlanePartSo partSo, PlanePartVariation partVariation)
+        {
+            if (!_currentSocketManager.sockets.TryGetValue(partSo.planePartType, out PlaneSocket targetSocket)) return;
+
+            if (_currentPreviewPart != null)
+            {
+                Destroy(_currentPreviewPart);
+            }
+
+            GameObject prefabToPreview =
+                partVariation.partPrefab != null ? partVariation.partPrefab : partSo.defaultPartPrefab;
+
+            _currentPreviewPart = Instantiate(prefabToPreview, targetSocket.transform);
+            _currentPreviewPart.transform.localPosition = Vector3.zero;
+            _currentPreviewPart.transform.localRotation = Quaternion.identity;
         }
 
         private void HandlePlaneBuildCompleted(PlaneBluePrintSo bluePrintSo)
@@ -208,28 +263,31 @@ namespace _Project.Scripts.Lobby.Controllers
 
         private void ProcessPaint(PlanePartSo partSo, PlanePartVariation? partVariation)
         {
-            if (!_currentSocketManager.sockets.TryGetValue(partSo.planePartType, out PlaneSocket targetSocket))
-                return;
+            if (!_currentSocketManager.sockets.TryGetValue(partSo.planePartType, out PlaneSocket targetSocket)) return;
 
             Renderer targetRenderer = targetSocket.GetComponentInChildren<Renderer>();
             if (targetRenderer == null) return;
 
             Material originalMaterial = targetRenderer.sharedMaterial;
 
-            Texture currentTexture = originalMaterial.GetTexture(_baseMapID);
+            if (_originalTextureBeforePreview != null)
+            {
+                originalMaterial.SetTexture(_baseMapID, _originalTextureBeforePreview);
+                _originalTextureBeforePreview = null;
+            }
 
+            Texture currentTexture = originalMaterial.GetTexture(_baseMapID);
             if (currentTexture == null) currentTexture = Texture2D.whiteTexture;
 
-            Texture2D newTexture =
-                partVariation != null ? partVariation.Value.paintTexture : partSo.defaultPaintTexture;
-
+            Texture2D newTexture = partVariation != null && partVariation.Value.paintTexture != null
+                ? partVariation.Value.paintTexture
+                : partSo.defaultPaintTexture;
 
             if (partVariation != null)
             {
                 Material effectMat = new Material(partVariation.Value.paintMaterial); //paintEffectMaterialTemplate
 
                 _animSequence?.Kill();
-
                 _animSequence = DOTween.Sequence();
 
                 effectMat.SetTexture(_mainPaintID, currentTexture);
@@ -239,14 +297,11 @@ namespace _Project.Scripts.Lobby.Controllers
                 targetRenderer.material = effectMat;
 
                 _animSequence.Append(
-                    effectMat.DOFloat(1.5f, _paintSpeedId, paintDuration)
-                        .SetEase(Ease.InOutSine)
+                    effectMat.DOFloat(1.5f, _paintSpeedId, paintDuration).SetEase(Ease.InOutSine)
                 ).OnComplete(() =>
                 {
                     originalMaterial.SetTexture(_baseMapID, newTexture);
-
                     targetRenderer.material = originalMaterial;
-
                     Destroy(effectMat);
 
                     if (_isWaitingForCelebration)
@@ -266,6 +321,12 @@ namespace _Project.Scripts.Lobby.Controllers
 
             if (!_currentSocketManager.sockets.TryGetValue(partSo.planePartType, out PlaneSocket targetSocket))
                 return;
+
+            if (_currentPreviewPart != null)
+            {
+                Destroy(_currentPreviewPart);
+                _currentPreviewPart = null;
+            }
 
             GameObject finalPart = partVariation != null ? partVariation.Value.partPrefab : partSo.defaultPartPrefab;
 
@@ -301,6 +362,7 @@ namespace _Project.Scripts.Lobby.Controllers
             LobbyEvents.OnPlaneSpawned -= HandlePlaneSpawned;
             LobbyEvents.OnPlanePartLoaded -= HandlePlanePartLoaded;
             LobbyEvents.OnPlaneBuildCompleted -= HandlePlaneBuildCompleted;
+            PlaneBuildUIManager.OnPlaneBuildPreviewRequested -= HandlePlaneBuildPreviewRequested;
         }
     }
 }

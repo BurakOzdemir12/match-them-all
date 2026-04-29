@@ -19,18 +19,4 @@ MonoBehaviour:
   <defaultPartPrefab>k__BackingField: {fileID: 6140448046116026373, guid: ef5a23121c8dc8a4d919aa240095f5e2, type: 3}
   <modificationType>k__BackingField: 1
   <defaultPaintTexture>k__BackingField: {fileID: 0}
-  <variations>k__BackingField:
-  - variationName: Big Wheel
-    variationID: 0
-    sprite: {fileID: 694085449, guid: adb14f56d3d1049d9a1499fc7d468095, type: 3}
-    partPrefab: {fileID: 2112140759901131732, guid: 631dbefd9ceac1c458814fdb3de64666, type: 3}
-    paintMaterial: {fileID: 6012087270956184818, guid: 3434c0b847ea9854cbf6ca7ed69f8a4c, type: 3}
-    backgroundColor: {r: 0.3490566, g: 0.31448025, b: 0.31448025, a: 1}
-    paintTexture: {fileID: 0}
-  - variationName: Bigger Wheel
-    variationID: 1
-    sprite: {fileID: 96192104, guid: adb14f56d3d1049d9a1499fc7d468095, type: 3}
-    partPrefab: {fileID: 2438543412896938934, guid: e6fa20086b9dde140af89968291316e4, type: 3}
-    paintMaterial: {fileID: 2100000, guid: e86c6ee57cd4c400ea5852025bc7b7c3, type: 2}
-    backgroundColor: {r: 0.5471698, g: 0.36908153, b: 0.36908153, a: 1}
-    paintTexture: {fileID: 0}
+  <variations>k__BackingField: []
