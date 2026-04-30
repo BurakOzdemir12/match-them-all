@@ -10,6 +10,7 @@ namespace _Project.Scripts.Lobby.Static
 {
     public struct LobbyEvents
     {
+        public static event Action<PlaneLibrarySo> OnPlaneLibraryLoaded;
         public static event Action<PlaneBluePrintSo, List<SavedPartData>> OnPlanePartLoaded;
         public static event Action<PlanePartSo, PlanePartVariation?> OnPlanePartBuildRequestConfirmed;
         public static event Action<PlanePartSo, PlanePartVariation?> OnPlanePartBuildAnimStarted;
@@ -19,8 +20,15 @@ namespace _Project.Scripts.Lobby.Static
         public static event Action<PlaneSocketManager> OnPlaneSpawned;
         public static event Action<float> OnPlaneBuildProgressChanged;
 
+        public static event Action<string, PlaneBluePrintSo> OnPlaneEditRequested;
+
         //UI flow
         public static event Action<ResourceType> OnResourceNotEnough;
+
+        public static void TriggerPlaneLibraryLoaded(PlaneLibrarySo planeLibrarySo)
+        {
+            OnPlaneLibraryLoaded?.Invoke(planeLibrarySo);
+        }
 
         public static void TriggerPlanePartLoaded(PlaneBluePrintSo planeBluePrintSo, List<SavedPartData> savedPartData)
         {

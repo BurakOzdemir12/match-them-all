@@ -39,7 +39,7 @@ namespace _Project.Scripts.Managers
         {
             //! For Testing
             SetResource(ResourceType.Coin, 600);
-            SetResource(ResourceType.Wrench, 20);
+            SetResource(ResourceType.Wrench, 120);
             SetResource(ResourceType.Health, 4);
         }
 

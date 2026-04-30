@@ -15881,6 +15881,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e661a39861ed46c884051f90768508df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Project.Scripts.Lobby.Managers.LobbyManager
+  planeLibrarySo: {fileID: 0}
 --- !u!1 &1914862419
 GameObject:
   m_ObjectHideFlags: 0
