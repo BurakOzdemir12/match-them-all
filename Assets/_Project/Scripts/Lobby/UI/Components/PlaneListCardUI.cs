@@ -9,6 +9,10 @@ namespace _Project.Scripts.Lobby.UI.Components
 {
     public class PlaneListCardUI : MonoBehaviour
     {
+        [field: Header("Plane")]
+        [field: SerializeField]
+        public PlaneBluePrintSo planeSo { get; set; }
+
         [Header("Card UI References")] [SerializeField]
         private Image cardImage;
 
@@ -26,17 +30,21 @@ namespace _Project.Scripts.Lobby.UI.Components
 
         [SerializeField] private Button selectButton;
 
-        private int _planeId;
 
+        private int _planeId;
+        public event Action<PlaneBluePrintSo, int> OnPlaneEditSelected;
 
         public void SetUp(PlaneBluePrintSo planeBluePrintSo)
         {
             planeNameText.text = planeBluePrintSo.planeName;
             _planeId = int.Parse(planeBluePrintSo.planeID);
+            planeSo = planeBluePrintSo;
+            planeImage = planeBluePrintSo.planeImage;
         }
 
         public void OnSelectButtonClicked()
         {
+            OnPlaneEditSelected?.Invoke(planeSo, _planeId);
         }
     }
 }

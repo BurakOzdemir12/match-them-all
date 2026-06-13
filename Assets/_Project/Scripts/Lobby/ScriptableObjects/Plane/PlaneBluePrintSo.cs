@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using _Project.Scripts.Lobby.Structs;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace _Project.Scripts.Lobby.ScriptableObjects.Plane
 {
@@ -12,6 +13,9 @@ namespace _Project.Scripts.Lobby.ScriptableObjects.Plane
 
         [field: Header("Plane blue print"), Tooltip("Plane Name"), SerializeField]
         public string planeName { get; private set; }
+
+        [field: Tooltip("Plane Image"), SerializeField]
+        public Image planeImage;
 
         [field: Space(10), Header("Skeleton of the plane"),
                 Tooltip("This is the what sockets for show exactly plane parts spawn that position"),
